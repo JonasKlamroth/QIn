@@ -8,7 +8,7 @@ public class Ident extends Expr {
     }
 
     public String toString() {
-        return name;
+        return "(" + name + ")";
     }
 
     @Override

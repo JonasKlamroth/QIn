@@ -1,5 +1,8 @@
 package Expressions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultOp extends Expr {
     Expr left;
     Expr right;
@@ -15,32 +18,48 @@ public class MultOp extends Expr {
 
     @Override
     public String simplify() {
-        try {
-            float left = Float.parseFloat(this.left.simplify());
-            float right = Float.parseFloat(this.right.simplify());
-            return (left * right) + "f";
-        } catch (NumberFormatException ex) {
-            try{
-                float left = Float.parseFloat(this.left.simplify());
-                if(left == 1.0f) {
-                    return right.simplify();
-                }
-                if(left == 0.0f) {
-                    return "0.0f";
-                }
-            } catch (NumberFormatException ignored) {
+        List<Const> constChildren = new ArrayList<>();
+        List<Expr> otherChildren = new ArrayList<>();
+        for(Expr e : getRecOperants()) {
+            if(e instanceof Const) {
+                constChildren.add((Const) e);
+            } else {
+                otherChildren.add(e);
             }
-            try{
-                float right = Float.parseFloat(this.right.simplify());
-                if(right == 1.0f) {
-                    return left.simplify();
-                }
-                if(right == 0.0f) {
-                    return "0.0f";
-                }
-            } catch (NumberFormatException ignored) {
-            }
-            return toString();
         }
+        float constPart = 1.f;
+        for(Const c : constChildren) {
+            constPart *= c.val;
+        }
+        if(otherChildren.size() == 0) {
+            return constPart + "f";
+        }
+        if(constPart == 0.0f) {
+            return "0.0f";
+        }
+
+        Expr res = otherChildren.get(0);
+        for(int i = 1; i < otherChildren.size(); ++i) {
+            res = new MultOp(res, otherChildren.get(i));
+        }
+        if(constPart != 1.0f) {
+            res = new MultOp(new Const(constPart), res);
+        }
+        return res.toString();
+    }
+
+    List<Expr> getRecOperants() {
+        List<Expr> res = new ArrayList<>();
+        if(left instanceof MultOp) {
+            res.addAll(((MultOp) left).getRecOperants());
+        } else {
+            res.add(left);
+        }
+        if(right instanceof MultOp) {
+            res.addAll(((MultOp) right).getRecOperants());
+        } else {
+            res.add(right);
+        }
+        return res;
     }
 }
