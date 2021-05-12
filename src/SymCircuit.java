@@ -1,164 +1,227 @@
+import Expressions.Const;
+import Expressions.Expr;
+import Expressions.Ident;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SymCircuit {
-    private final String h = "1.41421356237";
-    private final String[][] H = new String[][]{{h, h},
-            {h, "-" + h}};
-    private final String[][] ID = new String[][]{{"1.0", "0.0"},
-            {"0.0", "1.0"}};
-    private final String[][] X = new String[][]{{"0.0", "1.0"},
-            {"1.0", "0.0"}};
-    private final String[][] CX = new String[][]{{"1.0", "0.0", "0.0", "0.0"},
-            {"0.0", "1.0", "0.0", "0.0"},
-            {"0.0", "0.0", "0.0", "1.0"},
-            {"0.0", "0.0", "1.0", "0.0"}};
-    private StringBuilder sb;
-    private int numQbits;
+   private int numQbits;
+    private int numCBits;
+    private int numfloatVars = 0;
+    private int numBoolVars = 0;
     private int stateSize;
-    private int numStates = 0;
-    private String[][] currentState;
+    private int currentStateIdx = 0;
+    private int currentCStateIdx = 0;
+    private final Expr[][] initialState;
+    private List<Operation> operations = new ArrayList<>();
 
-    public SymCircuit(int numQbits) {
+    public SymCircuit(int numQbits, int numCBits) {
         this.numQbits = numQbits;
+        this.numCBits = numCBits;
         this.stateSize = (int)Math.pow(2, numQbits);
-
-        sb = new StringBuilder();
-
-        currentState = newState();
+        this.initialState = new Expr[stateSize][1];
+        for(int i = 0; i < stateSize; ++i) {
+            this.initialState[i] = new Expr[]{new Const(0.0f)};
+        }
+        this.initialState[0][0] = new Const(1.0f);
     }
 
-    private String[][] newState() {
-        String[][] res = new String[stateSize][1];
-        res[0][0] = "1.0";
+    public SymCircuit(int numQbits, int numCBits, List<String[]> initialStates) {
+        this.numQbits = numQbits;
+        this.numCBits = numCBits;
+        this.stateSize = (int) Math.pow(2, numQbits);
+        assert initialStates.size() == numQbits;
+        Expr[][] state = arrayToState(initialStates.get(0));
+        for(int i = 1; i < initialStates.size(); ++i) {
+            state = Utils.tensorProd(state, arrayToState(initialStates.get(i)));
+        }
+        this.initialState = state;
+    }
+
+    public SymCircuit(int numQbits, int numCBits, String[] initialState) {
+        this.numQbits = numQbits;
+        this.numCBits = numCBits;
+        this.stateSize = (int)Math.pow(2, numQbits);
+        assert initialState.length == stateSize;
+        this.initialState = new Expr[stateSize][1];
+        for(int i = 0; i < stateSize; ++i) {
+            this.initialState[i] = new Expr[]{Expr.parse(initialState[i])};
+        }
+
+    }
+
+    Expr[][] arrayToState(String[] a) {
+        Expr[][] state = new Expr[a.length][1];
+        for(int i = 0; i < a.length; ++i) {
+            state[i][0] = Expr.parse(a[i]);
+        }
+        return state;
+    }
+
+    private String newVarFromCState(Boolean[] cstate) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("boolean[] c_").append(++currentCStateIdx).append(" = new boolean[]");
+        sb.append(Arrays.toString(cstate).replace('[', '{').replace(']', '}').replace("null", "false"));
+        sb.append(";\n");
+        return sb.toString();
+    }
+
+    private String newVarFromState(Expr[][] state) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("float[] q_").append(++currentStateIdx).append(" = new float[]");
+        sb.append(getStateArray(state));
+        sb.append(";\n");
+        for(int i = 0; i < stateSize; ++i) {
+            state[i][0] = new Ident("q_" + currentStateIdx + "[" + i + "]");
+        }
+        return sb.toString();
+    }
+
+    private Expr[][] newState() {
+        Expr[][] res = new Expr[stateSize][1];
+        res[0][0] = new Const(1.0f);
         for(int i = 1; i < stateSize; ++i) {
-            res[i][0] = "0.0";
+            res[i][0] = new Const(0.0f);
         }
         return res;
     }
 
     public void h(int qbit) {
-        String[][] m = adapt(H, qbit);
-        currentState = mult(m, currentState);
+        u(Utils.H, qbit);
     }
+
     public void x(int qbit) {
-        String[][] m = adapt(X, qbit);
-        currentState = mult(m, currentState);
+        u(Utils.X, qbit);
+    }
+
+    public void z(int qbit) {
+        u(Utils.Z, qbit);
     }
 
     public void cnot(int cqbit, int tqbit) {
-        assert cqbit == tqbit - 1;
-        String[][] m = adapt(CX, cqbit);
-        currentState = mult(m, currentState);
+        u(Utils.CX, cqbit, tqbit);
     }
 
-    public void u(double[][] m, int... qbits) {
-        assert m.length > 1 && m.length < stateSize;
+    public void u(String[][] m, int... qbits) {
+        assert m.length > 1 && m.length <= stateSize;
         assert m.length == m[0].length;
         assert Math.pow(2, qbits.length) == m.length;
         for(int i = 1; i < qbits.length; ++i) {
             assert qbits[i] == qbits[i - 1] + 1;
         }
-        String[][] m1 = adapt(CX, qbits[0]);
-        currentState = mult(m1, currentState);
-    }
-
-    public static String[][] mult(String[][] a, String[][] b){//a[m][n], b[n][p]
-        assert a.length != 0;
-        assert (a[0].length != b.length);
-
-        int n = a[0].length;
-        int m = a.length;
-        int p = b[0].length;
-
-        String[][] ans = new String[m][p];
-
-        for(int i = 0;i < m;i++){
-            for(int j = 0;j < p;j++){
-                for(int k = 0;k < n;k++){
-                    if(ans[i][j] == null) {
-                        ans[i][j] = "0.0";
-                    }
-                    ans[i][j] = "(" + ans[i][j] + ") + (" + a[i][k] + ") * (" + b[k][j] + ")";
-                }
+        Expr[][] u = new Expr[m.length][m.length];
+        for(int i = 0; i < m.length; ++i) {
+            for(int j = 0; j < m.length; j++) {
+                u[i][j] = Expr.parse(m[i][j]);
             }
         }
-        return ans;
+        u(u, qbits);
+    }
+    public void u(Expr[][] m, int... qbits) {
+        assert m.length > 1 && m.length <= stateSize;
+        assert m.length == m[0].length;
+        assert Math.pow(2, qbits.length) == m.length;
+        for(int i = 1; i < qbits.length; ++i) {
+            assert qbits[i] == qbits[i - 1] + 1;
+        }
+        Expr[][] m1 = Utils.adapt(m, qbits[0], numQbits);
+        operations.add(new Unitary(qbits[0], m1));
     }
 
-    private String[][] adapt(String[][] m, int qbit) {
-        String[][] res = ID;
-        int matrixSize = (int)Math.log(m.length);
-        assert (double)matrixSize == Math.log(m.length);
-        int i = 1;
-        if(qbit == 0) {
-            res = m;
-            i = matrixSize;
-        }
-        for(; i < numQbits; ++i) {
-            if(i != qbit) {
-                res = tensorProd(res, ID);
-            } else {
-                res = tensorProd(res, m);
-                i += matrixSize - 1;
-            }
-        }
-        return res;
+    public void measureMax(int qBit, int cBit) {
+        operations.add(new Measurement(qBit, cBit, false));
     }
 
-    private String[][] tensorProd(String[][] a, String[][] b) {
-        // Taken from: https://rosettacode.org/wiki/Kronecker_product#Java
-        // Create matrix c as the matrix to fill and return.
-        // The length of a matrix is its number of rows.
-        final String[][] c = new String[a.length*b.length][];
-        // Fill in the (empty) rows of c.
-        // The length of each row is the number of columns.
-        for (int ix = 0; ix < c.length; ix++) {
-            final int num_cols = a[0].length*b[0].length;
-            c[ix] = new String[num_cols];
-        }
-        // Now fill in the values: the products of each pair.
-        // Go through all the elements of a.
-        for (int ia = 0; ia < a.length; ia++) {
-            for (int ja = 0; ja < a[ia].length; ja++) {
-                // For each element of a, multiply it by all the elements of b.
-                for (int ib = 0; ib < b.length; ib++) {
-                    for (int jb = 0; jb < b[ib].length; jb++) {
-                        c[b.length*ia+ib][b[ib].length*ja+jb] = "(" + a[ia][ja] + ") * (" + b[ib][jb] + ")";
-                    }
-                }
-            }
-        }
-
-        // Return the completed product matrix c.
-        return c;
+    public void measure(int qBit, int cBit) {
+        operations.add(new Measurement(qBit, cBit, true));
     }
 
-    private String matrixToString(double[][] res) {
+    public String getTranslation() {
+        String res = "float[] q_res = null;\n";
+        res += "boolean[] c_res = null;\n";
+        res += newVarFromState(initialState);
+        return res + getTranslation(operations, initialState, new Boolean[numCBits]);
+    }
+
+    private String getTranslation(List<Operation> operations, Expr[][] qstate, Boolean[] cstate) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        for(int i = 0; i < res.length; ++i) {
-            for(int j = 0; j < res[0].length; ++j) {
-                sb.append(" ");
-                sb.append(res[i][j]);
-                if (res.length - 1 != i || j != res[0].length - 1) {
-                    sb.append(",");
+        for(int i = 0; i < operations.size(); ++i) {
+            Operation o = operations.get(i);
+            o.apply(qstate, cstate);
+            if(o instanceof Measurement) {
+                String cond = "";
+                if(((Measurement) o).considerAll) {
+                    sb.append("boolean b_" + ++numBoolVars + " = CProver.nondetBoolean();\n");
+                    cond = "b_" + numBoolVars;
+                } else {
+                    String val0 = "";
+                    String val1 = "";
+                    int shift = numQbits - o.qBit - 1;
+                    for(int j = 0; j < stateSize; ++j) {
+                        if((j & (1 << shift)) == 0) {
+                            val0 += "(" + qstate[j][0] + " * " + qstate[j][0] + ") + ";
+                        } else {
+                            val1 += "(" + qstate[j][0] + " * " + qstate[j][0] + ") + ";
+                        }
+                    }
+                    val0 += "0.0f;\n";
+                    val1 += "0.0f;\n";
+
+                    sb.append("float dvar_" + ++numfloatVars + " = " + val0);
+                    sb.append("float dvar_" + ++numfloatVars + " = " + val1);
+                    cond = "dvar_" + (numfloatVars - 1) + " < " + "dvar_" + numfloatVars;
+                }
+                sb.append("if(" + cond + ") {\n");
+                sb.append(newVarFromState(o.resultingQStates.get(0)));
+                sb.append(newVarFromCState(o.resultingCStates.get(0)));
+                if(i + 1 < operations.size()) {
+                    sb.append(getTranslation(operations.subList(i + 1, operations.size()), o.resultingQStates.get(0), o.resultingCStates.get(0)));
+                }
+                if(i == operations.size() - 1) {
+                    sb.append("q_res = q_" + currentStateIdx + ";\n");
+                    sb.append("c_res = c_" + currentCStateIdx + ";\n");
+                }
+                sb.append("} else {\n");
+                sb.append(newVarFromState(o.resultingQStates.get(1)));
+                sb.append(newVarFromCState(o.resultingCStates.get(1)));
+                if(i + 1 < operations.size()) {
+                    sb.append(getTranslation(operations.subList(i + 1, operations.size()), o.resultingQStates.get(1), o.resultingCStates.get(1)));
+                }
+                if(i == operations.size() - 1) {
+                    sb.append("q_res = q_" + currentStateIdx + ";\n");
+                    sb.append("c_res = c_" + currentCStateIdx + ";\n");
+                }
+                sb.append("}\n");
+                break;
+            } else {
+                qstate = o.resultingQStates.get(0);
+                sb.append(newVarFromState(qstate));
+                if(i == operations.size() - 1) {
+                    sb.append("q_res = q_" + currentStateIdx + ";\n");
+                    sb.append("c_res = c_" + currentCStateIdx + ";\n");
                 }
             }
         }
-        sb.append("}");
+
         return sb.toString();
     }
 
-    public String getRes() {
+    private void setQBit(int qBit, boolean value) {
+
+    }
+
+    public String getStateArray(Expr[][] state) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        for (String[] strings : currentState) {
-            assert strings.length == 1;
-            sb.append(strings[0]);
+        for (Expr[] exp : state) {
+            assert exp.length == 1;
+            sb.append(exp[0].simplify());
             sb.append(",");
         }
         sb.append("}");
         return sb.toString();
-        //return currentState;
     }
+
 }

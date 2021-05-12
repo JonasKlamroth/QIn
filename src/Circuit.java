@@ -1,18 +1,18 @@
 public class Circuit {
-    private final double h = 1.41421356237;
-    private final double[][] H = new double[][]{{h, h},
+    private final float h = 1.41421356237f;
+    private final float[][] H = new float[][]{{h, h},
                                                 {h, -h}};
-    private final double[][] ID = new double[][]{{1.0, 0.0},
-                                                 {0.0, 1.0}};
-    private final double[][] CX = new double[][]{{1.0, 0.0, 0.0, 0.0},
-                                                {0.0, 1.0, 0.0, 0.0},
-                                                {0.0, 0.0, 0.0, 1.0},
-                                                {0.0, 0.0, 1.0, 0.0}};
+    private final float[][] ID = new float[][]{{1.0f, 0.0f},
+                                                 {0.0f, 1.0f}};
+    private final float[][] CX = new float[][]{{1.0f, 0.0f, 0.0f, 0.0f},
+                                                {0.0f, 1.0f, 0.0f, 0.0f},
+                                                {0.0f, 0.0f, 0.0f, 1.0f},
+                                                {0.0f, 0.0f, 1.0f, 0.0f}};
     private StringBuilder sb;
     private int numQbits;
     private int stateSize;
     private int numStates = 0;
-    private double[][] currentState;
+    private float[][] currentState;
 
     public Circuit(int numQbits) {
         this.numQbits = numQbits;
@@ -23,29 +23,29 @@ public class Circuit {
         currentState = newState();
     }
 
-    private double[][] newState() {
-        double[][] res = new double[stateSize][1];
-        res[0][0] = 1.0;
+    private float[][] newState() {
+        float[][] res = new float[stateSize][1];
+        res[0][0] = 1.0f;
         return res;
     }
 
     private String zeroState() {
-        return "{0.0 " + (", 0.0".repeat(stateSize - 1)) + "}";
+        return "{0.0f " + (", 0.0f".repeat(stateSize - 1)) + "}";
     }
 
     public void h(int qbit) {
-        double[][] m = adapt(H, qbit);
+        float[][] m = adapt(H, qbit);
         currentState = mult(m, currentState);
     }
 
     public void cnot(int cqbit, int tqbit) {
         assert cqbit == tqbit - 1;
-        double[][] m = adapt(CX, cqbit, tqbit);
+        float[][] m = adapt(CX, cqbit, tqbit);
         currentState = mult(m, currentState);
     }
 
-    private double[][] adapt(double[][] m, int qbit) {
-        double res[][] = ID;
+    private float[][] adapt(float[][] m, int qbit) {
+        float[][] res = ID;
         if(qbit == 0) {
             res = m;
         }
@@ -59,7 +59,7 @@ public class Circuit {
         return res;
     }
 
-    public static double[][] mult(double a[][], double b[][]){//a[m][n], b[n][p]
+    public static float[][] mult(float[][] a, float[][] b){//a[m][n], b[n][p]
         assert a.length != 0;
         assert (a[0].length != b.length);
 
@@ -67,7 +67,7 @@ public class Circuit {
         int m = a.length;
         int p = b[0].length;
 
-        double ans[][] = new double[m][p];
+        float[][] ans = new float[m][p];
 
         for(int i = 0;i < m;i++){
             for(int j = 0;j < p;j++){
@@ -79,9 +79,9 @@ public class Circuit {
         return ans;
     }
 
-    private double[][] adapt(double[][] m, int qbit, int qbit2) {
+    private float[][] adapt(float[][] m, int qbit, int qbit2) {
         assert qbit == qbit2 - 1;
-        double res[][] = ID;
+        float[][] res = ID;
         int i = 1;
         if(qbit == 0) {
             res = m;
@@ -98,16 +98,16 @@ public class Circuit {
         return res;
     }
 
-    private double[][] tensorProd(double[][] a, double[][] b) {
+    private float[][] tensorProd(float[][] a, float[][] b) {
         // Taken from: https://rosettacode.org/wiki/Kronecker_product#Java
         // Create matrix c as the matrix to fill and return.
         // The length of a matrix is its number of rows.
-        final double[][] c = new double[a.length*b.length][];
+        final float[][] c = new float[a.length*b.length][];
         // Fill in the (empty) rows of c.
         // The length of each row is the number of columns.
         for (int ix = 0; ix < c.length; ix++) {
             final int num_cols = a[0].length*b[0].length;
-            c[ix] = new double[num_cols];
+            c[ix] = new float[num_cols];
         }
         // Now fill in the values: the products of each pair.
         // Go through all the elements of a.
@@ -126,7 +126,7 @@ public class Circuit {
         return c;
     }
 
-    private String matrixToString(double[][] res) {
+    private String matrixToString(float[][] res) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for(int i = 0; i < res.length; ++i) {
