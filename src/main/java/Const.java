@@ -1,4 +1,4 @@
-package Expressions;
+import com.sun.tools.javac.tree.JCTree;
 
 public class Const extends Expr {
     float val;
@@ -12,7 +12,12 @@ public class Const extends Expr {
     }
 
     @Override
-    public String simplify() {
-        return toString();
+    public Expr simplify() {
+        return this;
+    }
+
+    @Override
+    public JCTree.JCExpression getAST() {
+        return TransUtils.M.Literal(val);
     }
 }

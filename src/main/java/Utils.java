@@ -1,7 +1,7 @@
-import Expressions.AddOp;
-import Expressions.Const;
-import Expressions.Expr;
-import Expressions.MultOp;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.tree.JCTree;
+
+import java.util.List;
 
 public class Utils {
     public static final float h = 0.70710678118f;
@@ -92,4 +92,41 @@ public class Utils {
         // Return the completed product matrix c.
         return c;
     }
+
+    public static Expr[][] getInitialState(int numQbits) {
+        int stateSize = (int)Math.pow(numQbits, 2);
+        Expr[][] initialState = new Expr[stateSize][1];
+        for(int i = 0; i < stateSize; ++i) {
+            initialState[i] = new Expr[]{new Const(0.0f)};
+        }
+        initialState[0][0] = new Const(1.0f);
+        return initialState;
+    }
+
+    public static JCTree.JCStatement applyOperation(JCTree.JCVariableDecl q_state, Expr[][] u) {
+        return null;
+    }
+
+    public static Expr[][] getUnitaryForName(String name) {
+        if(name.equals("x")) {
+            return X;
+        }
+        if(name.equals("h")) {
+            return H;
+        }
+        if(name.equals("cx")) {
+            return CX;
+        }
+        if(name.equals("z")) {
+            return Z;
+        }
+        throw new AssertionError("unsupported unitary " + name);
+    }
+
+    public static Expr[][] apply(Expr[][] u, int qBit, Expr[][] state) {
+        int numQbits = log2(state.length);
+        u = adapt(u, qBit, numQbits);
+        return mult(u, state);
+    }
+
 }

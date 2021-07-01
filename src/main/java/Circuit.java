@@ -30,7 +30,8 @@ public class Circuit {
     }
 
     private String zeroState() {
-        return "{0.0f " + (", 0.0f".repeat(stateSize - 1)) + "}";
+        //return "{0.0f " + (", 0.0f".repeat(stateSize - 1)) + "}";
+        return "";
     }
 
     public void h(int qbit) {

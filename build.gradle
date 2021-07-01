@@ -23,31 +23,24 @@ repositories {
     jcenter()
 }
 
-sourceSets {
-   main {
-      java {
-         srcDir 'src'
-      }
-   }
-   test {
-      java {
-         srcDir 'test'
-      }
-   }
-}
-
 dependencies {
+    // Use OpenJml and Picolini
+    implementation fileTree(include: ['*.jar'], dir: 'lib')
+
     // Use JUnit Jupiter API for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'FirstTest'
+    mainClass = 'CLI'
 }
 
 tasks.named('test') {

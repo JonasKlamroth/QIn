@@ -1,7 +1,3 @@
-import Expressions.Const;
-import Expressions.Expr;
-import Expressions.Ident;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +43,7 @@ public class SymCircuit {
         assert initialState.length == stateSize;
         this.initialState = new Expr[stateSize][1];
         for(int i = 0; i < stateSize; ++i) {
-            this.initialState[i] = new Expr[]{Expr.parse(initialState[i])};
+            //this.initialState[i] = new Expr[]{Expr.parse(initialState[i])};
         }
 
     }
@@ -55,7 +51,7 @@ public class SymCircuit {
     Expr[][] arrayToState(String[] a) {
         Expr[][] state = new Expr[a.length][1];
         for(int i = 0; i < a.length; ++i) {
-            state[i][0] = Expr.parse(a[i]);
+            //state[i][0] = Expr.parse(a[i]);
         }
         return state;
     }
@@ -74,7 +70,7 @@ public class SymCircuit {
         sb.append(getStateArray(state));
         sb.append(";\n");
         for(int i = 0; i < stateSize; ++i) {
-            state[i][0] = new Ident("q_" + currentStateIdx + "[" + i + "]");
+            //state[i][0] = new SymbExpr("q_" + currentStateIdx + "[" + i + "]");
         }
         return sb.toString();
     }
@@ -104,7 +100,7 @@ public class SymCircuit {
         u(Utils.CX, cqbit, tqbit);
     }
 
-    public void u(String[][] m, int... qbits) {
+    public void u(float[][] m, int... qbits) {
         assert m.length > 1 && m.length <= stateSize;
         assert m.length == m[0].length;
         assert Math.pow(2, qbits.length) == m.length;
@@ -114,7 +110,7 @@ public class SymCircuit {
         Expr[][] u = new Expr[m.length][m.length];
         for(int i = 0; i < m.length; ++i) {
             for(int j = 0; j < m.length; j++) {
-                u[i][j] = Expr.parse(m[i][j]);
+                //u[i][j] = Expr.parse(m[i][j]);
             }
         }
         u(u, qbits);
