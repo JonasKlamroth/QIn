@@ -21,6 +21,7 @@ public class MultOp extends Expr {
         List<Const> constChildren = new ArrayList<>();
         List<Expr> otherChildren = new ArrayList<>();
         for(Expr e : getRecOperants()) {
+            e = e.simplify();
             if(e instanceof Const) {
                 constChildren.add((Const) e);
             } else {
@@ -38,9 +39,9 @@ public class MultOp extends Expr {
             return new Const(0.0f);
         }
 
-        Expr res = otherChildren.get(0).simplify();
+        Expr res = otherChildren.get(0);
         for(int i = 1; i < otherChildren.size(); ++i) {
-            res = new MultOp(res, otherChildren.get(i).simplify());
+            res = new MultOp(res, otherChildren.get(i));
         }
         if(constPart != 1.0f) {
             res = new MultOp(new Const(constPart), res);
@@ -50,13 +51,9 @@ public class MultOp extends Expr {
 
     @Override
     public JCTree.JCExpression getAST() {
-        Expr simplified = this.simplify();
-        if(simplified instanceof MultOp) {
-            JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.PLUS, ((MultOp) simplified).right.getAST(), ((MultOp) simplified).left.getAST());
-            res.type = res.lhs.type;
-            return res;
-        }
-        return simplified.getAST();
+        JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.MUL, left.getAST(), right.getAST());
+        res.type = res.lhs.type;
+        return res;
     }
 
     List<Expr> getRecOperants() {

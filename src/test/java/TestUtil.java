@@ -82,7 +82,6 @@ public class TestUtil {
                 matrixToString(m2));
     }
 
-
     public String matrixToString(Expr[][] m) {
         StringBuilder sb = new StringBuilder();
         for(Expr[] a : m) {

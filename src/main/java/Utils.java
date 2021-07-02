@@ -1,6 +1,9 @@
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Position;
+import org.smtlib.impl.Pos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
@@ -93,6 +96,27 @@ public class Utils {
         return c;
     }
 
+    public static Expr[][] getInitialSymbState(int numQbits, JCTree.JCIdent state) {
+        List<Expr[][]> initialStates = new ArrayList<>();
+        for(int i = 0; i < numQbits; ++i) {
+            initialStates.add(new Expr[][]{
+                    new Expr[]{
+                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                            TransUtils.M.Literal(0)))},
+                    new Expr[]{
+                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                            TransUtils.M.Literal(1)))}
+            });
+        }
+        Expr[][] finalState = initialStates.get(0);
+        for(int i = 1; i < initialStates.size(); ++i) {
+            finalState = tensorProd(finalState, initialStates.get(i));
+        }
+        return finalState;
+    }
+
     public static Expr[][] getInitialState(int numQbits) {
         int stateSize = (int)Math.pow(numQbits, 2);
         Expr[][] initialState = new Expr[stateSize][1];
@@ -129,4 +153,32 @@ public class Utils {
         return mult(u, state);
     }
 
+    public static Expr[][] applyMeasurement(Expr[][] qState, int qBit, boolean result) {
+        Expr[][] res = new Expr[qState.length][qState[0].length];
+        int stateSize = qState.length;
+        int numQbits = log2(qState.length);
+        int shift = numQbits - qBit - 1;
+        for(int j = 0; j < stateSize; ++j) {
+            if((j & (1 << shift)) == 0) {
+                if(result) {
+                    res[j][0] = qState[j][0];
+                } else {
+                    res[j][0] = new Const(0.0f);
+                }
+            } else {
+                if(!result) {
+                    res[j][0] = qState[j][0];
+                } else {
+                    res[j][0] = new Const(0.0f);
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void anonymizeState(Expr[][] qState, JCTree.JCVariableDecl qStateVar) {
+        for(int i = 0; i < qState.length; ++i) {
+            qState[i][0] = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+        }
+    }
 }

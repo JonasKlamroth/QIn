@@ -1,3 +1,4 @@
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
@@ -9,7 +10,7 @@ import org.jmlspecs.openjml.JmlTreeUtils;
 import java.lang.reflect.Array;
 
 public class TransUtils {
-    private static JmlTreeUtils treeutils;
+    public static JmlTreeUtils treeutils;
     public static JmlTree.Maker M;
     private static Context ctx;
 
@@ -24,7 +25,7 @@ public class TransUtils {
         for(Expr[] row : elems) {
             List<JCTree.JCExpression> rowElements = List.nil();
             for(Expr el : row) {
-                rowElements = rowElements.append(el.getAST());
+                rowElements = rowElements.append(el.getSimplifiedAST());
             }
             JCTree.JCNewArray array = M.NewArray(M.Type(rowElements.get(0).type), List.nil(), rowElements);
             array.type = new Type.ArrayType(rowElements.get(0).type, rowElements.get(0).type.tsym);
@@ -79,5 +80,33 @@ public class TransUtils {
             }
         }
         return res;
+    }
+
+    public static JCTree.JCExpression makeMeasureMaxCondition(Expr[][] qState, int qBit) {
+        JCTree.JCExpression left = M.Literal(0.0f);
+        JCTree.JCExpression right = M.Literal(0.0f);
+        int numQbits = Utils.log2(qState.length);
+        int shift = numQbits - qBit - 1;
+        for(int i = 0; i < qState.length; ++i) {
+            MultOp tmp = new MultOp(qState[i][0], qState[i][0]);
+            if((i & (1 << shift)) != 0) {
+                left = M.Binary(JCTree.Tag.PLUS, left, tmp.getSimplifiedAST());
+            } else {
+                right = M.Binary(JCTree.Tag.PLUS, right, tmp.getSimplifiedAST());
+            }
+        }
+        return M.Binary(JCTree.Tag.GT, left, right);
+    }
+
+    public static JCTree.JCStatement setCState(JCTree.JCExpression currentAssignExpression, boolean val) {
+        return M.Exec(M.Assign(currentAssignExpression, M.Literal(val)));
+    }
+
+
+    public static JCTree.JCMethodInvocation makeNondetBoolean(Symbol currentSymbol) {
+        JCTree.JCIdent classCProver = M.Ident(M.Name("CProver"));
+        JCTree.JCFieldAccess nondetFunc = M.Select(classCProver, M.Name("nondetBoolean"));
+        List<JCTree.JCExpression> largs = List.nil();
+        return M.Apply(List.nil(), nondetFunc, largs);
     }
 }

@@ -15,4 +15,7 @@ public abstract class Expr {
         }
     }
 
+    public JCTree.JCExpression getSimplifiedAST() {
+        return this.simplify().getAST();
+    }
 }
