@@ -13,6 +13,9 @@ public class CLI implements Runnable {
     @CommandLine.Parameters(index="0", arity = "1", description = "The file to be translated")
     public String fileName = null;
 
+    @CommandLine.Option(names = {"-v", "-verbose"}, description = "Include printout statements after each state update")
+    public static boolean includePrintStatements = false;
+
     public static final void main(String[] args) throws Exception {
         CommandLine.run(new CLI(), args);
     }

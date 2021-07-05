@@ -109,4 +109,9 @@ public class TransUtils {
         List<JCTree.JCExpression> largs = List.nil();
         return M.Apply(List.nil(), nondetFunc, largs);
     }
+
+    public static JCTree.JCStatement makePrintStatement(JCTree.JCExpression expr) {
+        JCTree.JCIdent sout = M.Ident("printState");
+        return M.Exec(M.Apply(List.nil(), sout, List.of(expr)));
+    }
 }
