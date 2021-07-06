@@ -19,6 +19,13 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-v", "-verbose"}, description = "Include printout statements after each state update")
     public static boolean includePrintStatements = false;
 
+    @CommandLine.Option(names = {"-nd", "-numDigits"}, description = "Number of digits used for fixed point representation.")
+    public static int numDigits = 4;
+
+    @CommandLine.Option(names = {"-float", "-useFloatingPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
+    public static boolean useFloat = false;
+
+
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));
         System.setOut(new CostumPrintStream(System.out));

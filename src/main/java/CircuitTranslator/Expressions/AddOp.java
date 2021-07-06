@@ -1,5 +1,6 @@
 package CircuitTranslator.Expressions;
 
+import CircuitTranslator.CLI;
 import CircuitTranslator.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
 
@@ -31,20 +32,23 @@ public class AddOp extends Expr {
                 otherChildren.add(e);
             }
         }
-        float constPart = 0.f;
-        for(Const c : constChildren) {
-            constPart += c.val;
+        Const constPart = null;
+        if(!constChildren.isEmpty()) {
+            constPart = constChildren.get(0);
+            for (Const c : constChildren.subList(1, constChildren.size())) {
+                constPart = constPart.add(c);
+            }
         }
         if(otherChildren.size() == 0) {
-            return new Const(constPart);
+            return constPart;
         }
 
         Expr res = otherChildren.get(0);
         for(int i = 1; i < otherChildren.size(); ++i) {
             res = new AddOp(res, otherChildren.get(i));
         }
-        if(constPart != 0.0f) {
-            res = new AddOp(new Const(constPart), res);
+        if(constPart != null && !constPart.isZero() ) {
+            res = new AddOp(constPart, res);
         }
         return res;
     }
@@ -55,8 +59,6 @@ public class AddOp extends Expr {
         res.type = res.lhs.type;
         return res;
     }
-
-
 
     List<Expr> getRecOperants() {
         List<Expr> res = new ArrayList<>();

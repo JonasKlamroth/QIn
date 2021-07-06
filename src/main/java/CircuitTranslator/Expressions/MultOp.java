@@ -1,5 +1,6 @@
 package CircuitTranslator.Expressions;
 
+import CircuitTranslator.CLI;
 import CircuitTranslator.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
 
@@ -31,23 +32,27 @@ public class MultOp extends Expr {
                 otherChildren.add(e);
             }
         }
-        float constPart = 1.f;
-        for(Const c : constChildren) {
-            constPart *= c.val;
+
+        Const constPart = null;
+        if(!constChildren.isEmpty()) {
+            constPart = constChildren.get(0);
+            for (Const c : constChildren.subList(1, constChildren.size())) {
+                constPart = constPart.mult(c);
+            }
         }
         if(otherChildren.size() == 0) {
-            return new Const(constPart);
+            return constPart;
         }
-        if(constPart == 0.0f) {
-            return new Const(0.0f);
+        if(constPart != null && constPart.isZero()) {
+            return constPart;
         }
 
         Expr res = otherChildren.get(0);
         for(int i = 1; i < otherChildren.size(); ++i) {
             res = new MultOp(res, otherChildren.get(i));
         }
-        if(constPart != 1.0f) {
-            res = new MultOp(new Const(constPart), res);
+        if(constPart != null && !constPart.isOne()) {
+            res = new MultOp(constPart, res);
         }
         return res;
     }
@@ -56,6 +61,10 @@ public class MultOp extends Expr {
     public JCTree.JCExpression getAST() {
         JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.MUL, left.getAST(), right.getAST());
         res.type = res.lhs.type;
+        if(!CLI.useFloat) {
+            res = TransUtils.M.Binary(JCTree.Tag.DIV, res, TransUtils.M.Literal((int)Math.pow(10, CLI.numDigits)));
+            res.type = res.lhs.type;
+        }
         return res;
     }
 

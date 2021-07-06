@@ -1,5 +1,6 @@
 package CircuitTranslator.Expressions;
 
+import CircuitTranslator.Utils;
 import com.sun.tools.javac.tree.JCTree;
 
 public abstract class Expr {
@@ -10,7 +11,7 @@ public abstract class Expr {
     public static Expr parse(JCTree.JCExpression s) {
         try {
             float f = Float.parseFloat(s.toString());
-            return new Const(f);
+            return Utils.getConst(f);
         } catch (NumberFormatException e) {
             //String[] splits = s.split("\\[\\+\\*\\]");
             return new SymbExpr(s);
