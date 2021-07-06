@@ -28,7 +28,7 @@ public class FixedConst extends Const {
 
     @Override
     public boolean isOne() {
-        return (int)this.val == 1;
+        return (int)this.val == (int)Math.pow(10, CLI.numDigits);
     }
 
     @Override
