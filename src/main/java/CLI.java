@@ -5,6 +5,7 @@ import org.jmlspecs.openjml.IAPI;
 import org.jmlspecs.openjml.JmlTree;
 import picocli.CommandLine;
 
+import java.io.File;
 import java.io.IOException;
 
 @CommandLine.Command(name = "CircTrans", header = "@|bold translate quantum circuits to plain java |@")
@@ -16,20 +17,23 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-v", "-verbose"}, description = "Include printout statements after each state update")
     public static boolean includePrintStatements = false;
 
-    public static final void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        System.setErr(new CostumPrintStream(System.err));
+        System.setOut(new CostumPrintStream(System.out));
         CommandLine.run(new CLI(), args);
     }
 
     @Override
     public void run() {
 
-        String[] apiArgs = new String[]{};
+        String[] apiArgs = new String[]{"-cp", new File(fileName).getParent()};
         String[] args = new String[]{fileName};
         IAPI api = null;
         try {
             api = Factory.makeAPI(apiArgs);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("Error creating api: " + e.getMessage());
         }
         java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
         int a = 0;
@@ -37,6 +41,7 @@ public class CLI implements Runnable {
             a = api.typecheck(cu);
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error running typecheck: " + e.getMessage());
         }
         if(a > 0) {
             System.out.println("Error translating");
