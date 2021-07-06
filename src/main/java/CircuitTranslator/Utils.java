@@ -9,18 +9,18 @@ import java.util.List;
 
 public class Utils {
     public static final float h = 0.70710678118f;
-    public static final Expr[][] H = new Expr[][]{{new Const(h), new Const(h)},
-            {new Const(h), new Const(-h)}};
-    public static final Expr[][] ID = new Expr[][]{{new Const(1.0f), new Const(0.0f)},
-            {new Const(0.0f), new Const(1.0f)}};
-    public static final Expr[][] X = new Expr[][]{{new Const(0.0f), new Const(1.0f)},
-            {new Const(1.0f), new Const(0.0f)}};
-    public static final Expr[][] Z = new Expr[][]{{new Const(1.0f), new Const(0.0f)},
-            {new Const(0.0f), new Const(-1.0f)}};
-    public static final Expr[][] CX = new Expr[][]{{new Const(1.0f), new Const(0.0f), new Const(0.0f), new Const(0.0f)},
-            {new Const(0.0f), new Const(1.0f), new Const(0.0f), new Const(0.0f)},
-            {new Const(0.0f), new Const(0.0f), new Const(0.0f), new Const(1.0f)},
-            {new Const(0.0f), new Const(0.0f), new Const(1.0f), new Const(0.0f)}};
+    public static final Expr[][] H = new Expr[][]{{Utils.getConst(h), Utils.getConst(h)},
+            {Utils.getConst(h), Utils.getConst(-h)}};
+    public static final Expr[][] ID = new Expr[][]{{Utils.getConst(1.0f), Utils.getConst(0.0f)},
+            {Utils.getConst(0.0f), Utils.getConst(1.0f)}};
+    public static final Expr[][] X = new Expr[][]{{Utils.getConst(0.0f), Utils.getConst(1.0f)},
+            {Utils.getConst(1.0f), Utils.getConst(0.0f)}};
+    public static final Expr[][] Z = new Expr[][]{{Utils.getConst(1.0f), Utils.getConst(0.0f)},
+            {Utils.getConst(0.0f), Utils.getConst(-1.0f)}};
+    public static final Expr[][] CX = new Expr[][]{{Utils.getConst(1.0f), Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(0.0f)},
+            {Utils.getConst(0.0f), Utils.getConst(1.0f), Utils.getConst(0.0f), Utils.getConst(0.0f)},
+            {Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(1.0f)},
+            {Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(1.0f), Utils.getConst(0.0f)}};
 
     public static Expr[][] mult(Expr[][] a, Expr[][] b){//a[m][n], b[n][p]
         assert a.length != 0;
@@ -36,7 +36,7 @@ public class Utils {
             for(int j = 0;j < p;j++){
                 for(int k = 0;k < n;k++){
                     if(ans[i][j] == null) {
-                        ans[i][j] = new Const(0.0f);
+                        ans[i][j] = Utils.getConst(0.0f);
                     }
                     ans[i][j] = new AddOp(ans[i][j], new MultOp(a[i][k], b[k][j]));
                 }
@@ -122,9 +122,9 @@ public class Utils {
         int stateSize = (int)Math.pow(numQbits, 2);
         Expr[][] initialState = new Expr[stateSize][1];
         for(int i = 0; i < stateSize; ++i) {
-            initialState[i] = new Expr[]{new Const(0.0f)};
+            initialState[i] = new Expr[]{Utils.getConst(0.0f)};
         }
-        initialState[0][0] = new Const(1.0f);
+        initialState[0][0] = Utils.getConst(1.0f);
         return initialState;
     }
 
@@ -164,13 +164,13 @@ public class Utils {
                 if(result) {
                     res[j][0] = qState[j][0];
                 } else {
-                    res[j][0] = new Const(0.0f);
+                    res[j][0] = Utils.getConst(0.0f);
                 }
             } else {
                 if(!result) {
                     res[j][0] = qState[j][0];
                 } else {
-                    res[j][0] = new Const(0.0f);
+                    res[j][0] = Utils.getConst(0.0f);
                 }
             }
         }
@@ -180,6 +180,15 @@ public class Utils {
     public static void anonymizeState(Expr[][] qState, JCTree.JCVariableDecl qStateVar) {
         for(int i = 0; i < qState.length; ++i) {
             qState[i][0] = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+        }
+    }
+
+    public static Const getConst(float f) {
+        if(CLI.useFloat) {
+            return new FloatConst(f);
+        } else {
+            int val = (int)(f * Math.pow(10, CLI.numDigits));
+            return new FixedConst(val);
         }
     }
 }
