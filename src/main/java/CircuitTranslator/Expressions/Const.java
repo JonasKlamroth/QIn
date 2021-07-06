@@ -3,15 +3,22 @@ package CircuitTranslator.Expressions;
 import CircuitTranslator.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
 
-public class Const extends Expr {
-    float val;
+import java.lang.reflect.Type;
 
-    public Const(float val) {
+public abstract class Const extends Expr {
+    Object val;
+
+    public Const(Object val) {
         this.val = val;
     }
 
+
+    public abstract Const add(Const c);
+
+    public abstract Const mult(Const c);
+
     public String toString() {
-        return val + "f";
+        return val.toString();
     }
 
     @Override
@@ -23,4 +30,8 @@ public class Const extends Expr {
     public JCTree.JCExpression getAST() {
         return TransUtils.M.Literal(val);
     }
+
+    public abstract boolean isOne();
+
+    public abstract boolean isZero();
 }

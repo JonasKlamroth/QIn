@@ -63,8 +63,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
     @Override
     public JCTree visitJmlMethodDecl(JmlTree.JmlMethodDecl that, Void p) {
         currentSymbol = that.sym;
-        JmlTree.JmlMethodDecl copy = (JmlTree.JmlMethodDecl) super.visitJmlMethodDecl(that, p);
-        return copy;
+        return super.visitJmlMethodDecl(that, p);
     }
 
     @Override
@@ -89,8 +88,8 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         JCTree.JCExpression cond = TransUtils.makeMeasureMaxCondition(qState, qBit);
                         newStatements = newStatements.append(treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureVar" + ++measureVarCounter), currentSymbol, Position.NOPOS));
                         JCTree.JCIdent tmp = M.Ident("$$_tmp_measureVar" + measureVarCounter);
-                        JCTree.JCBlock ifBlock = M.Block(0L, List.of(TransUtils.updateState(trueState, qStateVar), TransUtils.setCState(tmp,  true)));
-                        JCTree.JCBlock elseBlock = M.Block(0L, List.of(TransUtils.updateState(falseState, qStateVar), TransUtils.setCState(tmp,  false)));
+                        JCTree.JCBlock ifBlock = M.Block(0L, List.of(TransUtils.updateState(falseState, qStateVar), TransUtils.setCState(tmp,  true)));
+                        JCTree.JCBlock elseBlock = M.Block(0L, List.of(TransUtils.updateState(trueState, qStateVar), TransUtils.setCState(tmp,  false)));
                         JCTree.JCIf jcIf = M.If(cond, ifBlock, elseBlock);
                         newStatements = newStatements.append(jcIf);
                         if(CLI.includePrintStatements) {
