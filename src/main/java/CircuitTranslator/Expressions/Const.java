@@ -1,3 +1,6 @@
+package CircuitTranslator.Expressions;
+
+import CircuitTranslator.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
 
 public class Const extends Expr {

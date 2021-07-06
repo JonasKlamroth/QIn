@@ -40,10 +40,15 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'CLI'
+    mainClass = 'CircuitTranslator.CLI'
 }
 
 tasks.named('test') {
     // Use junit platform for unit tests.
     useJUnitPlatform()
 }
+
+//tasks.withType(JavaCompile) {
+//    options.compilerArgs << '-Xlint:unchecked'
+//    options.deprecation = true
+//}

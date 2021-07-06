@@ -1,3 +1,5 @@
+package CircuitTranslator.Expressions;
+
 import com.sun.tools.javac.tree.JCTree;
 
 public class SymbExpr extends Expr {
