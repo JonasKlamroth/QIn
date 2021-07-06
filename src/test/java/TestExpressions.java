@@ -1,3 +1,5 @@
+import CircuitTranslator.*;
+import CircuitTranslator.Expressions.*;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.util.Context;
 import org.jmlspecs.openjml.Factory;

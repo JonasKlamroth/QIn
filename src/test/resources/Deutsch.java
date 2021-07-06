@@ -1,4 +1,3 @@
-
 public class Deutsch {
     public boolean applyDeutsch(boolean[] f) {
         float[][] m = new float[][]{
