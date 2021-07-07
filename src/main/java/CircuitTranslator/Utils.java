@@ -187,7 +187,7 @@ public class Utils {
         if(CLI.useFloat) {
             return new FloatConst(f);
         } else {
-            int val = (int)(f * Math.pow(10, CLI.numDigits));
+            int val = (int)(f * Math.pow(CLI.base, CLI.numDigits));
             return new FixedConst(val);
         }
     }

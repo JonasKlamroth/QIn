@@ -20,7 +20,10 @@ public class CLI implements Runnable {
     public static boolean includePrintStatements = false;
 
     @CommandLine.Option(names = {"-nd", "-numDigits"}, description = "Number of digits used for fixed point representation.")
-    public static int numDigits = 4;
+    public static int numDigits = 15;
+
+    @CommandLine.Option(names = {"-b", "-base"}, description = "Base for fixedPoint arithmetic")
+    public static int base = 2;
 
     @CommandLine.Option(names = {"-float", "-useFloatingPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
     public static boolean useFloat = false;
