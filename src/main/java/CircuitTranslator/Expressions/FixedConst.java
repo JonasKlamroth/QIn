@@ -20,7 +20,7 @@ public class FixedConst extends Const {
     @Override
     public Const mult(Const c) {
         if(c instanceof FixedConst) {
-            int newVal = ((int)this.val * (int)c.val) / ((int)Math.pow(10, CLI.numDigits));
+            int newVal = ((int)this.val * (int)c.val) / ((int)Math.pow(CLI.base, CLI.numDigits));
             return new FixedConst(newVal);
         }
         throw new RuntimeException("Multiplying differently typed consts is not supported.");
@@ -28,7 +28,7 @@ public class FixedConst extends Const {
 
     @Override
     public boolean isOne() {
-        return (int)this.val == (int)Math.pow(10, CLI.numDigits);
+        return (int)this.val == (int)Math.pow(CLI.base, CLI.numDigits);
     }
 
     @Override
