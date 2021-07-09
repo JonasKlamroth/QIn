@@ -9,18 +9,28 @@ import java.util.List;
 
 public class Utils {
     public static final float h = 0.70710678118f;
-    public static final Expr[][] H = new Expr[][]{{Utils.getConst(h), Utils.getConst(h)},
-            {Utils.getConst(h), Utils.getConst(-h)}};
-    public static final Expr[][] ID = new Expr[][]{{Utils.getConst(1.0f), Utils.getConst(0.0f)},
-            {Utils.getConst(0.0f), Utils.getConst(1.0f)}};
-    public static final Expr[][] X = new Expr[][]{{Utils.getConst(0.0f), Utils.getConst(1.0f)},
-            {Utils.getConst(1.0f), Utils.getConst(0.0f)}};
-    public static final Expr[][] Z = new Expr[][]{{Utils.getConst(1.0f), Utils.getConst(0.0f)},
-            {Utils.getConst(0.0f), Utils.getConst(-1.0f)}};
-    public static final Expr[][] CX = new Expr[][]{{Utils.getConst(1.0f), Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(0.0f)},
-            {Utils.getConst(0.0f), Utils.getConst(1.0f), Utils.getConst(0.0f), Utils.getConst(0.0f)},
-            {Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(1.0f)},
-            {Utils.getConst(0.0f), Utils.getConst(0.0f), Utils.getConst(1.0f), Utils.getConst(0.0f)}};
+    public static final float[][] H = new float[][]{{h, h},
+            {h, -h}};
+    public static final float[][] ID = new float[][]{{1.0f, 0.0f},
+            {0.0f, 1.0f}};
+    public static final float[][] X = new float[][]{{0.0f, 1.0f},
+            {1.0f, 0.0f}};
+    public static final float[][] Z = new float[][]{{1.0f, 0.0f},
+            {0.0f, -1.0f}};
+    public static final float[][] CX = new float[][]{{1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 1.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f}};
+
+    public static Expr[][] getExprMatrix(float[][] m) {
+        Expr[][] res = new Expr[m.length][m[0].length];
+        for(int i = 0; i < m.length; ++i) {
+            for(int j = 0; j < m[0].length; ++j) {
+                res[i][j] = getConst(m[i][j]);
+            }
+        }
+        return res;
+    }
 
     public static Expr[][] mult(Expr[][] a, Expr[][] b){//a[m][n], b[n][p]
         assert a.length != 0;
@@ -38,7 +48,7 @@ public class Utils {
                     if(ans[i][j] == null) {
                         ans[i][j] = Utils.getConst(0.0f);
                     }
-                    ans[i][j] = new AddOp(ans[i][j], new MultOp(a[i][k], b[k][j]));
+                    ans[i][j] = ans[i][j].add(a[i][k].mult(b[k][j]));
                 }
             }
         }
@@ -50,7 +60,7 @@ public class Utils {
     }
 
     public static Expr[][] adapt(Expr[][] m, int qbit, int numQbits) {
-        Expr[][] res = ID;
+        Expr[][] res = getExprMatrix(ID);
         int matrixSize = log2(m.length);
         assert (float)matrixSize == log2(m.length);
         int i = 1;
@@ -60,7 +70,7 @@ public class Utils {
         }
         for(; i < numQbits; ++i) {
             if(i != qbit) {
-                res = tensorProd(res, ID);
+                res = tensorProd(res, getExprMatrix(ID));
             } else {
                 res = tensorProd(res, m);
                 i += matrixSize - 1;
@@ -87,7 +97,7 @@ public class Utils {
                 // For each element of a, multiply it by all the elements of b.
                 for (int ib = 0; ib < b.length; ib++) {
                     for (int jb = 0; jb < b[ib].length; jb++) {
-                        c[b.length*ia+ib][b[ib].length*ja+jb] = new MultOp(a[ia][ja], b[ib][jb]);
+                        c[b.length*ia+ib][b[ib].length*ja+jb] = a[ia][ja].mult(b[ib][jb]);
                     }
                 }
             }
@@ -134,16 +144,16 @@ public class Utils {
 
     public static Expr[][] getUnitaryForName(String name) {
         if(name.equals("x")) {
-            return X;
+            return getExprMatrix(X);
         }
         if(name.equals("h")) {
-            return H;
+            return getExprMatrix(H);
         }
         if(name.equals("cx")) {
-            return CX;
+            return getExprMatrix(CX);
         }
         if(name.equals("z")) {
-            return Z;
+            return getExprMatrix(Z);
         }
         throw new AssertionError("unsupported unitary " + name);
     }
@@ -177,9 +187,11 @@ public class Utils {
         return res;
     }
 
-    public static void anonymizeState(Expr[][] qState, JCTree.JCVariableDecl qStateVar) {
-        for(int i = 0; i < qState.length; ++i) {
-            qState[i][0] = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+    public static void anonymizeState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
+        for(int j = 0; j < qStateVar.size(); ++j) {
+            for (int i = 0; i < qState.length; ++i) {
+                qState[i][0] = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(j)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+            }
         }
     }
 
@@ -190,5 +202,36 @@ public class Utils {
             int val = (int)(f * Math.pow(CLI.base, CLI.numDigits));
             return new FixedConst(val);
         }
+    }
+
+    public static Expr[][] getInitialSymbState(int numQbits, JCTree.JCIdent state, JCTree.JCIdent cstate) {
+        List<Expr[][]> initialStates = new ArrayList<>();
+        for(int i = 0; i < numQbits; ++i) {
+            initialStates.add(new Expr[][]{
+                    new Expr[]{
+                            new ComplexExpression(
+                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                                            TransUtils.M.Literal(0))),
+                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(i)),
+                                            TransUtils.M.Literal(0))))
+                    },
+                    new Expr[]{
+                            new ComplexExpression(
+                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                                            TransUtils.M.Literal(0))),
+                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(i)),
+                                            TransUtils.M.Literal(0))))
+                    }
+            });
+        }
+        Expr[][] finalState = initialStates.get(0);
+        for(int i = 1; i < initialStates.size(); ++i) {
+            finalState = tensorProd(finalState, initialStates.get(i));
+        }
+        return finalState;
     }
 }

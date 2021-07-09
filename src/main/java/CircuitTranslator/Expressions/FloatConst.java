@@ -5,16 +5,18 @@ public class FloatConst extends Const {
         super(val);
     }
 
-    public Const add(Const a) {
+    @Override
+    public Expr add(Expr a) {
         if(a instanceof FloatConst) {
-            return new FloatConst((float) a.val + (float)this.val);
+            return new FloatConst((float) ((FloatConst) a).val + (float)this.val);
         }
         throw new RuntimeException("Unsupported addition of different types.");
     }
 
-    public Const mult(Const a) {
+    @Override
+    public Expr mult(Expr a) {
         if(a instanceof FloatConst) {
-            return new FloatConst(((float) a.val) * (float)this.val);
+            return new FloatConst(((float) ((FloatConst) a).val) * (float)this.val);
         }
         throw new RuntimeException("Unsupported addition of different types.");
     }
@@ -27,5 +29,10 @@ public class FloatConst extends Const {
     @Override
     public boolean isZero() {
         return (float)val == 0.0f;
+    }
+
+    @Override
+    public String toString() {
+        return this.val + "f";
     }
 }

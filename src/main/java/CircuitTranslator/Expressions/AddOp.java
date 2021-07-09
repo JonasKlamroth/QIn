@@ -11,7 +11,7 @@ public class AddOp extends Expr {
     public Expr left;
     public Expr right;
 
-    public AddOp(Expr left, Expr right) {
+    protected AddOp(Expr left, Expr right) {
         this.left = left;
         this.right = right;
     }
@@ -36,7 +36,7 @@ public class AddOp extends Expr {
         if(!constChildren.isEmpty()) {
             constPart = constChildren.get(0);
             for (Const c : constChildren.subList(1, constChildren.size())) {
-                constPart = constPart.add(c);
+                constPart = (Const) constPart.add(c);
             }
         }
         if(otherChildren.size() == 0) {
@@ -54,10 +54,10 @@ public class AddOp extends Expr {
     }
 
     @Override
-    public JCTree.JCExpression getAST() {
-        JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.PLUS, left.getAST(), right.getAST());
+    public com.sun.tools.javac.util.List<JCTree.JCExpression> getAST() {
+        JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.PLUS, left.getAST().get(0), right.getAST().get(0));
         res.type = res.lhs.type;
-        return res;
+        return com.sun.tools.javac.util.List.of(res);
     }
 
     List<Expr> getRecOperants() {

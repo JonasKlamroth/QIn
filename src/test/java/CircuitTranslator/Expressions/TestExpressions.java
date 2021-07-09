@@ -1,5 +1,6 @@
+package CircuitTranslator.Expressions;
+
 import CircuitTranslator.*;
-import CircuitTranslator.Expressions.*;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.util.Context;
 import org.jmlspecs.openjml.Factory;
@@ -20,6 +21,7 @@ public class TestExpressions {
 
     @BeforeAll
     private static void setUp() throws Exception {
+        CLI.useFloat = true;
         IAPI api = Factory.makeAPI(new String[]{});
         Context context = api.context();
         treeutils = JmlTreeUtils.instance(context);

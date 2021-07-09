@@ -19,7 +19,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
     private final Symtab syms;
     private Symbol currentSymbol;
     int numQbits = -1;
-    private JCTree.JCVariableDecl qStateVar;
+    private List<JCTree.JCVariableDecl> qStateVars;
     private int stateSize;
     private Expr[][] qState;
     private int measureVarCounter = 0;
@@ -50,12 +50,24 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 } else {
                     throw new RuntimeException("Currently only initial states provided via variable are supported.");
                 }
+            } else if(clazz.args.size() == 3) {
+                if(clazz.args.get(1) instanceof JCTree.JCIdent && clazz.args.get(2) instanceof JCTree.JCIdent) {
+                    qState = Utils.getInitialSymbState(numQbits, (JCTree.JCIdent) clazz.args.get(1), (JCTree.JCIdent) clazz.args.get(2));
+                } else {
+                    throw new RuntimeException("Currently only initial states provided via variable are supported.");
+                }
             } else {
                 qState = Utils.getInitialState(numQbits);
             }
-            JCTree.JCExpression init = TransUtils.makeArrayExpression(qState);
-            qStateVar = treeutils.makeVarDef(init.type, M.Name("q_state"), currentSymbol, init);
-            return qStateVar;
+            List<JCTree.JCExpression> init = TransUtils.makeArrayExpression(qState);
+            qStateVars = List.nil();
+            for(int i = 0; i < init.size(); ++i) {
+                qStateVars = qStateVars.append(treeutils.makeVarDef(init.get(i).type, M.Name("q_state_" + i), currentSymbol, init.get(i)));
+                if(i != init.size() - 1) {
+                    newStatements = newStatements.append(qStateVars.get(qStateVars.size() - 1));
+                }
+            }
+            return qStateVars.get(qStateVars.size() - 1);
         }
         return super.visitJmlVariableDecl(that, p);
     }
@@ -88,14 +100,14 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         JCTree.JCExpression cond = TransUtils.makeMeasureMaxCondition(qState, qBit);
                         newStatements = newStatements.append(treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureVar" + ++measureVarCounter), currentSymbol, Position.NOPOS));
                         JCTree.JCIdent tmp = M.Ident("$$_tmp_measureVar" + measureVarCounter);
-                        JCTree.JCBlock ifBlock = M.Block(0L, List.of(TransUtils.updateState(falseState, qStateVar), TransUtils.setCState(tmp,  true)));
-                        JCTree.JCBlock elseBlock = M.Block(0L, List.of(TransUtils.updateState(trueState, qStateVar), TransUtils.setCState(tmp,  false)));
+                        JCTree.JCBlock ifBlock = M.Block(0L, TransUtils.updateState(falseState, qStateVars).append(TransUtils.setCState(tmp,  true)));
+                        JCTree.JCBlock elseBlock = M.Block(0L, TransUtils.updateState(trueState, qStateVars).append(TransUtils.setCState(tmp,  false)));
                         JCTree.JCIf jcIf = M.If(cond, ifBlock, elseBlock);
                         newStatements = newStatements.append(jcIf);
                         if(CLI.includePrintStatements) {
-                            newStatements = newStatements.append(TransUtils.makePrintStatement(M.Ident(qStateVar)));
+                            newStatements = newStatements.appendList(TransUtils.makePrintStatement(qStateVars));
                         }
-                        Utils.anonymizeState(qState, qStateVar);
+                        Utils.anonymizeState(qState, qStateVars);
 
                         return tmp;
                     } else if(fullMethod.name.toString().equals("measure")) {
@@ -105,14 +117,14 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         JCTree.JCExpression cond = TransUtils.makeNondetBoolean(currentSymbol);
                         newStatements = newStatements.append(treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureVar" + ++measureVarCounter), currentSymbol, Position.NOPOS));
                         JCTree.JCIdent tmp = M.Ident("$$_tmp_measureVar" + measureVarCounter);
-                        JCTree.JCBlock ifBlock = M.Block(0L, List.of(TransUtils.updateState(trueState, qStateVar), TransUtils.setCState(tmp,  false)));
-                        JCTree.JCBlock elseBlock = M.Block(0L, List.of(TransUtils.updateState(falseState, qStateVar), TransUtils.setCState(tmp,  true)));
+                        JCTree.JCBlock ifBlock = M.Block(0L, TransUtils.updateState(trueState, qStateVars).append(TransUtils.setCState(tmp,  false)));
+                        JCTree.JCBlock elseBlock = M.Block(0L, TransUtils.updateState(falseState, qStateVars).append(TransUtils.setCState(tmp,  true)));
                         JCTree.JCIf jcIf = M.If(cond, ifBlock, elseBlock);
                         newStatements = newStatements.append(jcIf);
                         if(CLI.includePrintStatements) {
-                            newStatements = newStatements.append(TransUtils.makePrintStatement(M.Ident(qStateVar)));
+                            newStatements = newStatements.appendList(TransUtils.makePrintStatement(qStateVars));
                         }
-                        Utils.anonymizeState(qState, qStateVar);
+                        Utils.anonymizeState(qState, qStateVars);
 
                         return tmp;
                     } else {
@@ -120,9 +132,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
                     }
                     qState = Utils.apply(unitary, qBit, qState);
-                    newStatements = newStatements.append(TransUtils.updateState(qState, qStateVar));
+                    newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
                     if(CLI.includePrintStatements) {
-                        newStatements = newStatements.append(TransUtils.makePrintStatement(M.Ident(qStateVar)));
+                        newStatements = newStatements.appendList(TransUtils.makePrintStatement(qStateVars));
                     }
                 }
             }
@@ -166,9 +178,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
         JCTree.JCIf jcif = (JCTree.JCIf)node;
         JCTree.JCExpression cond = super.copy(jcif.cond);
         JCTree.JCStatement ifBlock = super.copy(jcif.thenpart);
-        Utils.anonymizeState(qState, qStateVar);
+        Utils.anonymizeState(qState, qStateVars);
         JCTree.JCStatement elseBlock = super.copy(jcif.elsepart);
-        Utils.anonymizeState(qState, qStateVar);
+        Utils.anonymizeState(qState, qStateVars);
         return M.If(cond, ifBlock, elseBlock);
     }
 }

@@ -25,6 +25,9 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-b", "-base"}, description = "Base for fixedPoint arithmetic")
     public static int base = 2;
 
+    @CommandLine.Option(names = {"-real", "-realCoefficients"}, description = "Use real coefficients instead of complex ones.")
+    public static boolean real = false;
+
     @CommandLine.Option(names = {"-float", "-useFloatingPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
     public static boolean useFloat = false;
 

@@ -3,7 +3,6 @@ package CircuitTranslator.Expressions;
 import CircuitTranslator.CLI;
 import CircuitTranslator.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class MultOp extends Expr {
     Expr left;
     Expr right;
 
-    public MultOp(Expr left, Expr right) {
+    protected MultOp(Expr left, Expr right) {
         this.left = left;
         this.right = right;
     }
@@ -37,7 +36,7 @@ public class MultOp extends Expr {
         if(!constChildren.isEmpty()) {
             constPart = constChildren.get(0);
             for (Const c : constChildren.subList(1, constChildren.size())) {
-                constPart = constPart.mult(c);
+                constPart = (Const) constPart.mult(c);
             }
         }
         if(otherChildren.size() == 0) {
@@ -58,14 +57,14 @@ public class MultOp extends Expr {
     }
 
     @Override
-    public JCTree.JCExpression getAST() {
-        JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.MUL, left.getAST(), right.getAST());
+    public com.sun.tools.javac.util.List<JCTree.JCExpression> getAST() {
+        JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.MUL, left.getAST().get(0), right.getAST().get(0));
         res.type = res.lhs.type;
         if(!CLI.useFloat) {
             res = TransUtils.M.Binary(JCTree.Tag.DIV, res, TransUtils.M.Literal((int)Math.pow(CLI.base, CLI.numDigits)));
             res.type = res.lhs.type;
         }
-        return res;
+        return com.sun.tools.javac.util.List.of(res);
     }
 
     List<Expr> getRecOperants() {
