@@ -24,10 +24,16 @@ public abstract class Expr {
     }
 
     public Expr mult(Expr e) {
+        if(e instanceof ComplexExpression) {
+            return e.mult(this);
+        }
         return new MultOp(this, e);
     }
 
     public Expr add(Expr e) {
+        if(e instanceof ComplexExpression) {
+            return e.add(this);
+        }
         return new AddOp(this, e);
     }
 

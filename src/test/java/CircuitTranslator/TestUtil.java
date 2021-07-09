@@ -1,11 +1,12 @@
 package CircuitTranslator;
 
+import CircuitTranslator.Expressions.ComplexExpression;
+import CircuitTranslator.Expressions.Const;
 import CircuitTranslator.Expressions.Expr;
-import CircuitTranslator.Utils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestUtil {
@@ -13,6 +14,7 @@ public class TestUtil {
     @BeforeAll
     public static void setUp() {
         CLI.useFloat = true;
+        CLI.useReals = true;
     }
 
     @Test
@@ -90,6 +92,26 @@ public class TestUtil {
                         "0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,0.0f,\n" +
                         "0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,\n",
                 matrixToString(m2));
+    }
+
+    @Test
+    public void testInitialState() {
+        CLI.useReals = true;
+        Expr[][] state = Utils.getInitialState(2);
+        for(int i = 0; i < state.length; ++i) {
+            assertEquals(1, state[i].length);
+            assertTrue(state[i][0] instanceof Const);
+            assertFalse(state[i][0] instanceof ComplexExpression);
+        }
+        assertTrue(((Const)state[0][0]).isOne());
+        CLI.useReals = false;
+        state = Utils.getInitialState(2);
+        for(int i = 0; i < state.length; ++i) {
+            assertEquals(1, state[i].length);
+            assertTrue(state[i][0] instanceof ComplexExpression);
+        }
+        CLI.useReals = true;
+
     }
 
     public String matrixToString(Expr[][] m) {

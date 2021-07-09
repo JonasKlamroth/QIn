@@ -31,11 +31,12 @@ public class ComplexExpression extends Expr {
     public Expr mult(Expr e) {
         if(e instanceof ComplexExpression) {
             ComplexExpression other = (ComplexExpression)e;
-            Expr newReal = this.real.mult(other.real).add(this.img.mult(other.img).mult(Utils.getConst(-1.0f)));
+            Expr newReal = this.real.mult(other.real).add(this.img.mult(other.img).mult(Utils.getRealConst(-1.0f)));
             Expr newImg = this.real.mult(other.img).add(this.img.mult(other.real));
             return new ComplexExpression(newReal, newImg);
+        } else {
+            return this.mult(getComplex(e));
         }
-        throw new RuntimeException("Multiplication of complex and non complex numbers not supported.");
     }
 
     @Override
@@ -45,12 +46,36 @@ public class ComplexExpression extends Expr {
             Expr newReal = this.real.add(other.real);
             Expr newImg = this.img.add(other.img);
             return new ComplexExpression(newReal, newImg);
+        } else {
+            return this.add(getComplex(e));
         }
-        throw new RuntimeException("Addition of complex and non complex numbers not supported.");
     }
 
     public Expr getAbs() {
         return this.real.mult(this.real).add(this.img.mult(this.img));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof ComplexExpression) {
+            return ((ComplexExpression) o).real.equals(this.real) && ((ComplexExpression) o).img.equals(this.img);
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return real.toString() + " + " + img.toString() + "i";
+    }
+
+    public ComplexExpression getComplex(Expr e) {
+        if(e instanceof ComplexExpression) {
+            return (ComplexExpression) e;
+        }
+        if(CLI.useFloat) {
+            return new ComplexExpression(e, new FloatConst(0.0f));
+        } else {
+            return new ComplexExpression(e, new FixedConst(0));
+        }
+    }
 }

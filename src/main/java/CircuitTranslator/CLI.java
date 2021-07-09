@@ -26,7 +26,7 @@ public class CLI implements Runnable {
     public static int base = 2;
 
     @CommandLine.Option(names = {"-real", "-realCoefficients"}, description = "Use real coefficients instead of complex ones.")
-    public static boolean real = false;
+    public static boolean useReals = false;
 
     @CommandLine.Option(names = {"-float", "-useFloatingPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
     public static boolean useFloat = false;

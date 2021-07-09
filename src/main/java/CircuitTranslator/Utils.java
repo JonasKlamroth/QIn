@@ -132,9 +132,17 @@ public class Utils {
         int stateSize = (int)Math.pow(numQbits, 2);
         Expr[][] initialState = new Expr[stateSize][1];
         for(int i = 0; i < stateSize; ++i) {
-            initialState[i] = new Expr[]{Utils.getConst(0.0f)};
+            if(CLI.useReals) {
+                initialState[i] = new Expr[]{Utils.getConst(0.0f)};
+            } else {
+                initialState[i] = new Expr[]{new ComplexExpression(Utils.getConst(0.0f), Utils.getConst(0.0f))};
+            }
         }
-        initialState[0][0] = Utils.getConst(1.0f);
+        if(CLI.useReals) {
+            initialState[0][0] = Utils.getConst(1.0f);
+        } else {
+            initialState[0][0] = new ComplexExpression(Utils.getConst(1.0f), Utils.getConst(0.0f));
+        }
         return initialState;
     }
 
@@ -195,7 +203,48 @@ public class Utils {
         }
     }
 
-    public static Const getConst(float f) {
+    public static Expr getConst(float r, float i) {
+        if(CLI.useFloat) {
+            if(CLI.useReals) {
+                if(i != 0.0f) {
+                    throw new RuntimeException("Cant initialize real const with imaginary part != 0");
+                }
+                return new FloatConst(r);
+            } else {
+                return new ComplexExpression(new FloatConst(r), new FloatConst(i));
+            }
+        } else {
+            int val = (int)(r * Math.pow(CLI.base, CLI.numDigits));
+            int ival = (int)(i * Math.pow(CLI.base, CLI.numDigits));
+            if(CLI.useReals) {
+                if(i != 0.0f) {
+                    throw new RuntimeException("Cant initialize real const with imaginary part != 0");
+                }
+                return new FixedConst(val);
+            } else {
+                return new ComplexExpression(new FixedConst(val), new FixedConst(ival));
+            }
+        }
+    }
+
+    public static Expr getConst(float f) {
+        if(CLI.useFloat) {
+            if(CLI.useReals) {
+                return new FloatConst(f);
+            } else {
+                return new ComplexExpression(new FloatConst(f), new FloatConst(0.0f));
+            }
+        } else {
+            int val = (int)(f * Math.pow(CLI.base, CLI.numDigits));
+            if(CLI.useReals) {
+                return new FixedConst(val);
+            } else {
+                return new ComplexExpression(new FixedConst(val), new FixedConst(0));
+            }
+        }
+    }
+
+    public static Const getRealConst(float f) {
         if(CLI.useFloat) {
             return new FloatConst(f);
         } else {

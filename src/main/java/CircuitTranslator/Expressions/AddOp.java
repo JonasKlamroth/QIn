@@ -74,4 +74,13 @@ public class AddOp extends Expr {
         }
         return res;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof AddOp) {
+            return ((AddOp) o).left.equals(this.left) && ((AddOp) o).right.equals(this.right);
+        }
+        return false;
+    }
 }
