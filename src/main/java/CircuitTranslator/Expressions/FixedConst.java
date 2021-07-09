@@ -9,18 +9,18 @@ public class FixedConst extends Const {
     }
 
     @Override
-    public Const add(Const c) {
+    public Expr add(Expr c) {
         if(c instanceof FixedConst) {
-            int newVal = (int)this.val + (int)c.val;
+            int newVal = (int)this.val + (int) ((FixedConst) c).val;
             return new FixedConst(newVal);
         }
         throw new RuntimeException("Adding differently typed consts is not supported.");
     }
 
     @Override
-    public Const mult(Const c) {
+    public Expr mult(Expr c) {
         if(c instanceof FixedConst) {
-            int newVal = ((int)this.val * (int)c.val) / ((int)Math.pow(CLI.base, CLI.numDigits));
+            int newVal = ((int)this.val * (int) ((FixedConst) c).val) / ((int)Math.pow(CLI.base, CLI.numDigits));
             return new FixedConst(newVal);
         }
         throw new RuntimeException("Multiplying differently typed consts is not supported.");

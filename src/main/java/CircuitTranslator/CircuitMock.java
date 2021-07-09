@@ -10,6 +10,12 @@ public class CircuitMock {
 
     public CircuitMock(int numQbits, float[][] initialStates) {
     }
+
+    public CircuitMock(int numQbits, float[][] initialStates, float[][] initialCStates) {
+    }
+
+
+
     public void h(int qbit) {
     }
 

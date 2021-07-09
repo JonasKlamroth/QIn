@@ -1,6 +1,7 @@
 package CircuitTranslator.Expressions;
 
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.List;
 
 public class SymbExpr extends Expr {
     JCTree.JCExpression expression;
@@ -19,7 +20,7 @@ public class SymbExpr extends Expr {
     }
 
     @Override
-    public JCTree.JCExpression getAST() {
-        return expression;
+    public List<JCTree.JCExpression> getAST() {
+        return List.of(expression);
     }
 }

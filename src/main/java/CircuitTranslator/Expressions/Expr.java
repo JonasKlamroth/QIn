@@ -2,11 +2,12 @@ package CircuitTranslator.Expressions;
 
 import CircuitTranslator.Utils;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.List;
 
 public abstract class Expr {
     public abstract Expr simplify();
 
-    public abstract JCTree.JCExpression getAST();
+    public abstract List<JCTree.JCExpression> getAST();
 
     public static Expr parse(JCTree.JCExpression s) {
         try {
@@ -18,7 +19,19 @@ public abstract class Expr {
         }
     }
 
-    public JCTree.JCExpression getSimplifiedAST() {
+    public List<JCTree.JCExpression> getSimplifiedAST() {
         return this.simplify().getAST();
+    }
+
+    public Expr mult(Expr e) {
+        return new MultOp(this, e);
+    }
+
+    public Expr add(Expr e) {
+        return new AddOp(this, e);
+    }
+
+    public Expr getAbs() {
+        return this;
     }
 }

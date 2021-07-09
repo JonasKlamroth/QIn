@@ -2,6 +2,7 @@ package CircuitTranslator.Expressions;
 
 import CircuitTranslator.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.List;
 
 import java.lang.reflect.Type;
 
@@ -11,11 +12,6 @@ public abstract class Const extends Expr {
     public Const(Object val) {
         this.val = val;
     }
-
-
-    public abstract Const add(Const c);
-
-    public abstract Const mult(Const c);
 
     public String toString() {
         return val.toString();
@@ -27,8 +23,8 @@ public abstract class Const extends Expr {
     }
 
     @Override
-    public JCTree.JCExpression getAST() {
-        return TransUtils.M.Literal(val);
+    public List<JCTree.JCExpression> getAST() {
+        return List.of(TransUtils.M.Literal(val));
     }
 
     public abstract boolean isOne();

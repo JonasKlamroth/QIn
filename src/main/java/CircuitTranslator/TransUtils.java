@@ -25,20 +25,24 @@ public class TransUtils {
         TransUtils.treeutils = JmlTreeUtils.instance(ctx);
     }
 
-    public static JCTree.JCExpression makeArrayExpression(Expr[][] elems) {
-        List<JCTree.JCExpression> allElemnts = List.nil();
-        for(Expr[] row : elems) {
-            List<JCTree.JCExpression> rowElements = List.nil();
-            for(Expr el : row) {
-                rowElements = rowElements.append(el.getSimplifiedAST());
+    public static List<JCTree.JCExpression> makeArrayExpression(Expr[][] elems) {
+        List<JCTree.JCExpression> res = List.nil();
+        for(int i = 0; i < elems[0][0].getSimplifiedAST().size(); ++i) {
+            List<JCTree.JCExpression> allElemnts = List.nil();
+            for (Expr[] row : elems) {
+                List<JCTree.JCExpression> rowElements = List.nil();
+                for (Expr el : row) {
+                    rowElements = rowElements.append(el.getSimplifiedAST().get(i));
+                }
+                JCTree.JCNewArray array = M.NewArray(M.Type(rowElements.get(0).type), List.nil(), rowElements);
+                array.type = new Type.ArrayType(rowElements.get(0).type, rowElements.get(0).type.tsym);
+                allElemnts = allElemnts.append(array);
             }
-            JCTree.JCNewArray array = M.NewArray(M.Type(rowElements.get(0).type), List.nil(), rowElements);
-            array.type = new Type.ArrayType(rowElements.get(0).type, rowElements.get(0).type.tsym);
-            allElemnts = allElemnts.append(array);
+            JCTree.JCNewArray newArray = M.NewArray(M.Type(allElemnts.get(0).type), List.nil(), allElemnts);
+            newArray.type = new Type.ArrayType(allElemnts.get(0).type, allElemnts.get(0).type.tsym);
+            res = res.append(newArray);
         }
-        JCTree.JCNewArray newArray = M.NewArray(M.Type(allElemnts.get(0).type), List.nil(), allElemnts);
-        newArray.type = new Type.ArrayType(allElemnts.get(0).type, allElemnts.get(0).type.tsym);
-        return newArray;
+        return res;
     }
 
 
@@ -69,9 +73,13 @@ public class TransUtils {
         return M.Literal(elems);
     }
 
-    public static JCTree.JCStatement updateState(Expr[][] newState, JCTree.JCVariableDecl qStateVar) {
-        JCTree.JCExpression init = TransUtils.makeArrayExpression(newState);
-        return M.Exec(M.Assign(M.Ident(qStateVar), init));
+    public static List<JCTree.JCStatement> updateState(Expr[][] newState, List<JCTree.JCVariableDecl> qStateVar) {
+        List<JCTree.JCExpression> init = TransUtils.makeArrayExpression(newState);
+        List<JCTree.JCStatement> res = List.nil();
+        for(int i = 0; i < init.size(); ++i) {
+            res = res.append(M.Exec(M.Assign(M.Ident(qStateVar.get(i)), init.get(0))));
+        }
+        return res;
     }
 
     public static Expr[][] getUnitaryFromIdent(JCTree.JCIdent ident, int stateSize) {
@@ -88,19 +96,32 @@ public class TransUtils {
     }
 
     public static JCTree.JCExpression makeMeasureMaxCondition(Expr[][] qState, int qBit) {
-        JCTree.JCExpression left = M.Literal(0.0f);
-        JCTree.JCExpression right = M.Literal(0.0f);
         int numQbits = Utils.log2(qState.length);
         int shift = numQbits - qBit - 1;
+        Expr left = null;
+        Expr right = null;
         for(int i = 0; i < qState.length; ++i) {
-            MultOp tmp = new MultOp(qState[i][0], qState[i][0]);
             if((i & (1 << shift)) != 0) {
-                left = M.Binary(JCTree.Tag.PLUS, left, tmp.getSimplifiedAST());
+                Expr abs = qState[i][0].getAbs();
+                if(left == null) {
+                    left = abs.mult(abs);
+                } else {
+                    left = left.add(abs.mult(abs));
+                }
             } else {
-                right = M.Binary(JCTree.Tag.PLUS, right, tmp.getSimplifiedAST());
+                Expr abs = qState[i][0].getAbs();
+                if(right == null) {
+                    right = abs.mult(abs);
+                } else {
+                    right = right.add(abs.mult(abs));
+                }
             }
         }
-        return M.Binary(JCTree.Tag.GT, left, right);
+        List<JCTree.JCExpression> lexpr = left.getSimplifiedAST();
+        List<JCTree.JCExpression> rexpr = left.getSimplifiedAST();
+        assert lexpr.size() == 1;
+        assert rexpr.size() == 1;
+        return M.Binary(JCTree.Tag.GT, lexpr.get(0), rexpr.get(0));
     }
 
     public static JCTree.JCStatement setCState(JCTree.JCExpression currentAssignExpression, boolean val) {
@@ -119,4 +140,14 @@ public class TransUtils {
         JCTree.JCIdent sout = M.Ident("printState");
         return M.Exec(M.Apply(List.nil(), sout, List.of(expr)));
     }
+
+    public static List<JCTree.JCStatement> makePrintStatement(List<JCTree.JCVariableDecl> decls) {
+        List<JCTree.JCStatement> res = List.nil();
+        for(JCTree.JCVariableDecl e : decls) {
+            res = res.append(makePrintStatement(M.Ident(e)));
+        }
+        return res;
+    }
+
+
 }
