@@ -81,4 +81,12 @@ public class MultOp extends Expr {
         }
         return res;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof MultOp) {
+            return ((MultOp) o).left.equals(this.left) && ((MultOp) o).right.equals(this.right);
+        }
+        return false;
+    }
 }

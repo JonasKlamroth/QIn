@@ -23,4 +23,12 @@ public class SymbExpr extends Expr {
     public List<JCTree.JCExpression> getAST() {
         return List.of(expression);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof SymbExpr) {
+            return ((SymbExpr) o).expression.equals(this.expression);
+        }
+        return false;
+    }
 }

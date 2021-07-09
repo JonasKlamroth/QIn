@@ -77,7 +77,7 @@ public class TransUtils {
         List<JCTree.JCExpression> init = TransUtils.makeArrayExpression(newState);
         List<JCTree.JCStatement> res = List.nil();
         for(int i = 0; i < init.size(); ++i) {
-            res = res.append(M.Exec(M.Assign(M.Ident(qStateVar.get(i)), init.get(0))));
+            res = res.append(M.Exec(M.Assign(M.Ident(qStateVar.get(i)), init.get(i))));
         }
         return res;
     }

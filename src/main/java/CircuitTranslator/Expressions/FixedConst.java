@@ -14,7 +14,7 @@ public class FixedConst extends Const {
             int newVal = (int)this.val + (int) ((FixedConst) c).val;
             return new FixedConst(newVal);
         }
-        throw new RuntimeException("Adding differently typed consts is not supported.");
+        return super.add(c);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class FixedConst extends Const {
             int newVal = ((int)this.val * (int) ((FixedConst) c).val) / ((int)Math.pow(CLI.base, CLI.numDigits));
             return new FixedConst(newVal);
         }
-        throw new RuntimeException("Multiplying differently typed consts is not supported.");
+        return super.mult(c);
     }
 
     @Override
@@ -34,5 +34,13 @@ public class FixedConst extends Const {
     @Override
     public boolean isZero() {
         return (int)val == 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof FixedConst) {
+            return ((FixedConst) o).val.equals(this.val);
+        }
+        return false;
     }
 }

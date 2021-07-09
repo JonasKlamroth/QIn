@@ -10,7 +10,7 @@ public class FloatConst extends Const {
         if(a instanceof FloatConst) {
             return new FloatConst((float) ((FloatConst) a).val + (float)this.val);
         }
-        throw new RuntimeException("Unsupported addition of different types.");
+        return super.add(a);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class FloatConst extends Const {
         if(a instanceof FloatConst) {
             return new FloatConst(((float) ((FloatConst) a).val) * (float)this.val);
         }
-        throw new RuntimeException("Unsupported addition of different types.");
+        return super.mult(a);
     }
 
     @Override
@@ -34,5 +34,14 @@ public class FloatConst extends Const {
     @Override
     public String toString() {
         return this.val + "f";
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof FloatConst) {
+            return ((FloatConst) o).val.equals(this.val);
+        }
+        return false;
     }
 }

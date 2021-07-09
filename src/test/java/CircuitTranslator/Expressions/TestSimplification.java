@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestExpressions {
+public class TestSimplification {
 
 
     private static JmlTree.Maker M;
@@ -32,32 +32,32 @@ public class TestExpressions {
 
     @Test
     public void testSimplification() {
-        Expr e = new MultOp(new MultOp(new SymbExpr(M.Ident("a")), Utils.getConst(0.5f)), Utils.getConst(0.5f));
+        Expr e = new MultOp(new MultOp(new SymbExpr(M.Ident("a")), Utils.getRealConst(0.5f)), Utils.getRealConst(0.5f));
         assertEquals("0.25F * a", e.getSimplifiedAST().toString());
     }
 
     @Test
     public void testSimplification1() {
-        Expr e = new AddOp(new AddOp(new SymbExpr(M.Ident("a")), Utils.getConst(0.5f)), Utils.getConst(0.5f));
+        Expr e = new AddOp(new AddOp(new SymbExpr(M.Ident("a")), Utils.getRealConst(0.5f)), Utils.getRealConst(0.5f));
         assertEquals("1.0F + a", e.getSimplifiedAST().toString());
     }
 
     @Test
     public void testSimplification2() {
-        Expr e = new MultOp(new SymbExpr(M.Ident("a")), Utils.getConst(0.f));
+        Expr e = new MultOp(new SymbExpr(M.Ident("a")), Utils.getRealConst(0.f));
         assertEquals("0.0F", e.getSimplifiedAST().toString());
     }
 
     @Test
     public void testSimplification3() {
-        Expr e = new MultOp(new SymbExpr(M.Ident("a")), Utils.getConst(1.0f));
+        Expr e = new MultOp(new SymbExpr(M.Ident("a")), Utils.getRealConst(1.0f));
         assertEquals("a", e.getSimplifiedAST().toString());
     }
 
 
     @Test
     public void testSimplification4() {
-        Expr e = new AddOp(new SymbExpr(M.Ident("a")), Utils.getConst(0.0f));
+        Expr e = new AddOp(new SymbExpr(M.Ident("a")), Utils.getRealConst(0.0f));
         assertEquals("a", e.getSimplifiedAST().toString());
     }
 }
