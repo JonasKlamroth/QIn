@@ -118,7 +118,7 @@ public class TransUtils {
             }
         }
         List<JCTree.JCExpression> lexpr = left.getSimplifiedAST();
-        List<JCTree.JCExpression> rexpr = left.getSimplifiedAST();
+        List<JCTree.JCExpression> rexpr = right.getSimplifiedAST();
         assert lexpr.size() == 1;
         assert rexpr.size() == 1;
         return M.Binary(JCTree.Tag.GT, lexpr.get(0), rexpr.get(0));

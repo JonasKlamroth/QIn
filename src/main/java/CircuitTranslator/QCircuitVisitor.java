@@ -45,9 +45,12 @@ public class QCircuitVisitor extends JmlTreeCopier {
             numQbits = Integer.parseInt(clazz.args.get(0).toString());
             stateSize = (int)Math.pow(numQbits, 2);
             if(clazz.args.size() == 2) {
-                if(clazz.args.get(1) instanceof JCTree.JCIdent) {
+                if(clazz.args.get(1) instanceof JCTree.JCIdent || !CLI.useReals) {
                     qState = Utils.getInitialSymbState(numQbits, (JCTree.JCIdent) clazz.args.get(1));
                 } else {
+                    if(!CLI.useReals) {
+                        throw new RuntimeException("When using complex coefficients initial states have to be complex as well.");
+                    }
                     throw new RuntimeException("Currently only initial states provided via variable are supported.");
                 }
             } else if(clazz.args.size() == 3) {
@@ -94,6 +97,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         }
                         qBit = Integer.parseInt(methodInvocation.args.get(1).toString());
                     } else if(fullMethod.name.toString().equals("measureMax")) {
+                        Utils.anonymizeState(qState, qStateVars);
                         qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
@@ -111,6 +115,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
                         return tmp;
                     } else if(fullMethod.name.toString().equals("measure")) {
+                        Utils.anonymizeState(qState, qStateVars);
                         qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
