@@ -21,6 +21,10 @@ public class Utils {
             {0.0f, 1.0f, 0.0f, 0.0f},
             {0.0f, 0.0f, 0.0f, 1.0f},
             {0.0f, 0.0f, 1.0f, 0.0f}};
+    public static final float[][] CZ = new float[][]{{1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 1.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, -1.0f}};
 
     public static Expr[][] getExprMatrix(float[][] m) {
         Expr[][] res = new Expr[m.length][m[0].length];
@@ -160,6 +164,9 @@ public class Utils {
         if(name.equals("cx")) {
             return getExprMatrix(CX);
         }
+        if(name.equals("cz")) {
+            return getExprMatrix(CZ);
+        }
         if(name.equals("z")) {
             return getExprMatrix(Z);
         }
@@ -196,11 +203,15 @@ public class Utils {
     }
 
     public static void anonymizeState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
-        for(int j = 0; j < qStateVar.size(); ++j) {
             for (int i = 0; i < qState.length; ++i) {
-                qState[i][0] = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(j)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+                Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+                if(CLI.useReals) {
+                    qState[i][0] = realVal;
+                } else {
+                    Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+                    qState[i][0] = new ComplexExpression(realVal, compVal);
+                }
             }
-        }
     }
 
     public static Expr getConst(float r, float i) {
