@@ -1,8 +1,7 @@
-package CircuitTranslator;
+package QIn;
 
-import CircuitTranslator.Expressions.Expr;
-import CircuitTranslator.Expressions.MultOp;
-import CircuitTranslator.Expressions.SymbExpr;
+import QIn.Expressions.Expr;
+import QIn.Expressions.SymbExpr;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;

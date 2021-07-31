@@ -1,4 +1,4 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;

@@ -1,7 +1,7 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
-import CircuitTranslator.CLI;
-import CircuitTranslator.TransUtils;
+import QIn.CLI;
+import QIn.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class MultOp extends Expr {
     public com.sun.tools.javac.util.List<JCTree.JCExpression> getAST() {
         JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.MUL, left.getAST().get(0), right.getAST().get(0));
         res.type = res.lhs.type;
-        if(!CLI.useFloat) {
+        if(!CLI.useFix) {
             res = TransUtils.M.Binary(JCTree.Tag.DIV, res, TransUtils.M.Literal((int)Math.pow(CLI.base, CLI.numDigits)));
             res.type = res.lhs.type;
         }

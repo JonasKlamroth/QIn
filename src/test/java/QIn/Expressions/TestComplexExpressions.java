@@ -1,6 +1,6 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
-import CircuitTranslator.Utils;
+import QIn.Utils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

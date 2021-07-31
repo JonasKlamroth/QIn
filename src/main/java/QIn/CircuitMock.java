@@ -1,8 +1,4 @@
-package CircuitTranslator;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+package QIn;
 
 public class CircuitMock {
     public CircuitMock(int numQbits) {

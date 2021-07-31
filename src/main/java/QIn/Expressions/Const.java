@@ -1,10 +1,8 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
-import CircuitTranslator.TransUtils;
+import QIn.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
-
-import java.lang.reflect.Type;
 
 public abstract class Const extends Expr {
     Object val;

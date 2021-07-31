@@ -1,6 +1,6 @@
-package CircuitTranslator;
+package QIn;
 
-import CircuitTranslator.Expressions.Expr;
+import QIn.Expressions.Expr;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Symtab;

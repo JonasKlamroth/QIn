@@ -1,8 +1,8 @@
-package CircuitTranslator;
+package QIn;
 
-import CircuitTranslator.Expressions.ComplexExpression;
-import CircuitTranslator.Expressions.Const;
-import CircuitTranslator.Expressions.Expr;
+import QIn.Expressions.ComplexExpression;
+import QIn.Expressions.Const;
+import QIn.Expressions.Expr;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ public class TestUtil {
 
     @BeforeAll
     public static void setUp() {
-        CLI.useFloat = true;
+        CLI.useFix = true;
         CLI.useReals = true;
     }
 

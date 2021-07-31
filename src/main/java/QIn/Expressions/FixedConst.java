@@ -1,6 +1,6 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
-import CircuitTranslator.CLI;
+import QIn.CLI;
 
 public class FixedConst extends Const {
 

@@ -1,7 +1,7 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
-import CircuitTranslator.CLI;
-import CircuitTranslator.Utils;
+import QIn.CLI;
+import QIn.Utils;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 
@@ -72,7 +72,7 @@ public class ComplexExpression extends Expr {
         if(e instanceof ComplexExpression) {
             return (ComplexExpression) e;
         }
-        if(CLI.useFloat) {
+        if(!CLI.useFix) {
             return new ComplexExpression(e, new FloatConst(0.0f));
         } else {
             return new ComplexExpression(e, new FixedConst(0));
