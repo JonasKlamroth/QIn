@@ -9,6 +9,9 @@ import picocli.CommandLine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.StandardOpenOption;
 
 @CommandLine.Command(name = "CircTrans", header = "@|bold translate quantum circuits to plain java |@")
 public class CLI implements Runnable {
@@ -30,6 +33,9 @@ public class CLI implements Runnable {
 
     @CommandLine.Option(names = {"-float", "-useFloatingPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
     public static boolean useFloat = false;
+
+    @CommandLine.Option(names = {"-o", "-outputFile"}, description = "Provide a file to which the output is stored. If not provided output is printed to stdout")
+    public static String outPath = null;
 
 
     public static void main(String[] args) {
@@ -70,7 +76,13 @@ public class CLI implements Runnable {
             JCTree t = rewriteAssert(it, ctx);
             try {
                 String translation = api.prettyPrint(t);
-                System.out.println(translation);
+                if(outPath != null) {
+                    File outFile = new File(outPath);
+                    Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
+                    System.out.println("Output written to: " + outFile.getAbsolutePath());
+                } else {
+                    System.out.println(translation);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -78,7 +78,13 @@ public class QCircuitVisitor extends JmlTreeCopier {
     @Override
     public JCTree visitJmlMethodDecl(JmlTree.JmlMethodDecl that, Void p) {
         currentSymbol = that.sym;
-        return super.visitJmlMethodDecl(that, p);
+        JmlTree.JmlMethodDecl copy = (JmlTree.JmlMethodDecl) super.visitJmlMethodDecl(that, p);
+        if(copy.methodSpecsCombined.cases != null && copy.methodSpecsCombined.cases.cases != null && copy.methodSpecsCombined.cases.cases.size() == 1) {
+            if(copy.methodSpecsCombined.cases.cases.get(0).clauses.stream().noneMatch(x -> x instanceof JmlTree.JmlMethodClauseExpr)) {
+                copy.methodSpecsCombined.cases.cases = List.nil();
+            }
+        }
+        return copy;
     }
 
     @Override
