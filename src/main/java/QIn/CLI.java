@@ -1,4 +1,4 @@
-package CircuitTranslator;
+package QIn;
 
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
@@ -10,7 +10,6 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.StandardOpenOption;
 
 @CommandLine.Command(name = "CircTrans", header = "@|bold translate quantum circuits to plain java |@")
@@ -31,8 +30,8 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-real", "-realCoefficients"}, description = "Use real coefficients instead of complex ones.")
     public static boolean useReals = false;
 
-    @CommandLine.Option(names = {"-float", "-useFloatingPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
-    public static boolean useFloat = false;
+    @CommandLine.Option(names = {"-fixed", "-useFixedPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
+    public static boolean useFix = false;
 
     @CommandLine.Option(names = {"-o", "-outputFile"}, description = "Provide a file to which the output is stored. If not provided output is printed to stdout")
     public static String outPath = null;

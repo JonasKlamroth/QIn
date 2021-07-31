@@ -1,6 +1,6 @@
-package CircuitTranslator;
+package QIn;
 
-import CircuitTranslator.Expressions.*;
+import QIn.Expressions.*;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Position;
 
@@ -215,7 +215,7 @@ public class Utils {
     }
 
     public static Expr getConst(float r, float i) {
-        if(CLI.useFloat) {
+        if(!CLI.useFix) {
             if(CLI.useReals) {
                 if(i != 0.0f) {
                     throw new RuntimeException("Cant initialize real const with imaginary part != 0");
@@ -239,7 +239,7 @@ public class Utils {
     }
 
     public static Expr getConst(float f) {
-        if(CLI.useFloat) {
+        if(!CLI.useFix) {
             if(CLI.useReals) {
                 return new FloatConst(f);
             } else {
@@ -256,7 +256,7 @@ public class Utils {
     }
 
     public static Const getRealConst(float f) {
-        if(CLI.useFloat) {
+        if(!CLI.useFix) {
             return new FloatConst(f);
         } else {
             int val = (int)(f * Math.pow(CLI.base, CLI.numDigits));

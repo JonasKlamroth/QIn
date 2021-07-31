@@ -1,6 +1,6 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
-import CircuitTranslator.*;
+import QIn.*;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.util.Context;
 import org.jmlspecs.openjml.Factory;
@@ -21,7 +21,7 @@ public class TestSimplification {
 
     @BeforeAll
     private static void setUp() throws Exception {
-        CLI.useFloat = true;
+        CLI.useFix = true;
         IAPI api = Factory.makeAPI(new String[]{});
         Context context = api.context();
         treeutils = JmlTreeUtils.instance(context);

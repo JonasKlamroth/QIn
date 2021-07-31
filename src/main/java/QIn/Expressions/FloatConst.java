@@ -1,4 +1,4 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
 public class FloatConst extends Const {
     public FloatConst(float val) {

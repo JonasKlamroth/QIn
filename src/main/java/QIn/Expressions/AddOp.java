@@ -1,7 +1,6 @@
-package CircuitTranslator.Expressions;
+package QIn.Expressions;
 
-import CircuitTranslator.CLI;
-import CircuitTranslator.TransUtils;
+import QIn.TransUtils;
 import com.sun.tools.javac.tree.JCTree;
 
 import java.util.ArrayList;

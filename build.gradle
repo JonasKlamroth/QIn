@@ -42,7 +42,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'CircuitTranslator.CLI'
+    mainClass = 'QIn.CLI'
 }
 
 test {
@@ -54,6 +54,25 @@ test {
   beforeTest { descriptor ->
      logger.lifecycle("Running test: ${descriptor}")
   }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes "Main-Class": "QIn.CLI"
+    }
+    archiveBaseName = 'QIn'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+    doLast {
+        copy {
+            from 'build/libs/QIn.jar'
+            into '.'
+        }
+    }
 }
 
 //tasks.withType(JavaCompile) {
