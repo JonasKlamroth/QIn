@@ -1,7 +1,7 @@
 QIn is a tool that is developed at [FZI](https://www.fzi.de), which translates quantum circuits into Java code and makes the accessible to software verification/validation tools aimed at Java code. To build QIn we provide 3 possibilities:
 - Build it manually.
 - Use our prebuilt docker image (this may reduce performance).
-- Use the [prebuilt version](https://github.com/JonasKlamroth/QIn/releases/download/ISoLa/JJBMC.jar).
+- Use the [prebuilt version](https://github.com/JonasKlamroth/QIn/releases/download/sefm21/QIn.jar).
 
 ## Using the Docker Image
 - Install docker if you do not have it already installed (e.g., via ``sudo curl -sSL https://get.docker.com/ | sh``).
