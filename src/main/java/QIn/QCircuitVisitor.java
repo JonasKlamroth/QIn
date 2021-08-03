@@ -43,7 +43,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 throw new RuntimeException("Error creating circuit.");
             }
             numQbits = Integer.parseInt(clazz.args.get(0).toString());
-            stateSize = (int)Math.pow(numQbits, 2);
+            stateSize = (int)Math.pow(2, numQbits);
             if(clazz.args.size() == 2) {
                 if(clazz.args.get(1) instanceof JCTree.JCIdent || !CLI.useReals) {
                     qState = Utils.getInitialSymbState(numQbits, (JCTree.JCIdent) clazz.args.get(1));

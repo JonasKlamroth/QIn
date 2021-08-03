@@ -133,7 +133,7 @@ public class Utils {
     }
 
     public static Expr[][] getInitialState(int numQbits) {
-        int stateSize = (int)Math.pow(numQbits, 2);
+        int stateSize = (int)Math.pow(2, numQbits);
         Expr[][] initialState = new Expr[stateSize][1];
         for(int i = 0; i < stateSize; ++i) {
             if(CLI.useReals) {
