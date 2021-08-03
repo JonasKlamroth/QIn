@@ -60,7 +60,7 @@ public class MultOp extends Expr {
     public com.sun.tools.javac.util.List<JCTree.JCExpression> getAST() {
         JCTree.JCBinary res = TransUtils.M.Binary(JCTree.Tag.MUL, left.getAST().get(0), right.getAST().get(0));
         res.type = res.lhs.type;
-        if(!CLI.useFix) {
+        if(CLI.useFix) {
             res = TransUtils.M.Binary(JCTree.Tag.DIV, res, TransUtils.M.Literal((int)Math.pow(CLI.base, CLI.numDigits)));
             res.type = res.lhs.type;
         }
