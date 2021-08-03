@@ -13,7 +13,7 @@ public class TestUtil {
 
     @BeforeAll
     public static void setUp() {
-        CLI.useFix = true;
+        CLI.useFix = false;
         CLI.useReals = true;
     }
 
