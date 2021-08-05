@@ -1,9 +1,12 @@
 public class Grover {
+
     /*@
-      @ requires val >= 0 && val < 4;
-      @ ensures \result == val;
+      @ ensures ((val >= 0 && val < 4) ==> \result == val) && ((val < 0 || val > 3) ==> \result == -1);
       @*/
     public static int grover(int val) {
+        if(val < 0 || val > 3) {
+            return -1;
+        }
         float[][] m = getOracle(val);
         CircuitMock circuit = new CircuitMock(2);
         circuit.h(0);

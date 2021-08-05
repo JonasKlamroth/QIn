@@ -75,6 +75,19 @@ task fatJar(type: Jar) {
     }
 }
 
+tasks.register('testCaseStudies', Test) {
+     description = 'Runs integration tests.'
+     group = 'verification'
+     useJUnitPlatform()
+     testClassesDirs = sourceSets.test.output.classesDirs
+  beforeTest { descriptor ->
+     logger.lifecycle("Running test: ${descriptor}")
+  }
+     filter {
+            includeTestsMatching "*Translations.*"
+     }
+}
+
 //tasks.withType(JavaCompile) {
 //    options.compilerArgs << '-Xlint:unchecked'
 //    options.deprecation = true
