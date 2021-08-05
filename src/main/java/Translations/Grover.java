@@ -1,3 +1,4 @@
+package Translations;
 
 public class Grover {
   
@@ -5,11 +6,13 @@ public class Grover {
     super();
   }
     /*@
-      requires val >= 0 && val < 4; 
-      ensures \result == val; 
+      ensures ((val >= 0 && val < 4) ==> \result == val) && ((val < 0 || val > 3) ==> \result == -1); 
    */
 
   public static int grover(int val) {
+    if (val < 0 || val > 3) {
+      return -1;
+    }
     /*@ non_null */ 
     float[][] m = getOracle(val);
     float[][] q_state_0 = new float[][]{new float[]{1.0F}, new float[]{0.0F}, new float[]{0.0F}, new float[]{0.0F}};

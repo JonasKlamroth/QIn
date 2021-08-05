@@ -1,5 +1,11 @@
 public class Deutsch {
-    public boolean applyDeutsch(boolean[] f) {
+
+    //@ requires f != null && f.length == 2;
+    //@ ensures \result <==> (f[0] != f[1]);
+    public static boolean isBalanced(boolean[] f) {
+        if(f == null || f.length != 2) {
+            throw new IllegalArgumentException("Input for Deutschalgorithm has to be boolean array of size 2.");
+        }
         float[][] m = new float[][]{
                 new float[]{!f[0] ? 1.0f : 0.0f, f[0] ? 1.0f :0.0f, 0.f, 0.f},
                 new float[]{f[0] ? 1.0f : 0.0f, !f[0] ? 1.0f :0.0f, 0.f, 0.f},
