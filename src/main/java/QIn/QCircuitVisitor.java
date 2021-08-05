@@ -23,6 +23,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
     private int stateSize;
     private Expr[][] qState;
     private int measureVarCounter = 0;
+    private JmlTree.JmlVariableDecl currentCircuitName = null;
 
     public QCircuitVisitor(Context context, JmlTree.Maker maker) {
         super(context, maker);
@@ -42,6 +43,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
             if(clazz.args == null || clazz.args.size() < 1) {
                 throw new RuntimeException("Error creating circuit.");
             }
+            currentCircuitName = that;
             numQbits = Integer.parseInt(clazz.args.get(0).toString());
             stateSize = (int)Math.pow(2, numQbits);
             if(clazz.args.size() == 2) {
@@ -188,6 +190,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
     @Override
     public JCTree visitIf(IfTree node, Void p) {
         JCTree.JCIf jcif = (JCTree.JCIf)node;
+        if(currentCircuitName == null) {
+            return jcif;
+        }
         JCTree.JCExpression cond = super.copy(jcif.cond);
         JCTree.JCStatement ifBlock = super.copy(jcif.thenpart);
         Utils.anonymizeState(qState, qStateVars);
