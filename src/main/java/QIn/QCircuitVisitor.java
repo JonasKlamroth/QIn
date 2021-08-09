@@ -23,6 +23,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
     private int stateSize;
     private Expr[][] qState;
     private int measureVarCounter = 0;
+    private int paramVarCounter = 0;
     private JmlTree.JmlVariableDecl currentCircuitName = null;
 
     public QCircuitVisitor(Context context, JmlTree.Maker maker) {
@@ -80,7 +81,13 @@ public class QCircuitVisitor extends JmlTreeCopier {
     @Override
     public JCTree visitJmlMethodDecl(JmlTree.JmlMethodDecl that, Void p) {
         currentSymbol = that.sym;
+        paramVarCounter = 0;
         JmlTree.JmlMethodDecl copy = (JmlTree.JmlMethodDecl) super.visitJmlMethodDecl(that, p);
+        for(int i = 0; i < paramVarCounter; ++i) {
+            JCTree.JCVariableDecl newParam = treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureParam" + i), currentSymbol.owner, Position.NOPOS);
+            copy.params = copy.params.append(newParam);
+        }
+
         if(copy.methodSpecsCombined.cases != null && copy.methodSpecsCombined.cases.cases != null && copy.methodSpecsCombined.cases.cases.size() == 1) {
             if(copy.methodSpecsCombined.cases.cases.get(0).clauses.stream().noneMatch(x -> x instanceof JmlTree.JmlMethodClauseExpr)) {
                 copy.methodSpecsCombined.cases.cases = List.nil();
@@ -95,7 +102,10 @@ public class QCircuitVisitor extends JmlTreeCopier {
             JCTree.JCMethodInvocation methodInvocation = (JCTree.JCMethodInvocation) node;
             if(methodInvocation.meth instanceof JCTree.JCFieldAccess) {
                 JCTree.JCFieldAccess fullMethod = (JCTree.JCFieldAccess) methodInvocation.meth;
-                if(fullMethod.selected.type.toString().equals(CIRCUIT_TYPE)) {
+                if(fullMethod.selected.type != null && fullMethod.selected.type.toString().equals(CIRCUIT_TYPE)) {
+                    if(!fullMethod.selected.toString().equals(currentCircuitName.name.toString())) {
+                        throw new RuntimeException("Currently only one circuit allowed in parallel.");
+                    }
                     Expr[][] unitary = null;
                     int qBit = -1;
                     Utils.anonymizePartialState(qState, qStateVars);
@@ -128,7 +138,12 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
-                        JCTree.JCExpression cond = TransUtils.makeNondetBoolean(currentSymbol);
+                        JCTree.JCExpression cond = null;
+                        if(CLI.useNondetFunctions) {
+                            cond = TransUtils.makeNondetBoolean(currentSymbol);
+                        } else {
+                            cond = M.Ident("$$_tmp_measureParam" + paramVarCounter++);
+                        }
                         newStatements = newStatements.append(treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureVar" + ++measureVarCounter), currentSymbol, Position.NOPOS));
                         JCTree.JCIdent tmp = M.Ident("$$_tmp_measureVar" + measureVarCounter);
                         JCTree.JCBlock ifBlock = M.Block(0L, TransUtils.updateState(trueState, qStateVars).append(TransUtils.setCState(tmp,  false)));
