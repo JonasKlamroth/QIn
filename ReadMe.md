@@ -1,7 +1,7 @@
 QIn is a tool that is developed at [FZI](https://www.fzi.de/en/home/), which translates quantum circuits into Java code and makes the accessible to software verification/validation tools aimed at Java code. To build QIn we provide 3 possibilities:
 - Build it manually.
 - Use our prebuilt docker image (this may reduce performance).
-- Use the [prebuilt version](https://github.com/JonasKlamroth/QIn/releases/download/sefm21v2/QIn.jar).
+- Use the [prebuilt version](https://github.com/JonasKlamroth/QIn/tree/sefm21/bin/QIn.jar).
 
 ## Using the Docker Image
 - Install docker if you do not have it already installed (e.g., via ``sudo curl -sSL https://get.docker.com/ | sh``).
@@ -26,13 +26,18 @@ QIn is a tool that is developed at [FZI](https://www.fzi.de/en/home/), which tra
 - In general, you can run QIn via ``java -jar QIn.jar JAVA_FILE"``, where **JAVA_FILE** should be replaced by the Java file that you want to translate. For examples, see the section below.
 
 ## Examples
-- To translate the Grover case Study File and store the translation in the ./translations folder run the following command:
+- To translate the Grover case Study File and store the translation in the root folder of the project run the following command:
 ```
-java -jar QIn.jar src/test/resources/Grover.java -o translations/Grover.java
+java -jar QIn.jar src/test/resources/Grover.java -o Grover.java
 ```
 
 ## Running tools on translations
 - To run [JJBMC](https://github.com/jonasklamroth/JJBMC) on one of the examples you can either go to the JJBMC-Website or use the precompiled version in the tools folder. To run JJBMC on the grover case study use the following command: 
 ```
-java -jar ./tools/JJBMC.jar translations/Grover.java grover
+java -jar ./tools/JJBMC.jar Grover.java grover
+```
+
+- To run the tests for the translations of the case studies run:
+```
+gradle testCaseStudies
 ```
