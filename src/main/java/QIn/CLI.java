@@ -36,6 +36,8 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-o", "-outputFile"}, description = "Provide a file to which the output is stored. If not provided output is printed to stdout")
     public static String outPath = null;
 
+    @CommandLine.Option(names = {"-ndf", "-nondetFunctions"}, description = "Allow the use of JJBMCs nondet functions.")
+    public static boolean useNondetFunctions;
 
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));
