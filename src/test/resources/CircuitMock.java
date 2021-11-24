@@ -31,8 +31,13 @@ public class CircuitMock {
 
     public void u(float[][] m, int... qbits) {
     }
+    public void u(float[][] m, float[][]m_i, int... qbits) {
+    }
 
-    public void u(int[][] m, int... qbits) {
+    public void u(int[][] m, int qbits) {
+    }
+
+    public void swap(int qbit1, int qbit2) {
     }
 
     public boolean measureMax(int qBit) {

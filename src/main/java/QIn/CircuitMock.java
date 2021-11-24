@@ -1,4 +1,4 @@
-package QIn;
+package Qin;
 
 public class CircuitMock {
     public CircuitMock(int numQbits) {
@@ -7,10 +7,14 @@ public class CircuitMock {
     public CircuitMock(int numQbits, float[][] initialStates) {
     }
 
-    public CircuitMock(int numQbits, float[][] initialStates, float[][] initialCStates) {
+    public CircuitMock(int numQbits, long[][] initialStates) {
     }
 
+    public CircuitMock(int numQbits, int[][] initialStates) {
+    }
 
+    public CircuitMock(int numQbits, float[][] initialStates, float[][] initialCStates) {
+    }
 
     public void h(int qbit) {
     }
@@ -21,10 +25,21 @@ public class CircuitMock {
     public void z(int qbit) {
     }
 
-    public void cx(int cqbit, int tqbit) {
+    public void cx(int cqbit) {
     }
 
-    public void u(float[][] m, int... qbits) {
+    public void cz(int cqbit) {
+    }
+
+    public void u(float[][] m, int qbits) {
+    }
+    public void u(float[][] m, float[][]m_i, int qbits) {
+    }
+
+    public void u(int[][] m, int qbits) {
+    }
+
+    public void swap(int qbit1, int qbit2) {
     }
 
     public boolean measureMax(int qBit) {

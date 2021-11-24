@@ -1,12 +1,15 @@
 public class LimitTest {
     public static void testALot() {
-        CircuitMock c = new CircuitMock(12);
-        c.h(9);
-        c.z(8);
+        CircuitMock c = new CircuitMock(5);
+        c.h(4);
+        c.h(4);
+        c.x(1);
+        c.h(1);
+        c.h(1);
         c.x(2);
-        c.h(2);
-        c.z(9);
-        c.cx(0, 1);
-        c.cz(0, 1);
+        assert c.measureMax(4) == false;
+        assert c.measureMax(1) == true;
+        assert c.measureMax(2) == true;
+        assert c.measureMax(3) == false;
     }
 }

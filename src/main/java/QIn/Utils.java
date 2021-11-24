@@ -67,6 +67,9 @@ public class Utils {
         Expr[][] res = getExprMatrix(ID);
         int matrixSize = log2(m.length);
         assert (float)matrixSize == log2(m.length);
+        if(matrixSize == numQbits) {
+            return m;
+        }
         int i = 1;
         if(qbit == 0) {
             res = m;
@@ -139,19 +142,15 @@ public class Utils {
             if(CLI.useReals) {
                 initialState[i] = new Expr[]{Utils.getConst(0.0f)};
             } else {
-                initialState[i] = new Expr[]{new ComplexExpression(Utils.getConst(0.0f), Utils.getConst(0.0f))};
+                initialState[i] = new Expr[]{new ComplexExpression(Utils.getRealConst(0.0f), Utils.getRealConst(0.0f))};
             }
         }
         if(CLI.useReals) {
             initialState[0][0] = Utils.getConst(1.0f);
         } else {
-            initialState[0][0] = new ComplexExpression(Utils.getConst(1.0f), Utils.getConst(0.0f));
+            initialState[0][0] = new ComplexExpression(Utils.getRealConst(1.0f), Utils.getRealConst(0.0f));
         }
         return initialState;
-    }
-
-    public static JCTree.JCStatement applyOperation(JCTree.JCVariableDecl q_state, Expr[][] u) {
-        return null;
     }
 
     public static Expr[][] getUnitaryForName(String name) {
@@ -318,5 +317,19 @@ public class Utils {
             finalState = tensorProd(finalState, initialStates.get(i));
         }
         return finalState;
+    }
+
+    public static void applySwap(Expr[][] qState, int qBit1, int qBit2) {
+        int stateSize = qState.length;
+        for(int i = 0; i < stateSize; ++i) {
+            //swap bits on positions qBit1 and qBit2 and exchange the corresponding array elements
+            int x = ((i >> qBit1) ^ (i >> qBit2)) & 1;
+            int r = i ^ ((x << qBit1) | (x << qBit2));
+            if(i < r) {
+                Expr tmp = qState[r][0];
+                qState[r][0] = qState[i][0];
+                qState[i][0] = tmp;
+            }
+        }
     }
 }
