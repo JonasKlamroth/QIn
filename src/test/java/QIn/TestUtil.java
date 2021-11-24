@@ -94,6 +94,7 @@ public class TestUtil {
                 matrixToString(m2));
     }
 
+
     @Test
     public void testInitialState() {
         CLI.useReals = true;

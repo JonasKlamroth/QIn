@@ -15,6 +15,7 @@ import org.jmlspecs.openjml.JmlTreeUtils;
 public class QCircuitVisitor extends JmlTreeCopier {
     private static final String CIRCUIT_TYPE = "CircuitMock";
     private final JmlTreeUtils treeutils;
+    public static org.jmlspecs.openjml.Utils utils;
     private List<JCTree.JCStatement> newStatements = List.nil();
     private final Symtab syms;
     private Symbol currentSymbol;
@@ -25,11 +26,14 @@ public class QCircuitVisitor extends JmlTreeCopier {
     private int measureVarCounter = 0;
     private int paramVarCounter = 0;
     private JmlTree.JmlVariableDecl currentCircuitName = null;
+    public static List<JmlTree.JmlVariableDecl> classFinalVars = List.nil();
+    public static List<JmlTree.JmlVariableDecl> localFinalVars = List.nil();
 
     public QCircuitVisitor(Context context, JmlTree.Maker maker) {
         super(context, maker);
         this.treeutils = JmlTreeUtils.instance(context);
         this.syms = Symtab.instance(context);
+        this.utils = org.jmlspecs.openjml.Utils.instance(context);
     }
 
     @Override
@@ -75,6 +79,13 @@ public class QCircuitVisitor extends JmlTreeCopier {
             }
             return qStateVars.get(qStateVars.size() - 1);
         }
+        if(TransUtils.isFinal(that)) {
+            if(that.sym.owner.equals(currentSymbol)) {
+                localFinalVars = localFinalVars.append(that);
+            } else {
+                classFinalVars = classFinalVars.append(that);
+            }
+        }
         return super.visitJmlVariableDecl(that, p);
     }
 
@@ -97,6 +108,11 @@ public class QCircuitVisitor extends JmlTreeCopier {
     }
 
     @Override
+    public JCTree visitJmlClassDecl(JmlTree.JmlClassDecl that, Void p) {
+        return super.visitJmlClassDecl(that, p);
+    }
+
+    @Override
     public JCTree visitMethodInvocation(MethodInvocationTree node, Void p) {
         if(node instanceof JCTree.JCMethodInvocation) {
             JCTree.JCMethodInvocation methodInvocation = (JCTree.JCMethodInvocation) node;
@@ -109,11 +125,29 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     Expr[][] unitary = null;
                     int qBit = -1;
                     if(fullMethod.name.toString().equals("u")) {
-                        assert methodInvocation.args.size() == 2;
-                        if(methodInvocation.args.get(0) instanceof JCTree.JCIdent) {
-                            unitary = TransUtils.getUnitaryFromIdent((JCTree.JCIdent) methodInvocation.args.get(0), stateSize);
+                        if(!(methodInvocation.args.get(1) instanceof JCTree.JCIdent)) {
+                            if (methodInvocation.args.get(0) instanceof JCTree.JCIdent) {
+                                int size = (int)Math.pow(2, methodInvocation.args.size() - 1);
+                                unitary = TransUtils.getUnitaryFromIdent((JCTree.JCIdent) methodInvocation.args.get(0), size);
+                            }
+                            qBit = Integer.parseInt(methodInvocation.args.get(1).toString());
+                        } else if(methodInvocation.args.size() >= 3) {
+                            if (methodInvocation.args.get(0) instanceof JCTree.JCIdent && methodInvocation.args.get(1) instanceof JCTree.JCIdent) {
+                                int size = (int)Math.pow(2, methodInvocation.args.size() - 2);
+                                unitary = TransUtils.getUnitaryFromCompIdent((JCTree.JCIdent) methodInvocation.args.get(0), (JCTree.JCIdent) methodInvocation.args.get(1), size);
+                            }
+                            qBit = Integer.parseInt(methodInvocation.args.get(2).toString());
+                        } else {
+                            throw new RuntimeException("Illegal number of arguments for unitary matrix application.");
                         }
-                        qBit = Integer.parseInt(methodInvocation.args.get(1).toString());
+                    } else if(fullMethod.name.toString().equals("swap")) {
+                        assert methodInvocation.args.size() == 2;
+
+                        int qBit1 = Integer.parseInt(methodInvocation.args.get(0).toString());
+                        int qBit2 = Integer.parseInt(methodInvocation.args.get(1).toString());
+                        Utils.applySwap(qState, qBit1, qBit2);
+                        newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
+                        return super.visitMethodInvocation(node, p);
                     } else if(fullMethod.name.toString().equals("measureMax")) {
                         Utils.anonymizeState(qState, qStateVars);
                         qBit = Integer.parseInt(methodInvocation.args.get(0).toString());

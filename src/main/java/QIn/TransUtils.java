@@ -1,7 +1,6 @@
 package QIn;
 
-import QIn.Expressions.Expr;
-import QIn.Expressions.SymbExpr;
+import QIn.Expressions.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
@@ -11,6 +10,8 @@ import com.sun.tools.javac.util.Position;
 import org.jmlspecs.openjml.JmlTree;
 import org.jmlspecs.openjml.JmlTreeUtils;
 
+import javax.lang.model.element.Modifier;
+import javax.lang.model.type.ArrayType;
 import java.lang.reflect.Array;
 
 public class TransUtils {
@@ -22,6 +23,14 @@ public class TransUtils {
         TransUtils.M = JmlTree.Maker.instance(ctx);
         TransUtils.ctx = ctx;
         TransUtils.treeutils = JmlTreeUtils.instance(ctx);
+    }
+
+    public static boolean isFinal(JmlTree.JmlVariableDecl decl) {
+        return decl.sym.getModifiers().contains(Modifier.FINAL);
+    }
+
+    public static boolean isFinal(JCTree.JCIdent ident) {
+        return ident.sym.getModifiers().contains(Modifier.FINAL);
     }
 
     public static List<JCTree.JCExpression> makeArrayExpression(Expr[][] elems) {
@@ -92,6 +101,82 @@ public class TransUtils {
             }
         }
         return res;
+    }
+
+    public static Expr[][] getUnitaryFromCompIdent(JCTree.JCIdent ident, JCTree.JCIdent i_ident, int stateSize) {
+        JmlTree.JmlVariableDecl decl = null;
+        JmlTree.JmlVariableDecl i_decl = null;
+        for(JmlTree.JmlVariableDecl d : QCircuitVisitor.localFinalVars) {
+            if(ident.sym == d.sym) {
+                decl = d;
+            }
+            if(i_ident.sym == d.sym) {
+                i_decl = d;
+            }
+        }
+        for(JmlTree.JmlVariableDecl d : QCircuitVisitor.classFinalVars) {
+            if(ident.sym == d.sym) {
+                decl = d;
+            }
+            if(i_ident.sym == d.sym) {
+                i_decl = d;
+            }
+        }
+        Expr[][] res = new Expr[stateSize][stateSize];
+        for(int i = 0; i < res[0].length; ++i) {
+            for(int j = 0; j < res.length; ++j) {
+                Expr expr = null;
+                if(decl != null) {
+                    expr = tryGetElement(decl.init, i, j);
+                }
+                if(expr == null) {
+                    JCTree.JCExpression element = treeutils.makeArrayElement(Position.NOPOS,
+                            treeutils.makeArrayElement(Position.NOPOS, ident, M.Literal(j)),
+                            M.Literal(i));
+                    expr = new SymbExpr(element);
+                }
+                Expr i_expr = null;
+                if(i_decl != null) {
+                    i_expr = tryGetElement(i_decl.init, i, j);
+                }
+                if(i_expr == null) {
+                    JCTree.JCExpression i_element = treeutils.makeArrayElement(Position.NOPOS,
+                            treeutils.makeArrayElement(Position.NOPOS, i_ident, M.Literal(j)),
+                            M.Literal(i));
+                    i_expr = new SymbExpr(i_element);
+                }
+                res[j][i] = new ComplexExpression(expr, i_expr);
+            }
+        }
+        return res;
+    }
+
+    private static Expr tryGetElement(JCTree.JCExpression init, int i, int j) {
+        if(init instanceof JCTree.JCNewArray) {
+            if(((JCTree.JCNewArray) init).elemtype instanceof JCTree.JCArrayTypeTree) {
+                JCTree.JCExpression element = ((JCTree.JCNewArray) init).elems.get(i);
+                if(element instanceof JCTree.JCNewArray) {
+                    element = ((JCTree.JCNewArray) element).elems.get(j);
+                    if(element instanceof JCTree.JCLiteral) {
+                        try {
+                            float f = Float.parseFloat(element.toString());
+                            return new FloatConst(f);
+                        } catch (NumberFormatException ex) {
+                            try {
+                                int inte = Integer.parseInt(element.toString());
+                                return new FixedConst(inte);
+                            } catch (NumberFormatException e) {
+                                throw new RuntimeException("Unexpected Literal: " + element);
+                            }
+                        }
+                    }
+                    if(element instanceof JCTree.JCIdent) {
+                        return new SymbExpr(element);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public static JCTree.JCExpression makeMeasureMaxCondition(Expr[][] qState, int qBit) {
