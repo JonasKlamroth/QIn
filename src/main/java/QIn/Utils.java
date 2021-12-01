@@ -202,6 +202,31 @@ public class Utils {
         return res;
     }
 
+    public static void anonymizePartialState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
+        for (int i = 0; i < qState.length; ++i) {
+            Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+            if(CLI.useReals) {
+                if(!(qState[i][0] instanceof Const)) {
+                    qState[i][0] = realVal;
+                }
+            } else {
+                if(qState[i][0] instanceof ComplexExpression) {
+                    ComplexExpression ce = (ComplexExpression) qState[i][0];
+                    Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+                    if (!(ce.getImg() instanceof Const)) {
+                        compVal = ce.getImg();
+                    }
+                    if (!(ce.getReal() instanceof Const)) {
+                        realVal = ce.getReal();
+                    }
+                    qState[i][0] = new ComplexExpression(realVal, compVal);
+                } else {
+                    throw new RuntimeException("Expected complex expression but got: " + qState[i][0]);
+                }
+            }
+        }
+    }
+
     public static void anonymizeState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
             for (int i = 0; i < qState.length; ++i) {
                 Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
@@ -271,19 +296,19 @@ public class Utils {
                     new Expr[]{
                             new ComplexExpression(
                                     new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(0)),
                                             TransUtils.M.Literal(0))),
                                     new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(i)),
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(0)),
                                             TransUtils.M.Literal(0))))
                     },
                     new Expr[]{
                             new ComplexExpression(
                                     new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(1)),
                                             TransUtils.M.Literal(0))),
                                     new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(i)),
+                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(1)),
                                             TransUtils.M.Literal(0))))
                     }
             });
