@@ -5,7 +5,7 @@ public class Grover {
       @*/
     public static int grover(int val) {
         float[][] m = getOracle(val);
-        CircuitMock circuit = new CircuitMock(2);
+        CircuitMock circuit = new CircuitMock(2, q_states, q_states_i);
         circuit.h(0);
         circuit.h(1);
         circuit.u(m, 0, 1);

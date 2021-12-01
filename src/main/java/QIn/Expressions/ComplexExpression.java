@@ -78,4 +78,13 @@ public class ComplexExpression extends Expr {
             return new ComplexExpression(e, new FixedConst(0));
         }
     }
+
+    public Expr getImg() {
+        return img;
+    }
+
+
+    public Expr getReal() {
+        return real;
+    }
 }

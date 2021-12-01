@@ -96,6 +96,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 if(fullMethod.selected.type.toString().equals(CIRCUIT_TYPE)) {
                     Expr[][] unitary = null;
                     int qBit = -1;
+                    Utils.anonymizePartialState(qState, qStateVars);
                     if(fullMethod.name.toString().equals("u")) {
                         assert methodInvocation.args.size() == 2;
                         if(methodInvocation.args.get(0) instanceof JCTree.JCIdent) {
