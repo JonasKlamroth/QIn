@@ -41,3 +41,21 @@ java -jar ./tools/JJBMC.jar Grover.java grover
 ```
 gradle testCaseStudies
 ```
+
+## Running Benchmark for qubits and gates
+- To run the Benchmarks for different number of qubits and gates we prepared the folder PerformanceTests. 
+- To run a single test run JJBMC as described in the previous section on one of the
+  Benchmark-Java-files. 
+- To run all benchmarks and reproduce the results shown in the paper just run the script "runPerformanceTests.sh". To do so make sure of two things:
+    - multitime is installed on your system:
+    ```
+    sudo apt-get install multitime
+    ```
+    - the scripts uses bashisms so make sure the script is run in a bash shell:
+    ```
+    bash ./runPerformanceTests.sh
+    ```
+
+
+## Running Benchmark for qubits and gates
+- To run the Benchmarks for different number of qubits and gates we prepared the folder PerformanceTests. 
