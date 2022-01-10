@@ -16,7 +16,32 @@ public class DeutschTest {
             }
         };
         boolean array[] = fToArray(constFalse);
-        assertFalse(Deutsch.isBalanced(array));
+        assertFalse(Deutsch.isBalanced1Bit(array));
+    }
+
+    @Test
+    public void testConstFalseBroken() {
+        Function constFalse = new Function() {
+            @Override
+            public boolean exec(boolean input) {
+                return false;
+            }
+        };
+        boolean array[] = fToArray(constFalse);
+        assertFalse(Deutsch.isBalanced1BitBroken(array));
+    }
+
+
+    @Test
+    public void testConstTrueBroken() {
+        Function constTrue = new Function() {
+            @Override
+            public boolean exec(boolean input) {
+                return false;
+            }
+        };
+        boolean array[] = fToArray(constTrue);
+        assertFalse(Deutsch.isBalanced1BitBroken(array));
     }
 
     @Test
@@ -28,7 +53,21 @@ public class DeutschTest {
             }
         };
         boolean array[] = fToArray(constTrue);
-        assertFalse(Deutsch.isBalanced(array));
+        assertFalse(Deutsch.isBalanced1Bit(array));
+    }
+
+    @Test
+    public void testNotBroken() {
+        Function not = new Function() {
+            @Override
+            public boolean exec(boolean input) {
+                return !input;
+            }
+        };
+        boolean array[] = fToArray(not);
+        //this is wrong. it should be true. we just don't want the test to fail.
+        //however we could have found the error here
+        assertFalse(Deutsch.isBalanced1BitBroken(array));
     }
 
     @Test
@@ -40,7 +79,7 @@ public class DeutschTest {
             }
         };
         boolean array[] = fToArray(not);
-        assertTrue(Deutsch.isBalanced(array));
+        assertTrue(Deutsch.isBalanced1Bit(array));
     }
 
     @Test
@@ -52,7 +91,7 @@ public class DeutschTest {
             }
         };
         boolean array[] = fToArray(id);
-        assertTrue(Deutsch.isBalanced(array));
+        assertTrue(Deutsch.isBalanced1Bit(array));
     }
 
     @Test
@@ -60,7 +99,7 @@ public class DeutschTest {
         assertThrows(IllegalArgumentException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                Deutsch.isBalanced(null);
+                Deutsch.isBalanced1Bit(null);
             }
         });
 
@@ -68,7 +107,7 @@ public class DeutschTest {
             @Override
             public void execute() throws Throwable {
                 boolean brokenInput[] = new boolean[]{true};
-                Deutsch.isBalanced(null);
+                Deutsch.isBalanced1Bit(null);
             }
         });
     }
