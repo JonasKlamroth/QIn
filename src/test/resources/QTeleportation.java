@@ -1,15 +1,22 @@
 
 public class QTeleportation {
-    public void generationTest(float a, float b) {
-        float[][] qStates_r = new float[3][2];
-        float[][] qStates_c = new float[3][2];
+
+    public static /*@ pure @*/ boolean isClose(float val, float to) {
+        //float roundError = 1.1920929E-7f;
+        float roundError = 1.0E-5f;
+        //float roundError = 0.01f;
+        return val < to + roundError && val > to - roundError;
+    }
+
+
+
+    /*@ requires isClose(a*a + b*b, 1.0f);
+      @ ensures a < b == \result;
+      @*/
+    public static boolean generationTest(float a, float b) {
+        float[] qStates_r = new float[]{a, b, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+        float[] qStates_c = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
         //0 is phi
-        qStates_r[0] = new float[]{a, b};
-        qStates_c[0] = new float[]{0.0f, 0.0f};
-        qStates_r[1] = new float[]{1.0f, 0.0f};
-        qStates_c[1] = new float[]{0.0f, 0.0f};
-        qStates_r[2] = new float[]{1.0f, 0.0f};
-        qStates_c[2] = new float[]{0.0f, 0.0f};
         CircuitMock c = new CircuitMock(3, qStates_r, qStates_c);
         //SymCircuit c = new SymCircuit(2, 0);
         //Create Bell-state for 1, 2
@@ -25,5 +32,6 @@ public class QTeleportation {
         if(b0) {
             c.z(2);
         }
+        return c.measureMax(2);
     }
 }

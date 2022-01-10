@@ -79,6 +79,9 @@ public class CLI implements Runnable {
                 String translation = api.prettyPrint(t);
                 if(outPath != null) {
                     File outFile = new File(outPath);
+                    if(outFile.exists()) {
+                        Files.delete(outFile.toPath());
+                    }
                     Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
                     System.out.println("Output written to: " + outFile.getAbsolutePath());
                 } else {

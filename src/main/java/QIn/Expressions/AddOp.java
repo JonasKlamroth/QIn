@@ -82,4 +82,9 @@ public class AddOp extends Expr {
         }
         return false;
     }
+
+    @Override
+    public Expr getAbs() {
+        return new AddOp(left.getAbs(), right.getAbs());
+    }
 }

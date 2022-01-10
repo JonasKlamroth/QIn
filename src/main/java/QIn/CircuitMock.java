@@ -4,16 +4,16 @@ public class CircuitMock {
     public CircuitMock(int numQbits) {
     }
 
-    public CircuitMock(int numQbits, float[][] initialStates) {
+    public CircuitMock(int numQbits, float[] initialStates) {
     }
 
-    public CircuitMock(int numQbits, long[][] initialStates) {
+    public CircuitMock(int numQbits, long[] initialStates) {
     }
 
-    public CircuitMock(int numQbits, int[][] initialStates) {
+    public CircuitMock(int numQbits, int[] initialStates) {
     }
 
-    public CircuitMock(int numQbits, float[][] initialStates, float[][] initialCStates) {
+    public CircuitMock(int numQbits, float[] initialStates, float[] initialCStates) {
     }
 
     public void h(int qbit) {

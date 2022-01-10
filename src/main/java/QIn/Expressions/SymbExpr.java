@@ -25,6 +25,11 @@ public class SymbExpr extends Expr {
     }
 
     @Override
+    public Expr getAbs() {
+        return new MultOp(this, this);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if(o instanceof SymbExpr) {
             return ((SymbExpr) o).expression.equals(this.expression);

@@ -203,7 +203,7 @@ public class Utils {
 
     public static void anonymizePartialState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
         for (int i = 0; i < qState.length; ++i) {
-            Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+            Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)));
             if(CLI.useReals) {
                 if(!(qState[i][0] instanceof Const)) {
                     qState[i][0] = realVal;
@@ -211,11 +211,11 @@ public class Utils {
             } else {
                 if(qState[i][0] instanceof ComplexExpression) {
                     ComplexExpression ce = (ComplexExpression) qState[i][0];
-                    Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
-                    if (!(ce.getImg() instanceof Const)) {
+                    Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)));
+                    if (ce.getImg() instanceof Const) {
                         compVal = ce.getImg();
                     }
-                    if (!(ce.getReal() instanceof Const)) {
+                    if (ce.getReal() instanceof Const) {
                         realVal = ce.getReal();
                     }
                     qState[i][0] = new ComplexExpression(realVal, compVal);
@@ -228,11 +228,11 @@ public class Utils {
 
     public static void anonymizeState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
             for (int i = 0; i < qState.length; ++i) {
-                Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+                Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)));
                 if(CLI.useReals) {
                     qState[i][0] = realVal;
                 } else {
-                    Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)), TransUtils.M.Literal(0)));
+                    Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)));
                     qState[i][0] = new ComplexExpression(realVal, compVal);
                 }
             }
@@ -289,34 +289,16 @@ public class Utils {
     }
 
     public static Expr[][] getInitialSymbState(int numQbits, JCTree.JCIdent state, JCTree.JCIdent cstate) {
-        List<Expr[][]> initialStates = new ArrayList<>();
-        for(int i = 0; i < numQbits; ++i) {
-            initialStates.add(new Expr[][]{
-                    new Expr[]{
-                            new ComplexExpression(
-                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(0)),
-                                            TransUtils.M.Literal(0))),
-                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(0)),
-                                            TransUtils.M.Literal(0))))
-                    },
-                    new Expr[]{
-                            new ComplexExpression(
-                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(1)),
-                                            TransUtils.M.Literal(0))),
-                                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(1)),
-                                            TransUtils.M.Literal(0))))
-                    }
-            });
+        int stateSize = 1 << numQbits;
+        Expr[][] newState = new Expr[stateSize][1];
+        for(int i = 0; i < stateSize; ++i) {
+            newState[i][0] = new ComplexExpression(
+                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i))),
+                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, cstate, TransUtils.M.Literal(i)))
+            );
         }
-        Expr[][] finalState = initialStates.get(0);
-        for(int i = 1; i < initialStates.size(); ++i) {
-            finalState = tensorProd(finalState, initialStates.get(i));
-        }
-        return finalState;
+        return newState;
+
     }
 
     public static void applySwap(Expr[][] qState, int qBit1, int qBit2) {
