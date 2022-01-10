@@ -7,7 +7,7 @@ QIn is a tool that is developed at [FZI](https://www.fzi.de/en/home/), which tra
 - Install docker if you do not have it already installed (e.g., via ``sudo curl -sSL https://get.docker.com/ | sh``).
 - For the following step, you might need to prefix the call with ``sudo `` if you are not a member of the docker group.
 - Run the interactive container via ``docker run -it jonasklamroth/qin``.
-- Run QIn as shown below in the section **Running QIn**.
+- Run QIn as shown below in the section **Running QIn** (multitime tool is not install in the container).
 
 ## Building QIn Manually 
 ### Requirements
@@ -34,7 +34,7 @@ java -jar QIn.jar src/test/resources/Grover.java -o Grover.java
 ## Running tools on translations
 - To run [JJBMC](https://github.com/jonasklamroth/JJBMC) on one of the examples you can either go to the JJBMC-Website or use the precompiled version in the tools folder. To run JJBMC on the grover case study use the following command: 
 ```
-java -jar ./tools/JJBMC.jar Grover.java grover
+java -jar ./tools/JJBMC.jar Grover.java grover2
 ```
 
 - To run the tests for the translations of the case studies run:
@@ -47,15 +47,12 @@ gradle testCaseStudies
 - To run a single test run JJBMC as described in the previous section on one of the
   Benchmark-Java-files. 
 - To run all benchmarks and reproduce the results shown in the paper just run the script "runPerformanceTests.sh". To do so make sure of two things:
-    - multitime is installed on your system:
+    - multitime is installed on your system (for Debian):
     ```
     sudo apt-get install multitime
     ```
-    - the scripts uses bashisms so make sure the script is run in a bash shell:
+    - the script uses bashisms so make sure the script is run in a bash shell:
     ```
     bash ./runPerformanceTests.sh
     ```
-
-
-## Running Benchmark for qubits and gates
-- To run the Benchmarks for different number of qubits and gates we prepared the folder PerformanceTests. 
+    
