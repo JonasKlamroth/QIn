@@ -83,6 +83,11 @@ public class MultOp extends Expr {
     }
 
     @Override
+    public Expr getAbs() {
+        return new MultOp(left.getAbs(), right.getAbs());
+    }
+
+    @Override
     public boolean equals(Object o) {
         if(o instanceof MultOp) {
             return ((MultOp) o).left.equals(this.left) && ((MultOp) o).right.equals(this.right);

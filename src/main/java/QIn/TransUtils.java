@@ -42,9 +42,7 @@ public class TransUtils {
                 for (Expr el : row) {
                     rowElements = rowElements.append(el.getSimplifiedAST().get(i));
                 }
-                JCTree.JCNewArray array = M.NewArray(M.Type(rowElements.get(0).type), List.nil(), rowElements);
-                array.type = new Type.ArrayType(rowElements.get(0).type, rowElements.get(0).type.tsym);
-                allElemnts = allElemnts.append(array);
+                allElemnts = allElemnts.appendList(rowElements);
             }
             JCTree.JCNewArray newArray = M.NewArray(M.Type(allElemnts.get(0).type), List.nil(), allElemnts);
             newArray.type = new Type.ArrayType(allElemnts.get(0).type, allElemnts.get(0).type.tsym);
@@ -188,16 +186,16 @@ public class TransUtils {
             if((i & (1 << shift)) != 0) {
                 Expr abs = qState[i][0].getAbs();
                 if(left == null) {
-                    left = abs.mult(abs);
+                    left = abs;
                 } else {
-                    left = left.add(abs.mult(abs));
+                    left = left.add(abs);
                 }
             } else {
                 Expr abs = qState[i][0].getAbs();
                 if(right == null) {
-                    right = abs.mult(abs);
+                    right = abs;
                 } else {
-                    right = right.add(abs.mult(abs));
+                    right = right.add(abs);
                 }
             }
         }

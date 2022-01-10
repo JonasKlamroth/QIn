@@ -5,10 +5,14 @@ public class FloatConst extends Const {
         super(val);
     }
 
+    public float getVal() {
+        return (float)this.val;
+    }
+
     @Override
     public Expr add(Expr a) {
         if(a instanceof FloatConst) {
-            return new FloatConst((float) ((FloatConst) a).val + (float)this.val);
+            return new FloatConst(((FloatConst) a).getVal() + getVal());
         }
         return super.add(a);
     }
@@ -43,5 +47,13 @@ public class FloatConst extends Const {
             return ((FloatConst) o).val.equals(this.val);
         }
         return false;
+    }
+
+    @Override
+    public Expr getAbs() {
+        if(getVal() >= 0.f) {
+            return this;
+        }
+        return new FloatConst(-getVal());
     }
 }

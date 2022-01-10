@@ -37,7 +37,5 @@ public abstract class Expr {
         return new AddOp(this, e);
     }
 
-    public Expr getAbs() {
-        return this;
-    }
+    abstract public Expr getAbs();
 }

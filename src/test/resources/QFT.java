@@ -24,12 +24,12 @@ public class QFT {
             new float[]{0.0f , 0.0f, 0.0f, 0.0f},
     };
 
-    /*@ requires qstate != null && qstatei != null && qstate.length == 2 && qstatei.length == 2;
-      @ requires (\forall int i; i >= 0 && i < qstate.length; qstate[i] != null && qstatei[i] != null && qstate[i].length == 1 && qstatei[i].length == 1);
-      @ requires (\exists int i; i >= 0 && i < qstate.length; qstate[i][0] == 1.0f &&
-      @     (\forall int j; j >= 0 && j < qstate.length; qstate[i][0] == 0.0f));
+    /*@ requires qstate != null && qstatei != null && qstate.length == 8 && qstatei.length == 8;
+      @ requires (\exists int i; i >= 0 && i < qstate.length; qstate[i] == 1.0f &&
+      @     (\forall int j; j >= 0 && j < qstate.length; (i != j) ==> qstate[j] == 0.0f));
+      @ requires (\forall int i; i >= 0 && i < qstate.length; qstatei[i] == 0.0f);
       @*/
-    public void qft(float[][] qstate, float[][] qstatei) {
+    public void qft(float[] qstate, float[] qstatei) {
         CircuitMock c = new CircuitMock(3, qstate, qstatei);
         c.h(2);
         c.u(R2, R2i,1, 2);

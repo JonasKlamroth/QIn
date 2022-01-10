@@ -1,14 +1,14 @@
 public class QBenchmark {
 
     public static void qbits_1() {
-        CircuitMock c = new CircuitMock(1, q_states, q_states_i);
+        CircuitMock c = new CircuitMock(1);
         c.h(0);
         boolean b_0 = c.measureMax(0);
         assert !b_0;
     }
 
     public static void qbits_2() {
-        CircuitMock c = new CircuitMock(2, q_states, q_states_i);
+        CircuitMock c = new CircuitMock(2);
         c.h(0);
         c.h(1);
         boolean b_0 = c.measureMax(0);
@@ -19,7 +19,7 @@ public class QBenchmark {
 
 
     public static void qbits_3() {
-        CircuitMock c = new CircuitMock(3, q_states, q_states_i);
+        CircuitMock c = new CircuitMock(3);
         c.h(0);
         c.h(1);
         c.h(2);
@@ -32,7 +32,7 @@ public class QBenchmark {
     }
 
     public static void qbits_4() {
-        CircuitMock c = new CircuitMock(4, q_states, q_states_i);
+        CircuitMock c = new CircuitMock(4);
         c.h(0);
         c.h(1);
         c.h(2);
@@ -48,7 +48,7 @@ public class QBenchmark {
     }
 
     public static void qbits_5() {
-        CircuitMock c = new CircuitMock(5, q_states, q_states_i);
+        CircuitMock c = new CircuitMock(5);
         c.h(0);
         c.h(1);
         c.h(2);
@@ -67,7 +67,7 @@ public class QBenchmark {
     }
 
     public static void qbits_6() {
-        CircuitMock c = new CircuitMock(6, q_states, q_states_i);
+        CircuitMock c = new CircuitMock(6);
         c.h(0);
         c.h(1);
         c.h(2);

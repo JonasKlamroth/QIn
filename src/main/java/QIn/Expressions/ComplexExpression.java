@@ -52,7 +52,7 @@ public class ComplexExpression extends Expr {
     }
 
     public Expr getAbs() {
-        return this.real.mult(this.real).add(this.img.mult(this.img));
+        return this.real.getAbs().add(this.img.getAbs());
     }
 
     @Override
@@ -82,7 +82,6 @@ public class ComplexExpression extends Expr {
     public Expr getImg() {
         return img;
     }
-
 
     public Expr getReal() {
         return real;
