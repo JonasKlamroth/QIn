@@ -20,7 +20,7 @@ public class Deutsch {
         c.h(0);
         c.u(m, 0, 1);
         c.h(0);
-        return c.measureMax(0);
+        return c.measure(0);
     }
 
     /*@ requires f != null && f.length == 2;
@@ -44,7 +44,7 @@ public class Deutsch {
         c.h(0);
         c.u(m, 0, 1);
         c.h(0);
-        return c.measureMax(0);
+        return c.measure(0);
     }
 
 
@@ -76,7 +76,7 @@ public class Deutsch {
         c.u(m, 0, 1, 2);
         c.h(1);
         c.h(0);
-        return c.measureMax(0) || c.measureMax(1);
+        return c.measure(0) || c.measure(1);
     }
 
     /*@ requires f != null && f.length == 8;
@@ -116,7 +116,7 @@ public class Deutsch {
         c.h(2);
         c.h(1);
         c.h(0);
-        return c.measureMax(0) || c.measureMax(1) || c.measureMax(2);
+        return c.measure(0) || c.measure(1) || c.measure(2);
     }
 
     /*@ requires f != null && f.length == 16;
@@ -174,7 +174,7 @@ public class Deutsch {
         c.h(2);
         c.h(1);
         c.h(0);
-        return c.measureMax(0) || c.measureMax(1) || c.measureMax(2) || c.measure(3);
+        return c.measure(0) || c.measure(1) || c.measure(2) || c.measure(3);
     }
 
     public static /*@ pure */ int count(boolean[] f) {

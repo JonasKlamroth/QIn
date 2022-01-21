@@ -13,7 +13,7 @@ public class QBenchmark3S {
         }
         CircuitMock c = new CircuitMock(1, qstate, qstatei);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0 != q_test;
     }
 
@@ -29,7 +29,7 @@ public class QBenchmark3S {
         }
         CircuitMock c = new CircuitMock(2, qstate, qstatei);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0 != q_test;
     }
 
@@ -45,7 +45,7 @@ public class QBenchmark3S {
         }
         CircuitMock c = new CircuitMock(3, qstate, qstatei);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0 != q_test;
     }
 
@@ -61,7 +61,7 @@ public class QBenchmark3S {
         }
         CircuitMock c = new CircuitMock(4, qstate, qstatei);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0 != q_test;
     }
 
@@ -78,7 +78,7 @@ public class QBenchmark3S {
         }
         CircuitMock c = new CircuitMock(5, qstate, qstatei);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0 != q_test;
     }
 
@@ -94,7 +94,7 @@ public class QBenchmark3S {
         }
         CircuitMock c = new CircuitMock(6, qstate, qstatei);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0 != q_test;
     }
 
@@ -111,7 +111,7 @@ public class QBenchmark3S {
         }
         CircuitMock c = new CircuitMock(7, qstate, qstatei);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0 != q_test;
     }
 }

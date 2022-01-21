@@ -40,11 +40,11 @@ public class QFT {
         c.h(1);
         c.swap(0, 1);
         c.swap(0, 2);
-        boolean b0 = c.measureMax(0);
+        boolean b0 = c.measure(0);
         assert b0 = false;
-        boolean b1 = c.measureMax(1);
+        boolean b1 = c.measure(1);
         assert b1 = false;
-        boolean b2 = c.measureMax(2);
+        boolean b2 = c.measure(2);
         assert b2 = false;
     }
 }

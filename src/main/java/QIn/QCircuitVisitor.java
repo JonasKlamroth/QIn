@@ -149,7 +149,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         Utils.applySwap(qState, qBit1, qBit2);
                         newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
                         return super.visitMethodInvocation(node, p);
-                    } else if(fullMethod.name.toString().equals("measureMax")) {
+                    } else if(fullMethod.name.toString().equals("measure")) {
                         Utils.anonymizeState(qState, qStateVars);
                         qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
@@ -167,7 +167,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         Utils.anonymizeState(qState, qStateVars);
 
                         return tmp;
-                    } else if(fullMethod.name.toString().equals("measure")) {
+                    } else if(fullMethod.name.toString().equals("measurePos")) {
                         Utils.anonymizeState(qState, qStateVars);
                         qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);

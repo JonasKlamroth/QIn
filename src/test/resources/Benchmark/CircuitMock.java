@@ -35,11 +35,11 @@ public class CircuitMock {
     public void u(int[][] m, int... qbits) {
     }
 
-    public boolean measureMax(int qBit) {
+    public boolean measure(int qBit) {
         return true;
     }
 
-    public boolean measure(int qBit) {
+    public boolean measurePos(int qBit) {
         return true;
     }
 }

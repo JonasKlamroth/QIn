@@ -40,11 +40,11 @@ public class CircuitMock {
     public void swap(int qbit1, int qbit2) {
     }
 
-    public boolean measureMax(int qBit) {
+    public boolean measure(int qBit) {
         return true;
     }
 
-    public boolean measure(int qBit) {
+    public boolean measurePos(int qBit) {
         return true;
     }
 }

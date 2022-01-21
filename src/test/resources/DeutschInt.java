@@ -12,6 +12,6 @@ public class DeutschInt {
         c.h(0);
         c.u(m, 0, 1);
         c.h(0);
-        return c.measureMax(0);
+        return c.measure(0);
     }
 }
