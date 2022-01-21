@@ -3,7 +3,7 @@ public class QBenchmark {
     public static void qbits_1() {
         CircuitMock c = new CircuitMock(1);
         c.h(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -11,9 +11,9 @@ public class QBenchmark {
         CircuitMock c = new CircuitMock(2);
         c.h(0);
         c.h(1);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
-        boolean b_1 = c.measureMax(1);
+        boolean b_1 = c.measure(1);
         assert !b_1;
     }
 
@@ -23,11 +23,11 @@ public class QBenchmark {
         c.h(0);
         c.h(1);
         c.h(2);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
-        boolean b_1 = c.measureMax(1);
+        boolean b_1 = c.measure(1);
         assert !b_1;
-        boolean b_2 = c.measureMax(2);
+        boolean b_2 = c.measure(2);
         assert !b_2;
     }
 
@@ -37,13 +37,13 @@ public class QBenchmark {
         c.h(1);
         c.h(2);
         c.h(3);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
-        boolean b_1 = c.measureMax(1);
+        boolean b_1 = c.measure(1);
         assert !b_1;
-        boolean b_2 = c.measureMax(2);
+        boolean b_2 = c.measure(2);
         assert !b_2;
-        boolean b_3 = c.measureMax(3);
+        boolean b_3 = c.measure(3);
         assert !b_3;
     }
 
@@ -54,15 +54,15 @@ public class QBenchmark {
         c.h(2);
         c.h(3);
         c.h(4);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
-        boolean b_1 = c.measureMax(1);
+        boolean b_1 = c.measure(1);
         assert !b_1;
-        boolean b_2 = c.measureMax(2);
+        boolean b_2 = c.measure(2);
         assert !b_2;
-        boolean b_3 = c.measureMax(3);
+        boolean b_3 = c.measure(3);
         assert !b_3;
-        boolean b_4 = c.measureMax(4);
+        boolean b_4 = c.measure(4);
         assert !b_4;
     }
 
@@ -74,17 +74,17 @@ public class QBenchmark {
         c.h(3);
         c.h(4);
         c.h(5);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
-        boolean b_1 = c.measureMax(1);
+        boolean b_1 = c.measure(1);
         assert !b_1;
-        boolean b_2 = c.measureMax(2);
+        boolean b_2 = c.measure(2);
         assert !b_2;
-        boolean b_3 = c.measureMax(3);
+        boolean b_3 = c.measure(3);
         assert !b_3;
-        boolean b_4 = c.measureMax(4);
+        boolean b_4 = c.measure(4);
         assert !b_4;
-        boolean b_5 = c.measureMax(5);
+        boolean b_5 = c.measure(5);
         assert !b_5;
     }
 

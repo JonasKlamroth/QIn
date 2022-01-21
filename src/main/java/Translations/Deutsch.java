@@ -200,7 +200,7 @@ public class Deutsch {
    */
 
   public static boolean isBalanced4Bit(/*@ non_null */ 
-  boolean[] f, boolean $$_tmp_measureParam0) {
+  boolean[] f) {
     if (f == null || f.length != 16) {
       throw new IllegalArgumentException("Input for Deutschalgorithm has to be boolean array of size 2 ** n.");
     }
@@ -261,14 +261,14 @@ public class Deutsch {
       $$_tmp_measureVar10 = false;
     }
     boolean $$_tmp_measureVar11;
-    if ($$_tmp_measureParam0) {
-      q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F, q_state_0[4], q_state_0[5], 0.0F, 0.0F, q_state_0[8], q_state_0[9], 0.0F, 0.0F, q_state_0[12], q_state_0[13], 0.0F, 0.0F, q_state_0[16], q_state_0[17], 0.0F, 0.0F, q_state_0[20], q_state_0[21], 0.0F, 0.0F, q_state_0[24], q_state_0[25], 0.0F, 0.0F, q_state_0[28], q_state_0[29], 0.0F, 0.0F};
-      q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F, q_state_1[4], q_state_1[5], 0.0F, 0.0F, q_state_1[8], q_state_1[9], 0.0F, 0.0F, q_state_1[12], q_state_1[13], 0.0F, 0.0F, q_state_1[16], q_state_1[17], 0.0F, 0.0F, q_state_1[20], q_state_1[21], 0.0F, 0.0F, q_state_1[24], q_state_1[25], 0.0F, 0.0F, q_state_1[28], q_state_1[29], 0.0F, 0.0F};
-      $$_tmp_measureVar11 = false;
-    } else {
+    if (q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15] + q_state_0[18] * q_state_0[18] + q_state_1[18] * q_state_1[18] + q_state_0[19] * q_state_0[19] + q_state_1[19] * q_state_1[19] + q_state_0[22] * q_state_0[22] + q_state_1[22] * q_state_1[22] + q_state_0[23] * q_state_0[23] + q_state_1[23] * q_state_1[23] + q_state_0[26] * q_state_0[26] + q_state_1[26] * q_state_1[26] + q_state_0[27] * q_state_0[27] + q_state_1[27] * q_state_1[27] + q_state_0[30] * q_state_0[30] + q_state_1[30] * q_state_1[30] + q_state_0[31] * q_state_0[31] + q_state_1[31] * q_state_1[31] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13] + q_state_0[16] * q_state_0[16] + q_state_1[16] * q_state_1[16] + q_state_0[17] * q_state_0[17] + q_state_1[17] * q_state_1[17] + q_state_0[20] * q_state_0[20] + q_state_1[20] * q_state_1[20] + q_state_0[21] * q_state_0[21] + q_state_1[21] * q_state_1[21] + q_state_0[24] * q_state_0[24] + q_state_1[24] * q_state_1[24] + q_state_0[25] * q_state_0[25] + q_state_1[25] * q_state_1[25] + q_state_0[28] * q_state_0[28] + q_state_1[28] * q_state_1[28] + q_state_0[29] * q_state_0[29] + q_state_1[29] * q_state_1[29]) {
       q_state_0 = new float[]{0.0F, 0.0F, q_state_0[2], q_state_0[3], 0.0F, 0.0F, q_state_0[6], q_state_0[7], 0.0F, 0.0F, q_state_0[10], q_state_0[11], 0.0F, 0.0F, q_state_0[14], q_state_0[15], 0.0F, 0.0F, q_state_0[18], q_state_0[19], 0.0F, 0.0F, q_state_0[22], q_state_0[23], 0.0F, 0.0F, q_state_0[26], q_state_0[27], 0.0F, 0.0F, q_state_0[30], q_state_0[31]};
       q_state_1 = new float[]{0.0F, 0.0F, q_state_1[2], q_state_1[3], 0.0F, 0.0F, q_state_1[6], q_state_1[7], 0.0F, 0.0F, q_state_1[10], q_state_1[11], 0.0F, 0.0F, q_state_1[14], q_state_1[15], 0.0F, 0.0F, q_state_1[18], q_state_1[19], 0.0F, 0.0F, q_state_1[22], q_state_1[23], 0.0F, 0.0F, q_state_1[26], q_state_1[27], 0.0F, 0.0F, q_state_1[30], q_state_1[31]};
       $$_tmp_measureVar11 = true;
+    } else {
+      q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F, q_state_0[4], q_state_0[5], 0.0F, 0.0F, q_state_0[8], q_state_0[9], 0.0F, 0.0F, q_state_0[12], q_state_0[13], 0.0F, 0.0F, q_state_0[16], q_state_0[17], 0.0F, 0.0F, q_state_0[20], q_state_0[21], 0.0F, 0.0F, q_state_0[24], q_state_0[25], 0.0F, 0.0F, q_state_0[28], q_state_0[29], 0.0F, 0.0F};
+      q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F, q_state_1[4], q_state_1[5], 0.0F, 0.0F, q_state_1[8], q_state_1[9], 0.0F, 0.0F, q_state_1[12], q_state_1[13], 0.0F, 0.0F, q_state_1[16], q_state_1[17], 0.0F, 0.0F, q_state_1[20], q_state_1[21], 0.0F, 0.0F, q_state_1[24], q_state_1[25], 0.0F, 0.0F, q_state_1[28], q_state_1[29], 0.0F, 0.0F};
+      $$_tmp_measureVar11 = false;
     }
     return $$_tmp_measureVar8 || $$_tmp_measureVar9 || $$_tmp_measureVar10 || $$_tmp_measureVar11;
   }

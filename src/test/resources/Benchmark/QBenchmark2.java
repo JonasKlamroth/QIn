@@ -3,7 +3,7 @@ public class QBenchmark2 {
     public static void gatesTest_1_1() {
         CircuitMock c = new CircuitMock(1);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -11,7 +11,7 @@ public class QBenchmark2 {
         CircuitMock c = new CircuitMock(1);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -20,7 +20,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -30,7 +30,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -41,7 +41,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -53,7 +53,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -66,7 +66,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -81,7 +81,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -96,14 +96,14 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
     public static void gatesTest_3_1() {
         CircuitMock c = new CircuitMock(3);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -111,7 +111,7 @@ public class QBenchmark2 {
         CircuitMock c = new CircuitMock(3);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -120,7 +120,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -130,7 +130,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -141,7 +141,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -153,7 +153,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -166,7 +166,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -181,7 +181,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -196,14 +196,14 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
     public static void gatesTest_5_1() {
         CircuitMock c = new CircuitMock(5);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -211,7 +211,7 @@ public class QBenchmark2 {
         CircuitMock c = new CircuitMock(5);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -220,7 +220,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -230,7 +230,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -241,7 +241,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -253,7 +253,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -266,7 +266,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -281,7 +281,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert !b_0;
     }
 
@@ -296,7 +296,7 @@ public class QBenchmark2 {
         c.x(0);
         c.x(0);
         c.x(0);
-        boolean b_0 = c.measureMax(0);
+        boolean b_0 = c.measure(0);
         assert b_0;
     }
 
@@ -311,7 +311,7 @@ public class QBenchmark2 {
         c.x(4);
         c.x(4);
         c.x(4);
-        boolean b_0 = c.measureMax(4);
+        boolean b_0 = c.measure(4);
         assert b_0;
     }
 }

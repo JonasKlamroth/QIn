@@ -13,8 +13,8 @@ public class QTeleportationInt {
         c.cx(1, 2);
         c.cx(0, 1);
         c.h(0);
-        boolean b0 = c.measure(0);
-        boolean b1 = c.measure(1);
+        boolean b0 = c.measurePos(0);
+        boolean b1 = c.measurePos(1);
         if(b1) {
             c.x(2);
         }
