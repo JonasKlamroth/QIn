@@ -1,13 +1,15 @@
-QIn is a tool that is developed at [FZI](https://www.fzi.de/en/home/), which translates quantum circuits into Java code and makes the accessible to software verification/validation tools aimed at Java code. To build QIn we provide 3 possibilities:
+QIn is a tool that is developed at [FZI](https://www.fzi.de/en/home/), which translates quantum circuits into Java code and thus makes quantum circuits the accessible to software verification/validation tools aimed at Java code. To build QIn we provide 3 possibilities:
 - Build it manually.
 - Use our prebuilt docker image (this may reduce performance).
-- Use the [prebuilt version](https://github.com/JonasKlamroth/QIn/tree/sefm21/bin/QIn.jar).
+- Use the [prebuilt version](https://github.com/JonasKlamroth/QIn/tree/main/bin/QIn.jar).
 
 ## Using the Docker Image
 - Install docker if you do not have it already installed (e.g., via ``sudo curl -sSL https://get.docker.com/ | sh``).
 - For the following step, you might need to prefix the call with ``sudo `` if you are not a member of the docker group.
 - Run the interactive container via ``docker run -it jonasklamroth/qin``.
-- Run QIn as shown below in the section **Running QIn** (multitime tool is not install in the container).
+- Run QIn as shown below in the section **Running QIn** (multitime for the benchmark is already installed).
+- to copy a file back to your host system use: docker cp [container-id]:/QIn/grover.java grover.java (for the grover case study)
+- get container id with docker ps
 
 ## Building QIn Manually 
 ### Requirements
@@ -55,4 +57,11 @@ gradle testCaseStudies
     ```
     bash ./runPerformanceTests.sh
     ```
-    
+## Writing own Circuits
+To write your own quantum circuits we provide an interface similar to those of Qiskit and Cirq: [CircuitMock](https://github.com/JonasKlamroth/QIn/tree/main/src/java/QIn/CircuitMock.java)):
+- Create a circuit object: ```CircuitMock c = new CircuitMock(numQubits)``` (numQubits is the number of qubits for that circuit)
+- call methods to apply gates: ```c.h(1)``` (to apply a a hadamard gate to qubit 1)
+  - supported standard gates for now are: h (Hadamard), x (NOT), z (Z-Rotation), cx (CONTROLLED NOT), CZ (CONTROLLED Z)
+  - any arbitrary gate can be applied by providing the corresponding matrix: ```c.u(m, m_i, qbits...)``` where m and m_i are real and complex parts of the matrix for the gate you want to apply and qbits are the bits you want to apply it to (have to be adjacent qubits)
+- same for measurements: ```c.measure(0)``` (to measure the 0th qubit, measuremtnes are the probabilistic measurement presented in the paper)
+
