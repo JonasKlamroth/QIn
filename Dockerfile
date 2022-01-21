@@ -11,6 +11,6 @@ COPY ./PerformanceTests /QIn/PerformanceTests
 WORKDIR /QIn
 
 RUN gradle fatJar
-RUN apt-get install multitime
+RUN apt-get update && apt-get install multitime
 
 CMD /bin/sh
