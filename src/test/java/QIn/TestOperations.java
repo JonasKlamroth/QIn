@@ -1,11 +1,18 @@
 package QIn;
 
 import QIn.Expressions.Expr;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestOperations {
+
+    @BeforeAll
+    public static void setUp() {
+        CLI.useFix = false;
+        CLI.useReals = false;
+    }
 
     @Test
     public void testSwap() {
