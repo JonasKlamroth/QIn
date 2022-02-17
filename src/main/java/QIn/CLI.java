@@ -1,7 +1,8 @@
 package QIn;
-
+import QIn.QASMLexer;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import org.antlr.v4.runtime.tree.*;
 import org.jmlspecs.openjml.Factory;
 import org.jmlspecs.openjml.IAPI;
 import org.jmlspecs.openjml.JmlTree;
@@ -11,6 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 @CommandLine.Command(name = "CircTrans", header = "@|bold translate quantum circuits to plain java |@")
 public class CLI implements Runnable {
@@ -57,7 +63,16 @@ public class CLI implements Runnable {
             e.printStackTrace();
             throw new RuntimeException("Error creating api: " + e.getMessage());
         }
+
         java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
+
+        //parse qasm here
+        try {
+            parseQasm();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         int a = 0;
         try {
             a = api.typecheck(cu);
@@ -91,6 +106,17 @@ public class CLI implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void parseQasm() throws IOException {
+        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromFileName("test_circuit.qasm"));
+        CommonTokenStream commonTokenStream = new CommonTokenStream(qasmLexer);
+
+        QIn.QASMParser qasmParser = new QIn.QASMParser(commonTokenStream);
+
+        ParseTree parseTree = qasmParser.mainprog();
+        ParseTreeWalker.DEFAULT.walk((ParseTreeListener) new qasm_listener(), parseTree);
+
     }
 
     private JCTree rewriteAssert(JmlTree.JmlCompilationUnit it, Context ctx) {
