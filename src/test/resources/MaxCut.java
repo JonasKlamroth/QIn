@@ -3,12 +3,12 @@ class MaxCut{
     public static boolean[] solve() {
 
         //optimal parameters for qaoa
-        float ss = 13.9720198865283f; //Rx
-        float y = 2.07703556549873f; //Rz
-        float cos_ss2 = 0.763019458f;
-        float sin_ss2 = 0.64637551524f;
-        float cos_y2 = 0.50749797111f;
-        float sin_y2 = 0.86165295178f;
+        float ss = -11.2055919296600f; //Rx
+        float y = 2.05324703239788f; //Rz
+        float cos_ss2 = 0.77732784406f;
+        float sin_ss2 = 0.62909571834f;
+        float cos_y2 = 0.51771056098f;
+        float sin_y2 = 0.85555582812f;
 
         final float[][] rx = new float[][]{
                 new float[]{cos_ss2 , 0.0f},
@@ -30,34 +30,51 @@ class MaxCut{
 
         CircuitMock c = new CircuitMock( 4);
 
+
+
         c.h(0);
         c.h(1);
         c.h(2);
         c.h(3);
 
-        c.cx(1, 0);
-        c.u(rz, rz_i, 0);
-        c.cx(1, 0);
-
-        c.cx(2, 0);
-        c.u(rz, rz_i, 0);
-        c.cx(2, 0);
-
-        c.cx(2, 1);
-        c.cx(3, 0);
-        c.u(rz, rz_i, 0);
+        c.swap(0, 1);
+        c.cx(0, 1);
         c.u(rz, rz_i, 1);
-        c.cx(2, 1);
-        c.cx(3, 0);
+        c.cx(0, 1);
+        c.swap(0, 1);
+
+        c.swap(1, 2);
+        c.swap(0, 1);
+        c.cx(0, 1);
+        c.u(rz, rz_i, 1);
+        c.cx(0, 1);
+        c.swap(0, 1);
+        c.swap(1, 2);
+
+        c.swap(1,2);
+        c.cx(1, 2);
+        c.u(rz, rz_i, 2);
+        c.cx(1, 2);
+
+        c.swap(2,3);
+        c.swap(1,2);
+        c.swap(0,1);
+        c.cx(0, 1);
+        c.u(rz, rz_i, 1);
+        c.cx(0, 1);
+        c.swap(0,1);
+        c.swap(1,2);
+        c.swap(2,3);
+
 
         c.u(rx, rx_i, 0);
         c.u(rx, rx_i, 1);
 
-        c.cx(3, 2);
-
-        c.u(rz, rz_i, 2);
-
-        c.cx(3, 2);
+        c.swap(2,3);
+        c.cx(2, 3);
+        c.u(rz, rz_i, 3);
+        c.cx(2, 3);
+        c.swap(2,3);
 
         c.u(rx, rx_i, 2);
         c.u(rx, rx_i, 3);
