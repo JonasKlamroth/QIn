@@ -33,7 +33,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
         super(context, maker);
         this.treeutils = JmlTreeUtils.instance(context);
         this.syms = Symtab.instance(context);
-        this.utils = org.jmlspecs.openjml.Utils.instance(context);
+        utils = org.jmlspecs.openjml.Utils.instance(context);
     }
 
     @Override
@@ -131,7 +131,18 @@ public class QCircuitVisitor extends JmlTreeCopier {
                                 int size = (int)Math.pow(2, methodInvocation.args.size() - 1);
                                 unitary = TransUtils.getUnitaryFromIdent((JCTree.JCIdent) methodInvocation.args.get(0), size);
                             }
-                            qBit = Integer.parseInt(methodInvocation.args.get(1).toString());
+                            try {
+                                qBit = Integer.parseInt(methodInvocation.args.get(1).toString());
+                                int tmp = qBit;
+                                for (int i = 2; i < methodInvocation.args.size(); ++i) {
+                                    if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
+                                        throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
+                                    }
+                                    tmp += 1;
+                                }
+                            } catch (NumberFormatException e) {
+                                throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
+                            }
                         } else if(methodInvocation.args.size() >= 3) {
                             if (methodInvocation.args.get(0) instanceof JCTree.JCIdent && methodInvocation.args.get(1) instanceof JCTree.JCIdent) {
                                 int size = (int)Math.pow(2, methodInvocation.args.size() - 2);
@@ -156,9 +167,6 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
                         int qBit1 = Integer.parseInt(methodInvocation.args.get(0).toString());
                         int qBit2 = Integer.parseInt(methodInvocation.args.get(1).toString());
-                        if(qBit1 + 1 != qBit2) {
-                            throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")");
-                        }
                         Utils.applySwap(qState, qBit1, qBit2);
                         newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
                         return super.visitMethodInvocation(node, p);
@@ -211,6 +219,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                             if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
                                 throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
                             }
+                            tmp += 1;
                         }
 
                     }

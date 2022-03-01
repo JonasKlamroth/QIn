@@ -29,10 +29,18 @@ public class CircuitMock {
     public void cz(int cqbit, int tqbit) {
     }
 
-    public void u(float[][] m, int... qbits) {
+    public void cxx(int cqbit1, int cqbit2, int tqbit) {
     }
 
-    public void u(int[][] m, int... qbits) {
+    public void u(float[][] m, int... qbits) {
+    }
+    public void u(float[][] m, float[][]m_i, int... qbits) {
+    }
+
+    public void u(int[][] m, int qbits) {
+    }
+
+    public void swap(int qbit1, int qbit2) {
     }
 
     public boolean measure(int qBit) {
