@@ -25,8 +25,17 @@ public class Utils {
             {0.0f, 1.0f, 0.0f, 0.0f},
             {0.0f, 0.0f, 1.0f, 0.0f},
             {0.0f, 0.0f, 0.0f, -1.0f}};
+    public static final float[][] CCX = new float[][]{
+            {1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}};
 
-    public static Expr[][] getExprMatrix(float[][] m) {
+public static Expr[][] getExprMatrix(float[][] m) {
         Expr[][] res = new Expr[m.length][m[0].length];
         for(int i = 0; i < m.length; ++i) {
             for(int j = 0; j < m[0].length; ++j) {
@@ -169,6 +178,9 @@ public class Utils {
         if(name.equals("z")) {
             return getExprMatrix(Z);
         }
+        if(name.equals("cxx")) {
+            return getExprMatrix(CCX);
+        }
         throw new AssertionError("unsupported unitary " + name);
     }
 
@@ -303,6 +315,9 @@ public class Utils {
 
     public static void applySwap(Expr[][] qState, int qBit1, int qBit2) {
         int stateSize = qState.length;
+        int numQbits = log2(stateSize);
+        qBit1 = numQbits - qBit1 - 1;
+        qBit2 = numQbits - qBit2 - 1;
         for(int i = 0; i < stateSize; ++i) {
             //swap bits on positions qBit1 and qBit2 and exchange the corresponding array elements
             int x = ((i >> qBit1) ^ (i >> qBit2)) & 1;

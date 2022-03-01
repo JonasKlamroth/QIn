@@ -19,14 +19,41 @@ public class TestOperations {
         Expr[][] state = Utils.getInitialState(3);
         state = Utils.apply(Utils.getExprMatrix(Utils.X), 0, state);
         Utils.applySwap(state, 0, 2);
-        assertEquals(matrixToString(state), "0.0f + 0.0fi,\n" +
+        assertEquals( "0.0f + 0.0fi,\n" +
                 "1.0f + 0.0fi,\n" +
                 "0.0f + 0.0fi,\n" +
                 "0.0f + 0.0fi,\n" +
                 "0.0f + 0.0fi,\n" +
                 "0.0f + 0.0fi,\n" +
                 "0.0f + 0.0fi,\n" +
-                "0.0f + 0.0fi,\n");
+                "0.0f + 0.0fi,\n",
+                matrixToString(state));
+        state = Utils.getInitialState(3);
+        state = Utils.apply(Utils.getExprMatrix(Utils.X), 2, state);
+        Utils.applySwap(state, 0, 2);
+        assertEquals("0.0f + 0.0fi,\n" +
+                "0.0f + 0.0fi,\n" +
+                "0.0f + 0.0fi,\n" +
+                "0.0f + 0.0fi,\n" +
+                "1.0f + 0.0fi,\n" +
+                "0.0f + 0.0fi,\n" +
+                "0.0f + 0.0fi,\n" +
+                "0.0f + 0.0fi,\n",
+                matrixToString(state));
+        state = Utils.getInitialState(3);
+        state = Utils.apply(Utils.getExprMatrix(Utils.X), 2, state);
+        System.out.println(matrixToString(state));
+        Utils.applySwap(state, 0, 1);
+        assertEquals("0.0f + 0.0fi,\n" +
+                        "1.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,\n",
+                matrixToString(state));
+
     }
 
     @Test
@@ -63,7 +90,7 @@ public class TestOperations {
         StringBuilder sb = new StringBuilder();
         for(Expr[] a : m) {
             for(Expr s : a) {
-                sb.append(s.simplify() + ",");
+                sb.append(s.simplify()).append(",");
             }
             sb.append("\n");
         }
