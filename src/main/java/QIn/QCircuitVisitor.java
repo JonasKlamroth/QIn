@@ -217,7 +217,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         int tmp = qBit;
                         for (int i = 1; i < methodInvocation.args.size(); ++i) {
                             if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
-                                throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
+                                throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-operations if needed. (Gate: " + node + ")" );
                             }
                             tmp += 1;
                         }
