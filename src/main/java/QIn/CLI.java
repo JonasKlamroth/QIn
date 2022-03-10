@@ -1,5 +1,4 @@
 package QIn;
-import QIn.QASMLexer;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import org.antlr.v4.runtime.tree.*;
