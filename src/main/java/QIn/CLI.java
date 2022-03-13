@@ -65,9 +65,11 @@ public class CLI implements Runnable {
 
         java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
 
+        fileName.endsWith(".qasm");
         //parse qasm here
         try {
             parseQasm();
+            return;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -108,13 +110,17 @@ public class CLI implements Runnable {
     }
 
     public void parseQasm() throws IOException {
-        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromFileName("test_circuit.qasm"));
+        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromFileName("simple_test_circuit.qasm"));
         CommonTokenStream commonTokenStream = new CommonTokenStream(qasmLexer);
 
         QIn.QASMParser qasmParser = new QIn.QASMParser(commonTokenStream);
 
         ParseTree parseTree = qasmParser.mainprog();
-        ParseTreeWalker.DEFAULT.walk((ParseTreeListener) new qasm_listener(), parseTree);
+
+        qasm_listener q = new qasm_listener();
+        ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
+
+        System.out.println(q.jv.prettyPrint("test", "testM"));
 
     }
 
