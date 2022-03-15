@@ -53,64 +53,68 @@ public class CLI implements Runnable {
     @Override
     public void run() {
 
-        String[] apiArgs = new String[]{"-cp", new File(fileName).getParent()};
-        String[] args = new String[]{fileName};
-        IAPI api = null;
-        try {
-            api = Factory.makeAPI(apiArgs);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error creating api: " + e.getMessage());
-        }
-
-        java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
-
-        fileName.endsWith(".qasm");
-        //parse qasm here
-        try {
-            parseQasm();
-            return;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int a = 0;
-        try {
-            a = api.typecheck(cu);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error running typecheck: " + e.getMessage());
-        }
-        if(a > 0) {
-            System.out.println("Error translating");
-            return;
-        }
-        Context ctx = api.context();
-        TransUtils.init(ctx);
-
-        for (JmlTree.JmlCompilationUnit it : cu) {
-            //log.info(api.prettyPrint(rewriteRAC(it, ctx)));
-            JCTree t = rewriteAssert(it, ctx);
+        if(fileName.endsWith(".qasm")){
+            //parse qasm
             try {
-                String translation = api.prettyPrint(t);
-                if(outPath != null) {
-                    File outFile = new File(outPath);
-                    if(outFile.exists()) {
-                        Files.delete(outFile.toPath());
-                    }
-                    Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
-                    System.out.println("Output written to: " + outFile.getAbsolutePath());
-                } else {
-                    System.out.println(translation);
-                }
+                parseQasm(fileName);
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new RuntimeException("Error parsing qasm " + e.getMessage());
             }
+        }else if(fileName.endsWith(".java")){
+            //parse java
+            String[] apiArgs = new String[]{"-cp", new File(fileName).getParent()};
+            String[] args = new String[]{fileName};
+            IAPI api = null;
+            try {
+                api = Factory.makeAPI(apiArgs);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error creating api: " + e.getMessage());
+            }
+
+            java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
+
+            int a = 0;
+            try {
+                a = api.typecheck(cu);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error running typecheck: " + e.getMessage());
+            }
+            if(a > 0) {
+                System.out.println("Error translating");
+                return;
+            }
+            Context ctx = api.context();
+            TransUtils.init(ctx);
+
+            for (JmlTree.JmlCompilationUnit it : cu) {
+                //log.info(api.prettyPrint(rewriteRAC(it, ctx)));
+                JCTree t = rewriteAssert(it, ctx);
+                try {
+                    String translation = api.prettyPrint(t);
+                    if(outPath != null) {
+                        File outFile = new File(outPath);
+                        if(outFile.exists()) {
+                            Files.delete(outFile.toPath());
+                        }
+                        Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
+                        System.out.println("Output written to: " + outFile.getAbsolutePath());
+                    } else {
+                        System.out.println(translation);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else{
+            throw new RuntimeException("unknown file format!");
         }
     }
 
-    public void parseQasm() throws IOException {
-        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromFileName("simple_test_circuit.qasm"));
+    public void parseQasm(String fileName) throws IOException {
+        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromFileName(fileName));
         CommonTokenStream commonTokenStream = new CommonTokenStream(qasmLexer);
 
         QIn.QASMParser qasmParser = new QIn.QASMParser(commonTokenStream);
@@ -120,7 +124,24 @@ public class CLI implements Runnable {
         qasm_listener q = new qasm_listener();
         ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
 
-        System.out.println(q.jv.prettyPrint("test", "testM"));
+
+        //save file
+
+        try {
+            String translation = q.jv.prettyPrint("test", "testM");
+            if(outPath != null) {
+                File outFile = new File(outPath);
+                if(outFile.exists()) {
+                    Files.delete(outFile.toPath());
+                }
+                Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
+                System.out.println("Output written to: " + outFile.getAbsolutePath());
+            } else {
+                System.out.println(translation);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
