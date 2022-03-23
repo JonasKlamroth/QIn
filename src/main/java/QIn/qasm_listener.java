@@ -25,6 +25,25 @@ public class qasm_listener extends QIn.QASMBaseListener {
             );
         }
 
+        if(ctx.getChild(0).getText().equals("swap")){
+            jv.applySwap(
+                    Integer.parseInt(ctx.getChild(1).getChild(0).getChild(2).getText()),
+                    Integer.parseInt(ctx.getChild(1).getChild(0).getChild(7).getText())
+            );
+        }
+
+        if(ctx.getChild(0).getText().equals("rx")){
+            jv.applyGate(Utils.getUnitaryForName("rx", Float.parseFloat(ctx.getChild(2).getChild(0).getChild(0).getText())),
+                    Integer.parseInt(ctx.getChild(4).getChild(0).getChild(2).getText())
+            );
+        }
+
+        if(ctx.getChild(0).getText().equals("rz")){
+            jv.applyGate(Utils.getUnitaryForName("rz", Float.parseFloat(ctx.getChild(2).getChild(0).getChild(0).getText())),
+                    Integer.parseInt(ctx.getChild(4).getChild(0).getChild(2).getText())
+            );
+        }
+
     }
 
     @Override public void enterQop(QASMParser.QopContext ctx) {
