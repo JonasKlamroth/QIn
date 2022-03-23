@@ -35,7 +35,7 @@ public class Utils {
             {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
             {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}};
 
-public static Expr[][] getExprMatrix(float[][] m) {
+    public static Expr[][] getExprMatrix(float[][] m) {
         Expr[][] res = new Expr[m.length][m[0].length];
         for(int i = 0; i < m.length; ++i) {
             for(int j = 0; j < m[0].length; ++j) {
@@ -128,13 +128,13 @@ public static Expr[][] getExprMatrix(float[][] m) {
         for(int i = 0; i < numQbits; ++i) {
             initialStates.add(new Expr[][]{
                     new Expr[]{
-                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
-                            TransUtils.M.Literal(0)))},
+                            new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                                    TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                                    TransUtils.M.Literal(0)))},
                     new Expr[]{
-                    new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
-                            TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
-                            TransUtils.M.Literal(1)))}
+                            new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS,
+                                    TransUtils.treeutils.makeArrayElement(Position.NOPOS, state, TransUtils.M.Literal(i)),
+                                    TransUtils.M.Literal(1)))}
             });
         }
         Expr[][] finalState = initialStates.get(0);
@@ -163,6 +163,10 @@ public static Expr[][] getExprMatrix(float[][] m) {
     }
 
     public static Expr[][] getUnitaryForName(String name) {
+        return getUnitaryForName(name, null);
+    }
+
+    public static Expr[][] getUnitaryForName(String name, Object theta) {
         if(name.equals("x")) {
             return getExprMatrix(X);
         }
@@ -181,7 +185,67 @@ public static Expr[][] getExprMatrix(float[][] m) {
         if(name.equals("cxx")) {
             return getExprMatrix(CCX);
         }
+        if(name.equals("rx")) {
+            return getRXGate(theta);
+        }
+        if(name.equals("rz")) {
+            return getRZGate(theta);
+        }
         throw new AssertionError("unsupported unitary " + name);
+    }
+
+    public static Expr[][] getRXGate(Object arg) {
+        if(!(arg instanceof Float) && !(arg instanceof Double)) {
+            throw new RuntimeException("Parameter theta of rx gate has to be float.");
+        }
+        double theta = 0.0;
+        if(arg instanceof Float) {
+            theta = ((Float) arg).doubleValue();
+        }
+        if(arg instanceof Double) {
+            theta = ((Double) arg).doubleValue();
+        }
+        float[][] real = new float[][]{
+                new float[]{(float)Math.cos(theta/2.0), 0.0f},
+                new float[]{0.0f, (float)Math.cos(theta/2.0)}
+        };
+        float[][] img = new float[][]{
+                new float[]{0.0f, -(float)Math.sin(theta/2.0)},
+                new float[]{-(float)Math.sin(theta/2.0), 0.0f}
+        };
+        return getExprMatrix(real, img);
+    }
+
+    public static Expr[][] getRZGate(Object arg) {
+        if(!(arg instanceof Float) && !(arg instanceof Double)) {
+            throw new RuntimeException("Parameter theta of rx gate has to be float.");
+        }
+        double theta = 0.0;
+        if(arg instanceof Float) {
+            theta = ((Float) arg).doubleValue();
+        }
+        if(arg instanceof Double) {
+            theta = ((Double) arg).doubleValue();
+        }
+        float[][] real = new float[][]{
+                new float[]{(float)Math.cos(theta/2.0), 0.0f},
+                new float[]{0.0f, (float)Math.cos(theta/2.0)}
+        };
+        float[][] img = new float[][]{
+                new float[]{-(float)Math.sin(theta/2.0), 0.0f},
+                new float[]{0.0f, (float)Math.sin(theta/2.0)}
+        };
+        return getExprMatrix(real, img);
+    }
+
+    private static Expr[][] getExprMatrix(float[][] real, float[][] img) {
+        Expr[][] res = new Expr[real.length][real[0].length];
+        for(int i = 0; i < real.length; ++i) {
+            for(int j = 0; j < real[0].length; ++j) {
+                res[i][j] = new ComplexExpression(getRealConst(real[i][j]), getRealConst(img[i][j]));
+            }
+        }
+        return res;
     }
 
     public static Expr[][] apply(Expr[][] u, int qBit, Expr[][] state) {
@@ -239,15 +303,15 @@ public static Expr[][] getExprMatrix(float[][] m) {
     }
 
     public static void anonymizeState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
-            for (int i = 0; i < qState.length; ++i) {
-                Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)));
-                if(CLI.useReals) {
-                    qState[i][0] = realVal;
-                } else {
-                    Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)));
-                    qState[i][0] = new ComplexExpression(realVal, compVal);
-                }
+        for (int i = 0; i < qState.length; ++i) {
+            Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)));
+            if(CLI.useReals) {
+                qState[i][0] = realVal;
+            } else {
+                Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)));
+                qState[i][0] = new ComplexExpression(realVal, compVal);
             }
+        }
     }
 
     public static Expr getConst(float r, float i) {
