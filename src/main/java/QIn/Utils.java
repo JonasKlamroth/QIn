@@ -163,7 +163,7 @@ public static Expr[][] getExprMatrix(float[][] m) {
     }
 
     public static Expr[][] getUnitaryForName(String name) {
-        return getUnitaryForName(name);
+        return getUnitaryForName(name, null);
     }
 
     public static Expr[][] getUnitaryForName(String name, Object theta) {
@@ -188,6 +188,12 @@ public static Expr[][] getExprMatrix(float[][] m) {
         if(name.equals("rx")) {
             return getRXGate(theta);
         }
+        if(name.equals("rz")) {
+            return getRZGate(theta);
+        }
+        if(name.equals("ry")) {
+            return getRYGate(theta);
+        }
         throw new AssertionError("unsupported unitary " + name);
     }
 
@@ -209,6 +215,50 @@ public static Expr[][] getExprMatrix(float[][] m) {
         float[][] img = new float[][]{
                 new float[]{0.0f, -(float)Math.sin(theta/2.0)},
                 new float[]{-(float)Math.sin(theta/2.0), 0.0f}
+        };
+        return getExprMatrix(real, img);
+    }
+
+    public static Expr[][] getRYGate(Object arg) {
+        if(!(arg instanceof Float) && !(arg instanceof Double)) {
+            throw new RuntimeException("Parameter theta of rx gate has to be float.");
+        }
+        double theta = 0.0;
+        if(arg instanceof Float) {
+            theta = ((Float) arg).doubleValue();
+        }
+        if(arg instanceof Double) {
+            theta = ((Double) arg).doubleValue();
+        }
+        float[][] real = new float[][]{
+                new float[]{(float)Math.cos(theta/2.0), (float)Math.sin(theta/2.0)},
+                new float[]{(float)Math.sin(theta/2.0), (float)Math.cos(theta/2.0)}
+        };
+        float[][] img = new float[][]{
+                new float[]{0.0f, 0.0f},
+                new float[]{0.0f, 0.0f}
+        };
+        return getExprMatrix(real, img);
+    }
+
+    public static Expr[][] getRZGate(Object arg) {
+        if(!(arg instanceof Float) && !(arg instanceof Double)) {
+            throw new RuntimeException("Parameter theta of rx gate has to be float.");
+        }
+        double theta = 0.0;
+        if(arg instanceof Float) {
+            theta = ((Float) arg).doubleValue();
+        }
+        if(arg instanceof Double) {
+            theta = ((Double) arg).doubleValue();
+        }
+        float[][] real = new float[][]{
+                new float[]{1.0f, 0.0f},
+                new float[]{0.0f, (float)Math.cos(theta)}
+        };
+        float[][] img = new float[][]{
+                new float[]{0.0f, 0.0f},
+                new float[]{0.0f, (float)Math.sin(theta)}
         };
         return getExprMatrix(real, img);
     }
