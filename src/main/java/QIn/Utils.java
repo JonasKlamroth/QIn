@@ -231,7 +231,7 @@ public static Expr[][] getExprMatrix(float[][] m) {
             theta = ((Double) arg).doubleValue();
         }
         float[][] real = new float[][]{
-                new float[]{(float)Math.cos(theta/2.0), (float)Math.sin(theta/2.0)},
+                new float[]{(float)Math.cos(theta/2.0), -(float)Math.sin(theta/2.0)},
                 new float[]{(float)Math.sin(theta/2.0), (float)Math.cos(theta/2.0)}
         };
         float[][] img = new float[][]{
@@ -253,11 +253,11 @@ public static Expr[][] getExprMatrix(float[][] m) {
             theta = ((Double) arg).doubleValue();
         }
         float[][] real = new float[][]{
-                new float[]{1.0f, 0.0f},
+                new float[]{(float)Math.cos(theta/2.0), 0.0f},
                 new float[]{0.0f, (float)Math.cos(theta)}
         };
         float[][] img = new float[][]{
-                new float[]{0.0f, 0.0f},
+                new float[]{-(float)Math.sin(theta/2.0), 0.0f},
                 new float[]{0.0f, (float)Math.sin(theta)}
         };
         return getExprMatrix(real, img);
