@@ -44,6 +44,12 @@ public class qasm_listener extends QIn.QASMBaseListener {
             );
         }
 
+        if(ctx.getChild(0).getText().equals("ry")){
+            jv.applyGate(Utils.getUnitaryForName("ry", Float.parseFloat(ctx.getChild(2).getChild(0).getChild(0).getText())),
+                    Integer.parseInt(ctx.getChild(4).getChild(0).getChild(2).getText())
+            );
+        }
+
     }
 
     @Override public void enterQop(QASMParser.QopContext ctx) {
