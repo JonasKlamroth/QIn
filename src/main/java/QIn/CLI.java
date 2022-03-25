@@ -44,6 +44,9 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-ndf", "-nondetFunctions"}, description = "Allow the use of JJBMCs nondet functions.")
     public static boolean useNondetFunctions;
 
+    @CommandLine.Option(names = {"-m", "-mockCircuit"}, description = "Create a mock circuit java file")
+    public static boolean createMockCircuit;
+
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));
         System.setOut(new CostumPrintStream(System.out));
@@ -52,6 +55,16 @@ public class CLI implements Runnable {
 
     @Override
     public void run() {
+
+        String[] apiArgs = new String[]{"-cp", new File(fileName).getParent()};
+        String[] args = new String[]{fileName};
+        IAPI api = null;
+        try {
+            api = Factory.makeAPI(apiArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error creating api: " + e.getMessage());
+        }
 
         if(fileName.endsWith(".qasm")){
             //parse qasm
@@ -63,16 +76,6 @@ public class CLI implements Runnable {
             }
         }else if(fileName.endsWith(".java")){
             //parse java
-            String[] apiArgs = new String[]{"-cp", new File(fileName).getParent()};
-            String[] args = new String[]{fileName};
-            IAPI api = null;
-            try {
-                api = Factory.makeAPI(apiArgs);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("Error creating api: " + e.getMessage());
-            }
-
             java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
 
             int a = 0;
@@ -121,14 +124,26 @@ public class CLI implements Runnable {
 
         ParseTree parseTree = qasmParser.mainprog();
 
-        qasm_listener q = new qasm_listener();
-        ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
+        String translation = "";
+        if(createMockCircuit){
+            translation += "public class test { \n" + "public static void testM() {\n";
 
+
+            qasm2mock_listener q = new qasm2mock_listener();
+            ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
+            translation += q.statements;
+
+            translation += "} \n" + "}\n";
+
+        }else{
+            qasm_listener q = new qasm_listener();
+            ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
+            translation = q.jv.prettyPrint("test", "testM");
+        }
 
         //save file
-
         try {
-            String translation = q.jv.prettyPrint("test", "testM");
+
             if(outPath != null) {
                 File outFile = new File(outPath);
                 if(outFile.exists()) {
