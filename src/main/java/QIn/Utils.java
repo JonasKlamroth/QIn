@@ -191,6 +191,9 @@ public class Utils {
         if(name.equals("rz")) {
             return getRZGate(theta);
         }
+        if(name.equals("ry")) {
+            return getRYGate(theta);
+        }
         throw new AssertionError("unsupported unitary " + name);
     }
 
@@ -212,6 +215,28 @@ public class Utils {
         float[][] img = new float[][]{
                 new float[]{0.0f, -(float)Math.sin(theta/2.0)},
                 new float[]{-(float)Math.sin(theta/2.0), 0.0f}
+        };
+        return getExprMatrix(real, img);
+    }
+
+    public static Expr[][] getRYGate(Object arg) {
+        if(!(arg instanceof Float) && !(arg instanceof Double)) {
+            throw new RuntimeException("Parameter theta of rx gate has to be float.");
+        }
+        double theta = 0.0;
+        if(arg instanceof Float) {
+            theta = ((Float) arg).doubleValue();
+        }
+        if(arg instanceof Double) {
+            theta = ((Double) arg).doubleValue();
+        }
+        float[][] real = new float[][]{
+                new float[]{(float)Math.cos(theta/2.0), -(float)Math.sin(theta/2.0)},
+                new float[]{(float)Math.sin(theta/2.0), (float)Math.cos(theta/2.0)}
+        };
+        float[][] img = new float[][]{
+                new float[]{0.0f, 0.0f},
+                new float[]{0.0f, 0.0f}
         };
         return getExprMatrix(real, img);
     }
