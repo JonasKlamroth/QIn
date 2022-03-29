@@ -77,7 +77,6 @@ public class CLI implements Runnable {
         }else if(fileName.endsWith(".java")){
             //parse java
             java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
-
             int a = 0;
             try {
                 a = api.typecheck(cu);
@@ -128,7 +127,6 @@ public class CLI implements Runnable {
         if(createMockCircuit){
             translation += "public class test { \n" + "public static void testM() {\n";
 
-
             qasm2mock_listener q = new qasm2mock_listener();
             ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
             translation += q.statements;
@@ -140,10 +138,8 @@ public class CLI implements Runnable {
             ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
             translation = q.jv.prettyPrint("test", "testM");
         }
-
         //save file
         try {
-
             if(outPath != null) {
                 File outFile = new File(outPath);
                 if(outFile.exists()) {
@@ -157,7 +153,6 @@ public class CLI implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private JCTree rewriteAssert(JmlTree.JmlCompilationUnit it, Context ctx) {
