@@ -1,29 +1,53 @@
 public class Deutsch_parameter {
 
     static int n = 2;
+
+    /*@ requires f != null && f.length == 2^n;
+      @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||
+      @             count(f) == f.length / 2;
+      @ ensures \result <==> (count(f) == f.length / 2);
+      @*/
     public static boolean isBalancednBit(boolean[] f) {
-        if(f == null || f.length != 2**n) {
+        if(f == null || f.length != Math.pow(2, n)) {
             throw new IllegalArgumentException("Input for Deutschalgorithm has to be boolean array of size 2 ** n.");
         }
         //create 2^n matrix
-        final float[][] m = new float[][]{
-                new float[]{!f[0] ? 1.0f : 0.0f, f[0] ? 1.0f :0.0f, 0.f, 0.f},
-                new float[]{f[0] ? 1.0f : 0.0f, !f[0] ? 1.0f :0.0f, 0.f, 0.f},
-                new float[]{0.f, 0.f, !f[1] ? 1.0f : 0.0f, f[1] ? 1.0f :0.0f},
-                new float[]{0.f, 0.f, f[1] ? 1.0f : 0.0f, !f[1] ? 1.0f :0.0f}
-        };
-        CircuitMock c = new CircuitMock( n + 1);
+        int dim = Math.pow(2, n + 1);
+
+        final float[][] m = new float[dim][dim];
+
+        for (int i = 0; i < dim; i = i + 2){
+            m[i][i] = !f[0] ? 1.0f : 0.0f;
+            m[i][i + 1] = f[0] ? 1.0f : 0.0f;
+
+            m[i + 1][i] = f[0] ? 1.0f : 0.0f;
+            m[i + 1][i + 1] = !f[0] ? 1.0f : 0.0f;
+        }
+
+        CircuitMock c = new CircuitMock(n + 1);
         c.x(n);
 
         for (int i = 0; i < n; i ++){
             c.h(i);
         }
-        c.u(m, 0, 1); //on all qubits
+
+        int[] q = new int[n];
+
+        for (int i = 0; i < n; i ++){
+            q[i] = i;
+        }
+
+        c.u(m, q); //on all qubits
 
         for (int i = 0; i < n; i ++){
             c.h(i);
         }
-        return c.measure(0);
+
+        boolean result;
+        for (int i = 0; i < n - 1; i ++){
+            result |= c.measure(i);
+        }
+        return result;
     }
 
 }
