@@ -278,4 +278,13 @@ public class QCircuitVisitor extends JmlTreeCopier {
         Utils.anonymizeState(qState, qStateVars);
         return M.If(cond, ifBlock, elseBlock);
     }
+
+    @Override
+    public JCTree visitJmlForLoop(JmlTree.JmlForLoop node, Void p) {
+
+        int a = 4;
+
+
+        return super.visitJmlForLoop(node, p);
+    }
 }
