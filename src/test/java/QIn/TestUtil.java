@@ -128,14 +128,14 @@ public class TestUtil {
 
     @Test
     public void testRZGate() {
-        Expr[][] rx = Utils.getRZGate(Math.PI*3);
-        assertEquals("0.0f - 1.0fi,0.0f,\n" +
-                        "0.0f,0.0f + 1.0fi,\n",
-                matrixToString(rx));
-        rx = Utils.getRZGate(0.0f);
-        assertEquals("1.0f - 0.0fi,0.0f,\n" +
-                        "0.0f ,1.0f + 0.0fi,\n",
-                matrixToString(rx));
+        Expr[][] rz = Utils.getRZGate(Math.PI*3);
+        assertEquals("-1.8369701E-16f + 1.0fi,0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,-1.8369701E-16f + -1.0fi,\n",
+                matrixToString(rz));
+        rz = Utils.getRZGate(0.0f);
+        assertEquals("1.0f + -0.0fi,0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,1.0f + 0.0fi,\n",
+                matrixToString(rz));
     }
 
     public String matrixToString(Expr[][] m) {

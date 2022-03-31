@@ -9,15 +9,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import org.apache.commons.lang3.StringEscapeUtils;
 public class Testqasm_listener {
 
     @Test
     public void testHGate(){
+
         QASMLexer qasmLexer = new QASMLexer(CharStreams.fromString(
                 "OPENQASM 2.0;\n" +
-                "qreg q[1];\n" +
-                "h q[0];\n" + "measure q[0];\n"));
+                        "qreg q[1];\n" +
+                        "h q[0];\n" + "measure q[0];\n"));
         CommonTokenStream commonTokenStream = new CommonTokenStream(qasmLexer);
 
         QIn.QASMParser qasmParser = new QIn.QASMParser(commonTokenStream);
@@ -27,8 +28,6 @@ public class Testqasm_listener {
         qasm_listener q = new qasm_listener();
         ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
 
-        assertEquals("public class test {\n" +
-                "public static void testM() {\n", q.jv.prettyPrint("test", "testM"));
 
     }
 }
