@@ -2,17 +2,18 @@ public class Deutsch_parameter {
 
     static int n = 2;
 
-    /*@ requires f != null && f.length == 2^n;
+    /*@ requires f != null && f.length == 1<<n;
       @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||
       @             count(f) == f.length / 2;
       @ ensures \result <==> (count(f) == f.length / 2);
       @*/
     public static boolean isBalancednBit(boolean[] f) {
-        if(f == null || f.length != Math.pow(2, n)) {
+        //Deutsch_parameter.java -o Deutsch_parameter.java -n 3
+        if(f == null || f.length != 1 << n) {
             throw new IllegalArgumentException("Input for Deutschalgorithm has to be boolean array of size 2 ** n.");
         }
         //create 2^n matrix
-        int dim = Math.pow(2, n + 1);
+        int dim = 1 << (n+1);
 
         final float[][] m = new float[dim][dim];
 
@@ -36,14 +37,14 @@ public class Deutsch_parameter {
         for (int i = 0; i < n; i ++){
             q[i] = i;
         }
-
+        c.u(m, 0, n);
         c.u(m, q); //on all qubits
 
-        for (int i = 0; i < n; i ++){
+        for (int i = 0; i < n - 1; i ++){
             c.h(i);
         }
 
-        boolean result;
+        boolean result = false;
         for (int i = 0; i < n - 1; i ++){
             result |= c.measure(i);
         }

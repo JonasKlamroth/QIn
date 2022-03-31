@@ -282,9 +282,22 @@ public class QCircuitVisitor extends JmlTreeCopier {
     @Override
     public JCTree visitJmlForLoop(JmlTree.JmlForLoop node, Void p) {
 
-        int a = 4;
+        //int size = node.cond.rhs.value; // = 2
+        //node.body.stats[0].expr.meth.name; //h gate
+        //node.body.stats[0].expr.args[0].sym; // i
 
+        for (int i = 0; i < 2; i ++){
+            //substitute loop index for argument
+            if(node.body instanceof JCTree.JCBlock){
+              //  ((JCTree.JCBlock) node.body).stats.get(0).expr.args[0] = i;
+            }
+            //node.body.stats[0].expr.args[0] = i;
+            //now call visitor, what to do with return?
+            //visitMethodInvocation(node.body.stats[0].expr);
+        }
 
-        return super.visitJmlForLoop(node, p);
+        //skip rest of node?
+        return null;
+        //return super.visitJmlForLoop(node, p);
     }
 }
