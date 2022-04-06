@@ -118,12 +118,24 @@ public class TestUtil {
     public void testRXGate() {
         Expr[][] rx = Utils.getRXGate(Math.PI*3);
         assertEquals("-1.8369701E-16f + 0.0fi,0.0f + 1.0fi,\n" +
-                "0.0f + 1.0fi,-1.8369701E-16f + 0.0fi,\n",
+                        "0.0f + 1.0fi,-1.8369701E-16f + 0.0fi,\n",
                 matrixToString(rx));
         rx = Utils.getRXGate(0.0f);
         assertEquals("1.0f + 0.0fi,0.0f + -0.0fi,\n" +
                         "0.0f + -0.0fi,1.0f + 0.0fi,\n",
                 matrixToString(rx));
+    }
+
+    @Test
+    public void testRZGate() {
+        Expr[][] rz = Utils.getRZGate(Math.PI*3);
+        assertEquals("-1.8369701E-16f + 1.0fi,0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,-1.8369701E-16f + -1.0fi,\n",
+                matrixToString(rz));
+        rz = Utils.getRZGate(0.0f);
+        assertEquals("1.0f + -0.0fi,0.0f + 0.0fi,\n" +
+                        "0.0f + 0.0fi,1.0f + 0.0fi,\n",
+                matrixToString(rz));
     }
 
     public String matrixToString(Expr[][] m) {

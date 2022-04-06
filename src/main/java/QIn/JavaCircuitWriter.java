@@ -122,6 +122,9 @@ public class JavaCircuitWriter {
         Utils.anonymizeState(qState, qStateVars);
     }
 
+    public void applySwap(int qBit1, int qBit2){
+        Utils.applySwap(qState, qBit1, qBit2);
+    }
 
     public static void main(String[] args) {
         JavaCircuitWriter jv = new JavaCircuitWriter(3);

@@ -32,6 +32,7 @@ QIn is a tool that is developed at [FZI](https://www.fzi.de/en/home/), which tra
 ```
 java -jar QIn.jar src/test/resources/Grover.java -o Grover.java
 ```
+- You can also translate any .qasm file (OPENQASM 2.0)
 
 ## Running tools on translations
 - To run [JJBMC](https://github.com/jonasklamroth/JJBMC) on one of the examples you can either go to the JJBMC-Website or use the precompiled version in the tools folder. To run JJBMC on the grover case study use the following command: 

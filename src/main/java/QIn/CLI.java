@@ -1,7 +1,7 @@
 package QIn;
-
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import org.antlr.v4.runtime.tree.*;
 import org.jmlspecs.openjml.Factory;
 import org.jmlspecs.openjml.IAPI;
 import org.jmlspecs.openjml.JmlTree;
@@ -11,6 +11,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 @CommandLine.Command(name = "CircTrans", header = "@|bold translate quantum circuits to plain java |@")
 public class CLI implements Runnable {
@@ -39,6 +44,9 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-ndf", "-nondetFunctions"}, description = "Allow the use of JJBMCs nondet functions.")
     public static boolean useNondetFunctions;
 
+    @CommandLine.Option(names = {"-m", "-mockCircuit"}, description = "Create a mock circuit java file")
+    public static boolean createMockCircuit;
+
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));
         System.setOut(new CostumPrintStream(System.out));
@@ -57,39 +65,93 @@ public class CLI implements Runnable {
             e.printStackTrace();
             throw new RuntimeException("Error creating api: " + e.getMessage());
         }
-        java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
-        int a = 0;
-        try {
-            a = api.typecheck(cu);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error running typecheck: " + e.getMessage());
-        }
-        if(a > 0) {
-            System.out.println("Error translating");
-            return;
-        }
-        Context ctx = api.context();
-        TransUtils.init(ctx);
 
-        for (JmlTree.JmlCompilationUnit it : cu) {
-            //log.info(api.prettyPrint(rewriteRAC(it, ctx)));
-            JCTree t = rewriteAssert(it, ctx);
+        if(fileName.endsWith(".qasm")){
+            //parse qasm
             try {
-                String translation = api.prettyPrint(t);
-                if(outPath != null) {
-                    File outFile = new File(outPath);
-                    if(outFile.exists()) {
-                        Files.delete(outFile.toPath());
-                    }
-                    Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
-                    System.out.println("Output written to: " + outFile.getAbsolutePath());
-                } else {
-                    System.out.println(translation);
-                }
+                parseQasm(fileName);
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new RuntimeException("Error parsing qasm " + e.getMessage());
             }
+        }else if(fileName.endsWith(".java")){
+            //parse java
+            java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
+            int a = 0;
+            try {
+                a = api.typecheck(cu);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error running typecheck: " + e.getMessage());
+            }
+            if(a > 0) {
+                System.out.println("Error translating");
+                return;
+            }
+            Context ctx = api.context();
+            TransUtils.init(ctx);
+
+            for (JmlTree.JmlCompilationUnit it : cu) {
+                //log.info(api.prettyPrint(rewriteRAC(it, ctx)));
+                JCTree t = rewriteAssert(it, ctx);
+                try {
+                    String translation = api.prettyPrint(t);
+                    if(outPath != null) {
+                        File outFile = new File(outPath);
+                        if(outFile.exists()) {
+                            Files.delete(outFile.toPath());
+                        }
+                        Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
+                        System.out.println("Output written to: " + outFile.getAbsolutePath());
+                    } else {
+                        System.out.println(translation);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else{
+            throw new RuntimeException("unknown file format!");
+        }
+    }
+
+    public void parseQasm(String fileName) throws IOException {
+        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromFileName(fileName));
+        CommonTokenStream commonTokenStream = new CommonTokenStream(qasmLexer);
+
+        QIn.QASMParser qasmParser = new QIn.QASMParser(commonTokenStream);
+
+        ParseTree parseTree = qasmParser.mainprog();
+
+        String translation = "";
+        if(createMockCircuit){
+            translation += "public class test { \n" + "public static void testM() {\n";
+
+            qasm2mock_listener q = new qasm2mock_listener();
+            ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
+            translation += q.statements;
+
+            translation += "} \n" + "}\n";
+
+        }else{
+            qasm_listener q = new qasm_listener();
+            ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
+            translation = q.jv.prettyPrint("test", "testM");
+        }
+        //save file
+        try {
+            if(outPath != null) {
+                File outFile = new File(outPath);
+                if(outFile.exists()) {
+                    Files.delete(outFile.toPath());
+                }
+                Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
+                System.out.println("Output written to: " + outFile.getAbsolutePath());
+            } else {
+                System.out.println(translation);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

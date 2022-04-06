@@ -13,6 +13,7 @@ plugins {
     id 'application'
     id 'idea'
     id 'java'
+    id 'antlr'
 }
 
 test.testLogging.showStandardStreams = true
@@ -39,6 +40,9 @@ dependencies {
 
     //Use JUnit Platform
     test.useJUnitPlatform()
+
+    //Use antlr to parse qasm
+    antlr "org.antlr:antlr4:4.7"
 }
 
 application {
