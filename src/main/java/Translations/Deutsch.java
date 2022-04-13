@@ -6,6 +6,66 @@ public class Deutsch {
     super();
   }
     /*@
+      requires f != null && f.length == 1 << 2; 
+      requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) || count(f) == f.length / 2; 
+      ensures \result <==> (count(f) == f.length / 2); 
+   */
+
+  public boolean isBalancedGeneric(/*@ non_null */ 
+  boolean[] f) {
+    float[] q_state_0 = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    float[] q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_0 = new float[]{0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_0 = new float[]{0.70710677F, -0.70710677F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_0 = new float[]{0.49999997F, -0.49999997F, 0.49999997F, -0.49999997F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    /*@ non_null */ 
+    float[][] oracle = getOracle(2, f);
+    q_state_0 = new float[]{0.49999997F * oracle[0][0] + -0.49999997F * oracle[0][1] + 0.49999997F * oracle[0][2] + -0.49999997F * oracle[0][3], 0.49999997F * oracle[1][0] + -0.49999997F * oracle[1][1] + 0.49999997F * oracle[1][2] + -0.49999997F * oracle[1][3], 0.49999997F * oracle[2][0] + -0.49999997F * oracle[2][1] + 0.49999997F * oracle[2][2] + -0.49999997F * oracle[2][3], 0.49999997F * oracle[3][0] + -0.49999997F * oracle[3][1] + 0.49999997F * oracle[3][2] + -0.49999997F * oracle[3][3], 0.49999997F * oracle[4][0] + -0.49999997F * oracle[4][1] + 0.49999997F * oracle[4][2] + -0.49999997F * oracle[4][3], 0.49999997F * oracle[5][0] + -0.49999997F * oracle[5][1] + 0.49999997F * oracle[5][2] + -0.49999997F * oracle[5][3], 0.49999997F * oracle[6][0] + -0.49999997F * oracle[6][1] + 0.49999997F * oracle[6][2] + -0.49999997F * oracle[6][3], 0.49999997F * oracle[7][0] + -0.49999997F * oracle[7][1] + 0.49999997F * oracle[7][2] + -0.49999997F * oracle[7][3]};
+    q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_0 = new float[]{0.70710677F * q_state_0[0] + 0.70710677F * q_state_0[4], 0.70710677F * q_state_0[1] + 0.70710677F * q_state_0[5], 0.70710677F * q_state_0[2] + 0.70710677F * q_state_0[6], 0.70710677F * q_state_0[3] + 0.70710677F * q_state_0[7], 0.70710677F * q_state_0[0] + -0.70710677F * q_state_0[4], 0.70710677F * q_state_0[1] + -0.70710677F * q_state_0[5], 0.70710677F * q_state_0[2] + -0.70710677F * q_state_0[6], 0.70710677F * q_state_0[3] + -0.70710677F * q_state_0[7]};
+    q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    q_state_0 = new float[]{0.70710677F * q_state_0[0] + 0.70710677F * q_state_0[2], 0.70710677F * q_state_0[1] + 0.70710677F * q_state_0[3], 0.70710677F * q_state_0[0] + -0.70710677F * q_state_0[2], 0.70710677F * q_state_0[1] + -0.70710677F * q_state_0[3], 0.70710677F * q_state_0[4] + 0.70710677F * q_state_0[6], 0.70710677F * q_state_0[5] + 0.70710677F * q_state_0[7], 0.70710677F * q_state_0[4] + -0.70710677F * q_state_0[6], 0.70710677F * q_state_0[5] + -0.70710677F * q_state_0[7]};
+    q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    boolean res = false;
+    boolean $$_tmp_measureVar1;
+    if (q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3]) {
+      q_state_0 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_0[4], q_state_0[5], q_state_0[6], q_state_0[7]};
+      q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_1[4], q_state_1[5], q_state_1[6], q_state_1[7]};
+      $$_tmp_measureVar1 = true;
+    } else {
+      q_state_0 = new float[]{q_state_0[0], q_state_0[1], q_state_0[2], q_state_0[3], 0.0F, 0.0F, 0.0F, 0.0F};
+      q_state_1 = new float[]{q_state_1[0], q_state_1[1], q_state_1[2], q_state_1[3], 0.0F, 0.0F, 0.0F, 0.0F};
+      $$_tmp_measureVar1 = false;
+    }
+    res |= $$_tmp_measureVar1;
+    boolean $$_tmp_measureVar2;
+    if (q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5]) {
+      q_state_0 = new float[]{0.0F, 0.0F, q_state_0[2], q_state_0[3], 0.0F, 0.0F, q_state_0[6], q_state_0[7]};
+      q_state_1 = new float[]{0.0F, 0.0F, q_state_1[2], q_state_1[3], 0.0F, 0.0F, q_state_1[6], q_state_1[7]};
+      $$_tmp_measureVar2 = true;
+    } else {
+      q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F, q_state_0[4], q_state_0[5], 0.0F, 0.0F};
+      q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F, q_state_1[4], q_state_1[5], 0.0F, 0.0F};
+      $$_tmp_measureVar2 = false;
+    }
+    res |= $$_tmp_measureVar2;
+    boolean $$_tmp_measureVar3;
+    if (q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6]) {
+      q_state_0 = new float[]{0.0F, q_state_0[1], 0.0F, q_state_0[3], 0.0F, q_state_0[5], 0.0F, q_state_0[7]};
+      q_state_1 = new float[]{0.0F, q_state_1[1], 0.0F, q_state_1[3], 0.0F, q_state_1[5], 0.0F, q_state_1[7]};
+      $$_tmp_measureVar3 = true;
+    } else {
+      q_state_0 = new float[]{q_state_0[0], 0.0F, q_state_0[2], 0.0F, q_state_0[4], 0.0F, q_state_0[6], 0.0F};
+      q_state_1 = new float[]{q_state_1[0], 0.0F, q_state_1[2], 0.0F, q_state_1[4], 0.0F, q_state_1[6], 0.0F};
+      $$_tmp_measureVar3 = false;
+    }
+    res |= $$_tmp_measureVar3;
+    return res;
+  }
+    /*@
       requires f != null && f.length == 2; 
       requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) || count(f) == f.length / 2; 
       ensures \result <==> (count(f) == f.length / 2); 
@@ -28,17 +88,17 @@ public class Deutsch {
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F};
     q_state_0 = new float[]{0.70710677F * q_state_0[0] + 0.70710677F * q_state_0[2], 0.70710677F * q_state_0[1] + 0.70710677F * q_state_0[3], 0.70710677F * q_state_0[0] + -0.70710677F * q_state_0[2], 0.70710677F * q_state_0[1] + -0.70710677F * q_state_0[3]};
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F};
-    boolean $$_tmp_measureVar1;
+    boolean $$_tmp_measureVar4;
     if (q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1]) {
       q_state_0 = new float[]{0.0F, 0.0F, q_state_0[2], q_state_0[3]};
       q_state_1 = new float[]{0.0F, 0.0F, q_state_1[2], q_state_1[3]};
-      $$_tmp_measureVar1 = true;
+      $$_tmp_measureVar4 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F};
-      $$_tmp_measureVar1 = false;
+      $$_tmp_measureVar4 = false;
     }
-    return $$_tmp_measureVar1;
+    return $$_tmp_measureVar4;
   }
     /*@
       requires f != null && f.length == 2; 
@@ -65,17 +125,17 @@ public class Deutsch {
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F};
     q_state_0 = new float[]{0.70710677F * q_state_0[0] + 0.70710677F * q_state_0[2], 0.70710677F * q_state_0[1] + 0.70710677F * q_state_0[3], 0.70710677F * q_state_0[0] + -0.70710677F * q_state_0[2], 0.70710677F * q_state_0[1] + -0.70710677F * q_state_0[3]};
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F};
-    boolean $$_tmp_measureVar2;
+    boolean $$_tmp_measureVar5;
     if (q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1]) {
       q_state_0 = new float[]{0.0F, 0.0F, q_state_0[2], q_state_0[3]};
       q_state_1 = new float[]{0.0F, 0.0F, q_state_1[2], q_state_1[3]};
-      $$_tmp_measureVar2 = true;
+      $$_tmp_measureVar5 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F};
-      $$_tmp_measureVar2 = false;
+      $$_tmp_measureVar5 = false;
     }
-    return $$_tmp_measureVar2;
+    return $$_tmp_measureVar5;
   }
     /*@
       requires f != null && f.length == 4; 
@@ -106,27 +166,27 @@ public class Deutsch {
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     q_state_0 = new float[]{0.70710677F * q_state_0[0] + 0.70710677F * q_state_0[4], 0.70710677F * q_state_0[1] + 0.70710677F * q_state_0[5], 0.70710677F * q_state_0[2] + 0.70710677F * q_state_0[6], 0.70710677F * q_state_0[3] + 0.70710677F * q_state_0[7], 0.70710677F * q_state_0[0] + -0.70710677F * q_state_0[4], 0.70710677F * q_state_0[1] + -0.70710677F * q_state_0[5], 0.70710677F * q_state_0[2] + -0.70710677F * q_state_0[6], 0.70710677F * q_state_0[3] + -0.70710677F * q_state_0[7]};
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    boolean $$_tmp_measureVar3;
+    boolean $$_tmp_measureVar6;
     if (q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3]) {
       q_state_0 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_0[4], q_state_0[5], q_state_0[6], q_state_0[7]};
       q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_1[4], q_state_1[5], q_state_1[6], q_state_1[7]};
-      $$_tmp_measureVar3 = true;
+      $$_tmp_measureVar6 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], q_state_0[2], q_state_0[3], 0.0F, 0.0F, 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], q_state_1[2], q_state_1[3], 0.0F, 0.0F, 0.0F, 0.0F};
-      $$_tmp_measureVar3 = false;
+      $$_tmp_measureVar6 = false;
     }
-    boolean $$_tmp_measureVar4;
+    boolean $$_tmp_measureVar7;
     if (q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5]) {
       q_state_0 = new float[]{0.0F, 0.0F, q_state_0[2], q_state_0[3], 0.0F, 0.0F, q_state_0[6], q_state_0[7]};
       q_state_1 = new float[]{0.0F, 0.0F, q_state_1[2], q_state_1[3], 0.0F, 0.0F, q_state_1[6], q_state_1[7]};
-      $$_tmp_measureVar4 = true;
+      $$_tmp_measureVar7 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F, q_state_0[4], q_state_0[5], 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F, q_state_1[4], q_state_1[5], 0.0F, 0.0F};
-      $$_tmp_measureVar4 = false;
+      $$_tmp_measureVar7 = false;
     }
-    return $$_tmp_measureVar3 || $$_tmp_measureVar4;
+    return $$_tmp_measureVar6 || $$_tmp_measureVar7;
   }
     /*@
       requires f != null && f.length == 8; 
@@ -161,37 +221,37 @@ public class Deutsch {
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     q_state_0 = new float[]{0.70710677F * q_state_0[0] + 0.70710677F * q_state_0[8], 0.70710677F * q_state_0[1] + 0.70710677F * q_state_0[9], 0.70710677F * q_state_0[2] + 0.70710677F * q_state_0[10], 0.70710677F * q_state_0[3] + 0.70710677F * q_state_0[11], 0.70710677F * q_state_0[4] + 0.70710677F * q_state_0[12], 0.70710677F * q_state_0[5] + 0.70710677F * q_state_0[13], 0.70710677F * q_state_0[6] + 0.70710677F * q_state_0[14], 0.70710677F * q_state_0[7] + 0.70710677F * q_state_0[15], 0.70710677F * q_state_0[0] + -0.70710677F * q_state_0[8], 0.70710677F * q_state_0[1] + -0.70710677F * q_state_0[9], 0.70710677F * q_state_0[2] + -0.70710677F * q_state_0[10], 0.70710677F * q_state_0[3] + -0.70710677F * q_state_0[11], 0.70710677F * q_state_0[4] + -0.70710677F * q_state_0[12], 0.70710677F * q_state_0[5] + -0.70710677F * q_state_0[13], 0.70710677F * q_state_0[6] + -0.70710677F * q_state_0[14], 0.70710677F * q_state_0[7] + -0.70710677F * q_state_0[15]};
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    boolean $$_tmp_measureVar5;
+    boolean $$_tmp_measureVar8;
     if (q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7]) {
       q_state_0 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[8], q_state_0[9], q_state_0[10], q_state_0[11], q_state_0[12], q_state_0[13], q_state_0[14], q_state_0[15]};
       q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[8], q_state_1[9], q_state_1[10], q_state_1[11], q_state_1[12], q_state_1[13], q_state_1[14], q_state_1[15]};
-      $$_tmp_measureVar5 = true;
+      $$_tmp_measureVar8 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], q_state_0[2], q_state_0[3], q_state_0[4], q_state_0[5], q_state_0[6], q_state_0[7], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], q_state_1[2], q_state_1[3], q_state_1[4], q_state_1[5], q_state_1[6], q_state_1[7], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-      $$_tmp_measureVar5 = false;
+      $$_tmp_measureVar8 = false;
     }
-    boolean $$_tmp_measureVar6;
+    boolean $$_tmp_measureVar9;
     if (q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11]) {
       q_state_0 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_0[4], q_state_0[5], q_state_0[6], q_state_0[7], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[12], q_state_0[13], q_state_0[14], q_state_0[15]};
       q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_1[4], q_state_1[5], q_state_1[6], q_state_1[7], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[12], q_state_1[13], q_state_1[14], q_state_1[15]};
-      $$_tmp_measureVar6 = true;
+      $$_tmp_measureVar9 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], q_state_0[2], q_state_0[3], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[8], q_state_0[9], q_state_0[10], q_state_0[11], 0.0F, 0.0F, 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], q_state_1[2], q_state_1[3], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[8], q_state_1[9], q_state_1[10], q_state_1[11], 0.0F, 0.0F, 0.0F, 0.0F};
-      $$_tmp_measureVar6 = false;
+      $$_tmp_measureVar9 = false;
     }
-    boolean $$_tmp_measureVar7;
+    boolean $$_tmp_measureVar10;
     if (q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13]) {
       q_state_0 = new float[]{0.0F, 0.0F, q_state_0[2], q_state_0[3], 0.0F, 0.0F, q_state_0[6], q_state_0[7], 0.0F, 0.0F, q_state_0[10], q_state_0[11], 0.0F, 0.0F, q_state_0[14], q_state_0[15]};
       q_state_1 = new float[]{0.0F, 0.0F, q_state_1[2], q_state_1[3], 0.0F, 0.0F, q_state_1[6], q_state_1[7], 0.0F, 0.0F, q_state_1[10], q_state_1[11], 0.0F, 0.0F, q_state_1[14], q_state_1[15]};
-      $$_tmp_measureVar7 = true;
+      $$_tmp_measureVar10 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F, q_state_0[4], q_state_0[5], 0.0F, 0.0F, q_state_0[8], q_state_0[9], 0.0F, 0.0F, q_state_0[12], q_state_0[13], 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F, q_state_1[4], q_state_1[5], 0.0F, 0.0F, q_state_1[8], q_state_1[9], 0.0F, 0.0F, q_state_1[12], q_state_1[13], 0.0F, 0.0F};
-      $$_tmp_measureVar7 = false;
+      $$_tmp_measureVar10 = false;
     }
-    return $$_tmp_measureVar5 || $$_tmp_measureVar6 || $$_tmp_measureVar7;
+    return $$_tmp_measureVar8 || $$_tmp_measureVar9 || $$_tmp_measureVar10;
   }
     /*@
       requires f != null && f.length == 16; 
@@ -230,47 +290,47 @@ public class Deutsch {
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     q_state_0 = new float[]{0.70710677F * q_state_0[0] + 0.70710677F * q_state_0[16], 0.70710677F * q_state_0[1] + 0.70710677F * q_state_0[17], 0.70710677F * q_state_0[2] + 0.70710677F * q_state_0[18], 0.70710677F * q_state_0[3] + 0.70710677F * q_state_0[19], 0.70710677F * q_state_0[4] + 0.70710677F * q_state_0[20], 0.70710677F * q_state_0[5] + 0.70710677F * q_state_0[21], 0.70710677F * q_state_0[6] + 0.70710677F * q_state_0[22], 0.70710677F * q_state_0[7] + 0.70710677F * q_state_0[23], 0.70710677F * q_state_0[8] + 0.70710677F * q_state_0[24], 0.70710677F * q_state_0[9] + 0.70710677F * q_state_0[25], 0.70710677F * q_state_0[10] + 0.70710677F * q_state_0[26], 0.70710677F * q_state_0[11] + 0.70710677F * q_state_0[27], 0.70710677F * q_state_0[12] + 0.70710677F * q_state_0[28], 0.70710677F * q_state_0[13] + 0.70710677F * q_state_0[29], 0.70710677F * q_state_0[14] + 0.70710677F * q_state_0[30], 0.70710677F * q_state_0[15] + 0.70710677F * q_state_0[31], 0.70710677F * q_state_0[0] + -0.70710677F * q_state_0[16], 0.70710677F * q_state_0[1] + -0.70710677F * q_state_0[17], 0.70710677F * q_state_0[2] + -0.70710677F * q_state_0[18], 0.70710677F * q_state_0[3] + -0.70710677F * q_state_0[19], 0.70710677F * q_state_0[4] + -0.70710677F * q_state_0[20], 0.70710677F * q_state_0[5] + -0.70710677F * q_state_0[21], 0.70710677F * q_state_0[6] + -0.70710677F * q_state_0[22], 0.70710677F * q_state_0[7] + -0.70710677F * q_state_0[23], 0.70710677F * q_state_0[8] + -0.70710677F * q_state_0[24], 0.70710677F * q_state_0[9] + -0.70710677F * q_state_0[25], 0.70710677F * q_state_0[10] + -0.70710677F * q_state_0[26], 0.70710677F * q_state_0[11] + -0.70710677F * q_state_0[27], 0.70710677F * q_state_0[12] + -0.70710677F * q_state_0[28], 0.70710677F * q_state_0[13] + -0.70710677F * q_state_0[29], 0.70710677F * q_state_0[14] + -0.70710677F * q_state_0[30], 0.70710677F * q_state_0[15] + -0.70710677F * q_state_0[31]};
     q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    boolean $$_tmp_measureVar8;
+    boolean $$_tmp_measureVar11;
     if (q_state_0[16] * q_state_0[16] + q_state_1[16] * q_state_1[16] + q_state_0[17] * q_state_0[17] + q_state_1[17] * q_state_1[17] + q_state_0[18] * q_state_0[18] + q_state_1[18] * q_state_1[18] + q_state_0[19] * q_state_0[19] + q_state_1[19] * q_state_1[19] + q_state_0[20] * q_state_0[20] + q_state_1[20] * q_state_1[20] + q_state_0[21] * q_state_0[21] + q_state_1[21] * q_state_1[21] + q_state_0[22] * q_state_0[22] + q_state_1[22] * q_state_1[22] + q_state_0[23] * q_state_0[23] + q_state_1[23] * q_state_1[23] + q_state_0[24] * q_state_0[24] + q_state_1[24] * q_state_1[24] + q_state_0[25] * q_state_0[25] + q_state_1[25] * q_state_1[25] + q_state_0[26] * q_state_0[26] + q_state_1[26] * q_state_1[26] + q_state_0[27] * q_state_0[27] + q_state_1[27] * q_state_1[27] + q_state_0[28] * q_state_0[28] + q_state_1[28] * q_state_1[28] + q_state_0[29] * q_state_0[29] + q_state_1[29] * q_state_1[29] + q_state_0[30] * q_state_0[30] + q_state_1[30] * q_state_1[30] + q_state_0[31] * q_state_0[31] + q_state_1[31] * q_state_1[31] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] + q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15]) {
       q_state_0 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[16], q_state_0[17], q_state_0[18], q_state_0[19], q_state_0[20], q_state_0[21], q_state_0[22], q_state_0[23], q_state_0[24], q_state_0[25], q_state_0[26], q_state_0[27], q_state_0[28], q_state_0[29], q_state_0[30], q_state_0[31]};
       q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[16], q_state_1[17], q_state_1[18], q_state_1[19], q_state_1[20], q_state_1[21], q_state_1[22], q_state_1[23], q_state_1[24], q_state_1[25], q_state_1[26], q_state_1[27], q_state_1[28], q_state_1[29], q_state_1[30], q_state_1[31]};
-      $$_tmp_measureVar8 = true;
+      $$_tmp_measureVar11 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], q_state_0[2], q_state_0[3], q_state_0[4], q_state_0[5], q_state_0[6], q_state_0[7], q_state_0[8], q_state_0[9], q_state_0[10], q_state_0[11], q_state_0[12], q_state_0[13], q_state_0[14], q_state_0[15], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], q_state_1[2], q_state_1[3], q_state_1[4], q_state_1[5], q_state_1[6], q_state_1[7], q_state_1[8], q_state_1[9], q_state_1[10], q_state_1[11], q_state_1[12], q_state_1[13], q_state_1[14], q_state_1[15], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-      $$_tmp_measureVar8 = false;
+      $$_tmp_measureVar11 = false;
     }
-    boolean $$_tmp_measureVar9;
+    boolean $$_tmp_measureVar12;
     if (q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15] + q_state_0[24] * q_state_0[24] + q_state_1[24] * q_state_1[24] + q_state_0[25] * q_state_0[25] + q_state_1[25] * q_state_1[25] + q_state_0[26] * q_state_0[26] + q_state_1[26] * q_state_1[26] + q_state_0[27] * q_state_0[27] + q_state_1[27] * q_state_1[27] + q_state_0[28] * q_state_0[28] + q_state_1[28] * q_state_1[28] + q_state_0[29] * q_state_0[29] + q_state_1[29] * q_state_1[29] + q_state_0[30] * q_state_0[30] + q_state_1[30] * q_state_1[30] + q_state_0[31] * q_state_0[31] + q_state_1[31] * q_state_1[31] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] + q_state_0[16] * q_state_0[16] + q_state_1[16] * q_state_1[16] + q_state_0[17] * q_state_0[17] + q_state_1[17] * q_state_1[17] + q_state_0[18] * q_state_0[18] + q_state_1[18] * q_state_1[18] + q_state_0[19] * q_state_0[19] + q_state_1[19] * q_state_1[19] + q_state_0[20] * q_state_0[20] + q_state_1[20] * q_state_1[20] + q_state_0[21] * q_state_0[21] + q_state_1[21] * q_state_1[21] + q_state_0[22] * q_state_0[22] + q_state_1[22] * q_state_1[22] + q_state_0[23] * q_state_0[23] + q_state_1[23] * q_state_1[23]) {
       q_state_0 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[8], q_state_0[9], q_state_0[10], q_state_0[11], q_state_0[12], q_state_0[13], q_state_0[14], q_state_0[15], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[24], q_state_0[25], q_state_0[26], q_state_0[27], q_state_0[28], q_state_0[29], q_state_0[30], q_state_0[31]};
       q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[8], q_state_1[9], q_state_1[10], q_state_1[11], q_state_1[12], q_state_1[13], q_state_1[14], q_state_1[15], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[24], q_state_1[25], q_state_1[26], q_state_1[27], q_state_1[28], q_state_1[29], q_state_1[30], q_state_1[31]};
-      $$_tmp_measureVar9 = true;
+      $$_tmp_measureVar12 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], q_state_0[2], q_state_0[3], q_state_0[4], q_state_0[5], q_state_0[6], q_state_0[7], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[16], q_state_0[17], q_state_0[18], q_state_0[19], q_state_0[20], q_state_0[21], q_state_0[22], q_state_0[23], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], q_state_1[2], q_state_1[3], q_state_1[4], q_state_1[5], q_state_1[6], q_state_1[7], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[16], q_state_1[17], q_state_1[18], q_state_1[19], q_state_1[20], q_state_1[21], q_state_1[22], q_state_1[23], 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-      $$_tmp_measureVar9 = false;
+      $$_tmp_measureVar12 = false;
     }
-    boolean $$_tmp_measureVar10;
+    boolean $$_tmp_measureVar13;
     if (q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15] + q_state_0[20] * q_state_0[20] + q_state_1[20] * q_state_1[20] + q_state_0[21] * q_state_0[21] + q_state_1[21] * q_state_1[21] + q_state_0[22] * q_state_0[22] + q_state_1[22] * q_state_1[22] + q_state_0[23] * q_state_0[23] + q_state_1[23] * q_state_1[23] + q_state_0[28] * q_state_0[28] + q_state_1[28] * q_state_1[28] + q_state_0[29] * q_state_0[29] + q_state_1[29] * q_state_1[29] + q_state_0[30] * q_state_0[30] + q_state_1[30] * q_state_1[30] + q_state_0[31] * q_state_0[31] + q_state_1[31] * q_state_1[31] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11] + q_state_0[16] * q_state_0[16] + q_state_1[16] * q_state_1[16] + q_state_0[17] * q_state_0[17] + q_state_1[17] * q_state_1[17] + q_state_0[18] * q_state_0[18] + q_state_1[18] * q_state_1[18] + q_state_0[19] * q_state_0[19] + q_state_1[19] * q_state_1[19] + q_state_0[24] * q_state_0[24] + q_state_1[24] * q_state_1[24] + q_state_0[25] * q_state_0[25] + q_state_1[25] * q_state_1[25] + q_state_0[26] * q_state_0[26] + q_state_1[26] * q_state_1[26] + q_state_0[27] * q_state_0[27] + q_state_1[27] * q_state_1[27]) {
       q_state_0 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_0[4], q_state_0[5], q_state_0[6], q_state_0[7], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[12], q_state_0[13], q_state_0[14], q_state_0[15], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[20], q_state_0[21], q_state_0[22], q_state_0[23], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[28], q_state_0[29], q_state_0[30], q_state_0[31]};
       q_state_1 = new float[]{0.0F, 0.0F, 0.0F, 0.0F, q_state_1[4], q_state_1[5], q_state_1[6], q_state_1[7], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[12], q_state_1[13], q_state_1[14], q_state_1[15], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[20], q_state_1[21], q_state_1[22], q_state_1[23], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[28], q_state_1[29], q_state_1[30], q_state_1[31]};
-      $$_tmp_measureVar10 = true;
+      $$_tmp_measureVar13 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], q_state_0[2], q_state_0[3], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[8], q_state_0[9], q_state_0[10], q_state_0[11], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[16], q_state_0[17], q_state_0[18], q_state_0[19], 0.0F, 0.0F, 0.0F, 0.0F, q_state_0[24], q_state_0[25], q_state_0[26], q_state_0[27], 0.0F, 0.0F, 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], q_state_1[2], q_state_1[3], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[8], q_state_1[9], q_state_1[10], q_state_1[11], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[16], q_state_1[17], q_state_1[18], q_state_1[19], 0.0F, 0.0F, 0.0F, 0.0F, q_state_1[24], q_state_1[25], q_state_1[26], q_state_1[27], 0.0F, 0.0F, 0.0F, 0.0F};
-      $$_tmp_measureVar10 = false;
+      $$_tmp_measureVar13 = false;
     }
-    boolean $$_tmp_measureVar11;
+    boolean $$_tmp_measureVar14;
     if (q_state_0[2] * q_state_0[2] + q_state_1[2] * q_state_1[2] + q_state_0[3] * q_state_0[3] + q_state_1[3] * q_state_1[3] + q_state_0[6] * q_state_0[6] + q_state_1[6] * q_state_1[6] + q_state_0[7] * q_state_0[7] + q_state_1[7] * q_state_1[7] + q_state_0[10] * q_state_0[10] + q_state_1[10] * q_state_1[10] + q_state_0[11] * q_state_0[11] + q_state_1[11] * q_state_1[11] + q_state_0[14] * q_state_0[14] + q_state_1[14] * q_state_1[14] + q_state_0[15] * q_state_0[15] + q_state_1[15] * q_state_1[15] + q_state_0[18] * q_state_0[18] + q_state_1[18] * q_state_1[18] + q_state_0[19] * q_state_0[19] + q_state_1[19] * q_state_1[19] + q_state_0[22] * q_state_0[22] + q_state_1[22] * q_state_1[22] + q_state_0[23] * q_state_0[23] + q_state_1[23] * q_state_1[23] + q_state_0[26] * q_state_0[26] + q_state_1[26] * q_state_1[26] + q_state_0[27] * q_state_0[27] + q_state_1[27] * q_state_1[27] + q_state_0[30] * q_state_0[30] + q_state_1[30] * q_state_1[30] + q_state_0[31] * q_state_0[31] + q_state_1[31] * q_state_1[31] > q_state_0[0] * q_state_0[0] + q_state_1[0] * q_state_1[0] + q_state_0[1] * q_state_0[1] + q_state_1[1] * q_state_1[1] + q_state_0[4] * q_state_0[4] + q_state_1[4] * q_state_1[4] + q_state_0[5] * q_state_0[5] + q_state_1[5] * q_state_1[5] + q_state_0[8] * q_state_0[8] + q_state_1[8] * q_state_1[8] + q_state_0[9] * q_state_0[9] + q_state_1[9] * q_state_1[9] + q_state_0[12] * q_state_0[12] + q_state_1[12] * q_state_1[12] + q_state_0[13] * q_state_0[13] + q_state_1[13] * q_state_1[13] + q_state_0[16] * q_state_0[16] + q_state_1[16] * q_state_1[16] + q_state_0[17] * q_state_0[17] + q_state_1[17] * q_state_1[17] + q_state_0[20] * q_state_0[20] + q_state_1[20] * q_state_1[20] + q_state_0[21] * q_state_0[21] + q_state_1[21] * q_state_1[21] + q_state_0[24] * q_state_0[24] + q_state_1[24] * q_state_1[24] + q_state_0[25] * q_state_0[25] + q_state_1[25] * q_state_1[25] + q_state_0[28] * q_state_0[28] + q_state_1[28] * q_state_1[28] + q_state_0[29] * q_state_0[29] + q_state_1[29] * q_state_1[29]) {
       q_state_0 = new float[]{0.0F, 0.0F, q_state_0[2], q_state_0[3], 0.0F, 0.0F, q_state_0[6], q_state_0[7], 0.0F, 0.0F, q_state_0[10], q_state_0[11], 0.0F, 0.0F, q_state_0[14], q_state_0[15], 0.0F, 0.0F, q_state_0[18], q_state_0[19], 0.0F, 0.0F, q_state_0[22], q_state_0[23], 0.0F, 0.0F, q_state_0[26], q_state_0[27], 0.0F, 0.0F, q_state_0[30], q_state_0[31]};
       q_state_1 = new float[]{0.0F, 0.0F, q_state_1[2], q_state_1[3], 0.0F, 0.0F, q_state_1[6], q_state_1[7], 0.0F, 0.0F, q_state_1[10], q_state_1[11], 0.0F, 0.0F, q_state_1[14], q_state_1[15], 0.0F, 0.0F, q_state_1[18], q_state_1[19], 0.0F, 0.0F, q_state_1[22], q_state_1[23], 0.0F, 0.0F, q_state_1[26], q_state_1[27], 0.0F, 0.0F, q_state_1[30], q_state_1[31]};
-      $$_tmp_measureVar11 = true;
+      $$_tmp_measureVar14 = true;
     } else {
       q_state_0 = new float[]{q_state_0[0], q_state_0[1], 0.0F, 0.0F, q_state_0[4], q_state_0[5], 0.0F, 0.0F, q_state_0[8], q_state_0[9], 0.0F, 0.0F, q_state_0[12], q_state_0[13], 0.0F, 0.0F, q_state_0[16], q_state_0[17], 0.0F, 0.0F, q_state_0[20], q_state_0[21], 0.0F, 0.0F, q_state_0[24], q_state_0[25], 0.0F, 0.0F, q_state_0[28], q_state_0[29], 0.0F, 0.0F};
       q_state_1 = new float[]{q_state_1[0], q_state_1[1], 0.0F, 0.0F, q_state_1[4], q_state_1[5], 0.0F, 0.0F, q_state_1[8], q_state_1[9], 0.0F, 0.0F, q_state_1[12], q_state_1[13], 0.0F, 0.0F, q_state_1[16], q_state_1[17], 0.0F, 0.0F, q_state_1[20], q_state_1[21], 0.0F, 0.0F, q_state_1[24], q_state_1[25], 0.0F, 0.0F, q_state_1[28], q_state_1[29], 0.0F, 0.0F};
-      $$_tmp_measureVar11 = false;
+      $$_tmp_measureVar14 = false;
     }
-    return $$_tmp_measureVar8 || $$_tmp_measureVar9 || $$_tmp_measureVar10 || $$_tmp_measureVar11;
+    return $$_tmp_measureVar11 || $$_tmp_measureVar12 || $$_tmp_measureVar13 || $$_tmp_measureVar14;
   }
   
   /*@ pure */ 
@@ -283,5 +343,26 @@ public class Deutsch {
       }
     }
     return i;
+  }
+  
+  public float[][] getOracle(int N, /*@ non_null */ 
+  boolean[] f) {
+    int size = 1 << N + 1;
+    /*@ non_null */ 
+    float[][] oracle = new float[size][size];
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        oracle[i][j] = 0.0F;
+        float val = f[i / 2] ? 1.0F : 0.0F;
+        if (i == j) {
+          oracle[i][j] = 1.0F - val;
+        }
+        int even = (i % 2) * 2 - 1;
+        if (i == j + even) {
+          oracle[i][j] = val;
+        }
+      }
+    }
+    return oracle;
   }
 }

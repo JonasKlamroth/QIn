@@ -1,5 +1,34 @@
 public class Deutsch {
 
+    /*@ requires f!= null && f.length == 1 << 2;
+      @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||
+      @             count(f) == f.length / 2;
+      @ ensures \result <==> (count(f) == f.length / 2);
+     */
+    public boolean isBalancedGeneric(boolean[] f) {
+        //Circuit for N == 2
+        CircuitMock circuit = new CircuitMock(3);
+
+        circuit.x(2);
+        circuit.h(2);
+
+        circuit.h(1);
+
+        float[][] oracle = getOracle(2, f);
+
+        //how to do this
+        circuit.u(oracle, 0, 1, 2);
+
+        circuit.h(0);
+        circuit.h(1);
+
+        boolean res = false;
+        res |= circuit.measure(0);
+        res |= circuit.measure(1);
+        res |= circuit.measure(2);
+        return res;
+    }
+
     /*@ requires f != null && f.length == 2;
       @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||
       @             count(f) == f.length / 2;
@@ -277,5 +306,26 @@ public class Deutsch {
             }
         }
         return i;
+    }
+
+    public float[][] getOracle(int N, boolean[] f) {
+        int size = 1 << N + 1;
+        float oracle[][] = new float[size][size];
+        for(int i = 0; i < size; ++i) {
+            for(int j = 0; j < size; ++j) {
+                oracle[i][j] = 0.0f;
+
+                float val = f[i / 2] ? 1.0f : 0.0f;
+
+                if(i == j) {
+                    oracle[i][j] = 1.0f - val;
+                }
+                int even = (i % 2) * 2 - 1;
+                if (i == j +even) {
+                    oracle[i][j] = val;
+                }
+            }
+        }
+        return oracle;
     }
 }
