@@ -17,22 +17,7 @@ public class GenericDeutsch {
         }
 
         int size = 1 << N + 1;
-        float oracle[][] = new float[size][size];
-        for(int i = 0; i < size; ++i) {
-            for(int j = 0; j < size; ++j) {
-                oracle[i][j] = 0.0f;
-
-                float val = f[i / 2] ? 1.0f : 0.0f;
-
-                if(i == j) {
-                    oracle[i][j] = 1.0f - val;
-                }
-                int even = (i % 2) * 2 - 1;
-                if (i == j + even) {
-                    oracle[i][j] = val;
-                }
-            }
-        }
+        float oracle[][] = getOracle(N, f);
         circuit.u(oracle, 0);
 
         for(int i = 0; i < N; ++i) {
@@ -51,7 +36,7 @@ public class GenericDeutsch {
       @             count(f) == f.length / 2;
       @ ensures \result <==> (count(f) == f.length / 2);
      */
-    public boolean isBalanced(boolean[] f) {
+    public boolean isBalancedHandTranslated(boolean[] f) {
         //Circuit for N == 2
         CircuitMock circuit = new CircuitMock(2 + 1);
 

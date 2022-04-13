@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.CharStreams;
@@ -23,7 +25,7 @@ public class CLI implements Runnable {
     @CommandLine.Parameters(index="0", arity = "1", description = "The file to be translated")
     public String fileName = null;
 
-    @CommandLine.Option(names = {"-v", "-verbose"}, description = "Include printout statements after each state update")
+    @CommandLine.Option(names = {"-p", "-printStates"}, description = "Include printout statements after each state update")
     public static boolean includePrintStatements = false;
 
     @CommandLine.Option(names = {"-nd", "-numDigits"}, description = "Number of digits used for fixed point representation.")
@@ -47,6 +49,9 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-m", "-mockCircuit"}, description = "Create a mock circuit java file")
     public static boolean createMockCircuit;
 
+    @CommandLine.Option(names= {"-v", "-variableAssignment"}, description = "Assign values to variables (only ints supported for now)")
+    public static Map<String, Integer> variableAssignments = new HashMap<>();
+
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));
         System.setOut(new CostumPrintStream(System.out));
@@ -55,6 +60,7 @@ public class CLI implements Runnable {
 
     @Override
     public void run() {
+        ScriptEngineWrapper.getInstance().applyAssignmentMap(variableAssignments);
 
         String[] apiArgs = new String[]{"-cp", new File(fileName).getParent()};
         String[] args = new String[]{fileName};
