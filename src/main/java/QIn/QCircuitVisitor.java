@@ -74,11 +74,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
             qStateVars = List.nil();
             for(int i = 0; i < init.size(); ++i) {
                 qStateVars = qStateVars.append(treeutils.makeVarDef(init.get(i).type, M.Name("q_state_" + i), currentSymbol, init.get(i)));
-                if(i != init.size() - 1) {
-                    newStatements = newStatements.append(qStateVars.get(qStateVars.size() - 1));
-                }
+                newStatements = newStatements.append(qStateVars.get(qStateVars.size() - 1));
             }
-            return qStateVars.get(qStateVars.size() - 1);
+            return null;
         }
         if(TransUtils.isFinal(that)) {
             if(that.sym.owner.equals(currentSymbol)) {
@@ -125,40 +123,22 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     }
                     Expr[][] unitary = null;
                     int qBit = -1;
+                    int numQbits = 1;
                     Utils.anonymizePartialState(qState, qStateVars);
                     if(fullMethod.name.toString().equals("u")) {
-                        if(!(methodInvocation.args.get(1) instanceof JCTree.JCIdent)) {
+                        if(methodInvocation.args.size() == 3) {
+                            qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(1).toString());
+                            numQbits = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(2).toString());
                             if (methodInvocation.args.get(0) instanceof JCTree.JCIdent) {
-                                int size = (int)Math.pow(2, methodInvocation.args.size() - 1);
+                                int size = (int) Math.pow(2, numQbits);
                                 unitary = TransUtils.getUnitaryFromIdent((JCTree.JCIdent) methodInvocation.args.get(0), size);
                             }
-                            try {
-                                qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(1).toString());
-                                int tmp = qBit;
-                                for (int i = 2; i < methodInvocation.args.size(); ++i) {
-                                    if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
-                                        throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
-                                    }
-                                    tmp += 1;
-                                }
-                            } catch (NumberFormatException e) {
-                                throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
-                            }
-                        } else if(methodInvocation.args.size() >= 3) {
+                        } else if(methodInvocation.args.size() == 4) {
+                            qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(2).toString());
+                            numQbits = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(3).toString());
                             if (methodInvocation.args.get(0) instanceof JCTree.JCIdent && methodInvocation.args.get(1) instanceof JCTree.JCIdent) {
-                                int size = (int)Math.pow(2, methodInvocation.args.size() - 2);
+                                int size = (int)Math.pow(2, numQbits);
                                 unitary = TransUtils.getUnitaryFromCompIdent((JCTree.JCIdent) methodInvocation.args.get(0), (JCTree.JCIdent) methodInvocation.args.get(1), size);
-                            }
-                            try {
-                                qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(2).toString());
-                                int tmp = qBit;
-                                for (int i = 3; i < methodInvocation.args.size(); ++i) {
-                                    if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
-                                        throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
-                                    }
-                                }
-                            } catch (NumberFormatException e) {
-                                throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-opertions if needed. (Gate: " + node + ")" );
                             }
                         } else {
                             throw new RuntimeException("Illegal number of arguments for unitary matrix application.");
@@ -229,6 +209,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     if(CLI.includePrintStatements) {
                         newStatements = newStatements.appendList(TransUtils.makePrintStatement(qStateVars));
                     }
+                    return null;
                 }
             }
         }
@@ -252,17 +233,6 @@ public class QCircuitVisitor extends JmlTreeCopier {
             newStatements = List.nil();
             JCTree.JCStatement statementCopy = super.copy(st);
             res.stats = res.stats.appendList(newStatements);
-            if(statementCopy instanceof JCTree.JCExpressionStatement) {
-                if(((JCTree.JCExpressionStatement) statementCopy).expr instanceof JCTree.JCMethodInvocation) {
-                    if(((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) statementCopy).expr).meth instanceof JCTree.JCFieldAccess) {
-                        if(((JCTree.JCFieldAccess) ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) statementCopy).expr).meth).selected.type.toString().equals(CIRCUIT_TYPE)) {
-                            continue;
-                        }
-                    }
-                }
-            } else if(statementCopy instanceof JCTree.JCForLoop) {
-                continue;
-            }
             res.stats = res.stats.append(statementCopy);
         }
         newStatements = tmp;
@@ -335,7 +305,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 newStatements = newStatements.append(newBody);
             }
         }
-        return that;
+        return M.Exec(null);
     }
 
 
