@@ -233,7 +233,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
             newStatements = List.nil();
             JCTree.JCStatement statementCopy = super.copy(st);
             res.stats = res.stats.appendList(newStatements);
-            res.stats = res.stats.append(statementCopy);
+            if(statementCopy != null && !statementCopy.toString().contains("/*missing*/")) {
+                res.stats = res.stats.append(statementCopy);
+            }
         }
         newStatements = tmp;
         return res;
