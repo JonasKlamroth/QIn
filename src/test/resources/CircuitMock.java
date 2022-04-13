@@ -32,12 +32,9 @@ public class CircuitMock {
     public void cxx(int cqbit1, int cqbit2, int tqbit) {
     }
 
-    public void u(float[][] m, int... qbits) {
+    public void u(float[][] m, int qbit, int numQbits) {
     }
-    public void u(float[][] m, float[][]m_i, int... qbits) {
-    }
-
-    public void u(int[][] m, int qbits) {
+    public void u(float[][] m, float[][]m_i, int qbits, int numQbits) {
     }
 
     public void swap(int qbit1, int qbit2) {

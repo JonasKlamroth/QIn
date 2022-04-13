@@ -18,14 +18,14 @@ public class GenericDeutsch {
 
         int size = 1 << N + 1;
         float oracle[][] = getOracle(N, f);
-        circuit.u(oracle, 0);
+        circuit.u(oracle, 0, N + 1);
 
         for(int i = 0; i < N; ++i) {
-            circuit.h(i + 1);
+            circuit.h(i);
         }
 
         boolean res = false;
-        for(int i = 0; i < N; ++i) {
+        for(int i = 0; i <= N; ++i) {
             res |= circuit.measure(i);
         }
         return res;
@@ -49,7 +49,7 @@ public class GenericDeutsch {
         float[][] oracle = getOracle(2, f);
 
         //how to do this
-        circuit.u(oracle, 0, 1, 2);
+        circuit.u(oracle, 0, 3);
 
         circuit.h(0);
         circuit.h(1);
