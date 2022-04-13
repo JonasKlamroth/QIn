@@ -10,10 +10,11 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Position;
 import org.jmlspecs.openjml.JmlTree;
 import org.jmlspecs.openjml.JmlTreeCopier;
+import org.jmlspecs.openjml.JmlTreeScanner;
 import org.jmlspecs.openjml.JmlTreeUtils;
 
 public class QCircuitVisitor extends JmlTreeCopier {
-    private static final String CIRCUIT_TYPE = "CircuitMock";
+    public static final String CIRCUIT_TYPE = "CircuitMock";
     private final JmlTreeUtils treeutils;
     public static org.jmlspecs.openjml.Utils utils;
     private List<JCTree.JCStatement> newStatements = List.nil();
@@ -49,7 +50,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 throw new RuntimeException("Error creating circuit.");
             }
             currentCircuitName = that;
-            numQbits = Integer.parseInt(clazz.args.get(0).toString());
+            numQbits = ScriptEngineWrapper.getInstance().eval(clazz.args.get(0).toString());
             stateSize = (int)Math.pow(2, numQbits);
             if(clazz.args.size() == 2) {
                 if(clazz.args.get(1) instanceof JCTree.JCIdent || !CLI.useReals) {
@@ -132,7 +133,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                                 unitary = TransUtils.getUnitaryFromIdent((JCTree.JCIdent) methodInvocation.args.get(0), size);
                             }
                             try {
-                                qBit = Integer.parseInt(methodInvocation.args.get(1).toString());
+                                qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(1).toString());
                                 int tmp = qBit;
                                 for (int i = 2; i < methodInvocation.args.size(); ++i) {
                                     if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
@@ -149,7 +150,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                                 unitary = TransUtils.getUnitaryFromCompIdent((JCTree.JCIdent) methodInvocation.args.get(0), (JCTree.JCIdent) methodInvocation.args.get(1), size);
                             }
                             try {
-                                qBit = Integer.parseInt(methodInvocation.args.get(2).toString());
+                                qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(2).toString());
                                 int tmp = qBit;
                                 for (int i = 3; i < methodInvocation.args.size(); ++i) {
                                     if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
@@ -165,14 +166,14 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     } else if(fullMethod.name.toString().equals("swap")) {
                         assert methodInvocation.args.size() == 2;
 
-                        int qBit1 = Integer.parseInt(methodInvocation.args.get(0).toString());
-                        int qBit2 = Integer.parseInt(methodInvocation.args.get(1).toString());
+                        int qBit1 = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
+                        int qBit2 = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(1).toString());
                         Utils.applySwap(qState, qBit1, qBit2);
                         newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
                         return super.visitMethodInvocation(node, p);
                     } else if(fullMethod.name.toString().equals("measure")) {
                         Utils.anonymizeState(qState, qStateVars);
-                        qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
+                        qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
                         JCTree.JCExpression cond = TransUtils.makeMeasureMaxCondition(qState, qBit);
@@ -190,7 +191,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         return tmp;
                     } else if(fullMethod.name.toString().equals("measurePos")) {
                         Utils.anonymizeState(qState, qStateVars);
-                        qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
+                        qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
                         JCTree.JCExpression cond = null;
@@ -213,10 +214,10 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         return tmp;
                     } else {
                         unitary = Utils.getUnitaryForName(fullMethod.name.toString());
-                        qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
+                        qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
                         int tmp = qBit;
                         for (int i = 1; i < methodInvocation.args.size(); ++i) {
-                            if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
+                            if(tmp + 1 != ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(i).toString())) {
                                 throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-operations if needed. (Gate: " + node + ")" );
                             }
                             tmp += 1;
@@ -245,6 +246,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
     @Override
     public JCTree visitJmlBlock(JmlTree.JmlBlock that, Void p) {
+        List<JCTree.JCStatement> tmp = newStatements;
         JCTree.JCBlock res = M.Block(0L, List.nil());
         for(JCTree.JCStatement st : that.stats) {
             newStatements = List.nil();
@@ -258,10 +260,12 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         }
                     }
                 }
+            } else if(statementCopy instanceof JCTree.JCForLoop) {
+                continue;
             }
             res.stats = res.stats.append(statementCopy);
         }
-        newStatements = List.nil();
+        newStatements = tmp;
         return res;
     }
 
@@ -277,5 +281,171 @@ public class QCircuitVisitor extends JmlTreeCopier {
         JCTree.JCStatement elseBlock = super.copy(jcif.elsepart);
         Utils.anonymizeState(qState, qStateVars);
         return M.If(cond, ifBlock, elseBlock);
+    }
+
+    @Override
+    public JCTree visitJmlForLoop(JmlTree.JmlForLoop that, Void p) {
+        //Check if its a loop effecting a circuit
+        if(ContainsCircuitVisitor.containsCircuit(that.body)) {
+            newStatements = List.nil();
+            if (that.init == null || that.init.length() != 1 || !(that.init.get(0) instanceof JCTree.JCVariableDecl)) {
+                throw new UnsupportedException("Loop initialization: " + that.init + " not supported.");
+            }
+            JCTree.JCVariableDecl loopVar = (JCTree.JCVariableDecl) that.init.get(0);
+            RangeExtractor re = new RangeExtractor(M, loopVar.sym);
+            re.extractRange(that.cond);
+            JCTree.JCExpression lowerExpr = re.getMin();
+            JCTree.JCExpression upperExpr = re.getMax();
+            if(lowerExpr == null && that.step != null && that.step.size() == 1) {
+                JCTree.JCStatement step = that.step.get(0);
+                if(step instanceof JCTree.JCExpressionStatement && ((JCTree.JCExpressionStatement) step).expr instanceof JCTree.JCUnary) {
+                    JCTree.JCUnary u = (JCTree.JCUnary) ((JCTree.JCExpressionStatement) step).expr;
+                    if(u.getTag().toString().equals("PREINC") || u.getTag().toString().equals("POSTINC")) {
+                        if(loopVar.init != null) {
+                            lowerExpr = loopVar.init;
+                        }
+
+                    }
+
+                }
+            }
+            if(upperExpr == null && that.step != null && that.step.size() == 1) {
+                JCTree.JCStatement step = that.step.get(0);
+                if(step instanceof JCTree.JCExpressionStatement && ((JCTree.JCExpressionStatement) step).expr instanceof JCTree.JCUnary) {
+                    JCTree.JCUnary u = (JCTree.JCUnary) ((JCTree.JCExpressionStatement) step).expr;
+                    if(u.getTag().toString().equals("POSTDEC") || u.getTag().toString().equals("PREDEC")) {
+                        if(loopVar.init != null) {
+                            upperExpr = loopVar.init;
+                        }
+                    }
+                }
+            }
+            if(upperExpr == null || lowerExpr == null) {
+                throw new UnsupportedException("Could not extract range from expr: " + that.cond);
+            }
+            int lower = ScriptEngineWrapper.getInstance().eval(lowerExpr.toString());
+            int upper = ScriptEngineWrapper.getInstance().eval(upperExpr.toString());
+
+            for (int i = lower; i <= upper; ++i) {
+                //replace loop var in statements
+                JCTree.JCBlock newBody = M.Block(0L, List.nil());
+                JCTree.JCStatement replacedVar = ReplaceVisitor.replace(loopVar.sym, i, that.body, M);
+                JCTree.JCStatement copy = this.copy(replacedVar);
+                newBody.stats = newBody.stats.append(copy);
+                newStatements = newStatements.append(newBody);
+            }
+        }
+        return that;
+    }
+
+
+
+    class RangeExtractor extends JmlTreeScanner {
+        private JCTree.JCExpression minResult;
+        private JCTree.JCExpression maxResult;
+        private Symbol ident;
+
+        private final JmlTree.Maker M;
+
+        public RangeExtractor(JmlTree.Maker maker, Symbol ident) {
+            this.ident = ident;
+            this.M = maker;
+        }
+
+        @Override
+        public void visitBinary(JCTree.JCBinary tree) {
+            if(tree.getKind() == Tree.Kind.GREATER_THAN) {
+                if(tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = M.Binary(JCTree.Tag.PLUS, tree.getRightOperand(), M.Literal(1));
+                    return;
+                }
+                if(tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getRightOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = M.Binary(JCTree.Tag.MINUS, tree.getLeftOperand(), M.Literal(1));
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.LESS_THAN) {
+                if(tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = M.Binary(JCTree.Tag.MINUS, tree.getRightOperand(), M.Literal(1));
+                    return;
+                }
+                if(tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getRightOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = M.Binary(JCTree.Tag.PLUS, tree.getLeftOperand(), M.Literal(1));
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.GREATER_THAN_EQUAL) {
+                if(tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = tree.getRightOperand();
+                    return;
+                }
+                if(tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getRightOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = tree.getLeftOperand();
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.LESS_THAN_EQUAL) {
+                if (tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent) tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = tree.getRightOperand();
+                    return;
+                }
+                if (tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent) tree.getRightOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = tree.getLeftOperand();
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.AND || tree.getKind() == Tree.Kind.CONDITIONAL_AND) {
+                super.visitBinary(tree);
+                return;
+            }
+            throw new UnsupportedException("Error extracting range from quantifier: " + tree);
+        }
+
+
+        public JCTree.JCExpression getMin() {
+            return minResult;
+        }
+
+        public JCTree.JCExpression getMax() {
+            return maxResult;
+        }
+
+        public void extractRange(JCTree tree) {
+            try{
+                maxResult = null;
+                minResult = null;
+                super.scan(tree);
+            } catch (UnsupportedException e) {
+                throw new UnsupportedException(e.getInnerMessage() + tree);
+            }
+        }
     }
 }
