@@ -13,9 +13,14 @@ public class Deutsch_parameter_simple {
         CircuitMock c = new CircuitMock( 2);
         c.x(1);
 
+        //c.h(0);
+        //c.h(1);
+
         for(int i = 0; i < 2; i++){
             c.h(i); //apply hadamard on all qubits
         }
+
+
 
         c.u(m, 0, 1);
         c.h(0);

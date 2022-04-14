@@ -1,6 +1,6 @@
 public class Deutsch_parameter {
 
-    static int n = 2;
+    static final int n = 1;
 
     /*@ requires f != null && f.length == 1<<n;
       @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||
@@ -28,24 +28,24 @@ public class Deutsch_parameter {
         CircuitMock c = new CircuitMock(n + 1);
         c.x(n);
 
-        for (int i = 0; i < n; i ++){
+        for (int i = 0; i < n + 1; i ++){
             c.h(i);
         }
 
-        int[] q = new int[n];
+        int[] q = new int[n + 1];
 
-        for (int i = 0; i < n; i ++){
+        for (int i = 0; i < n + 1; i ++){
             q[i] = i;
         }
-        c.u(m, 0, n);
+
         c.u(m, q); //on all qubits
 
-        for (int i = 0; i < n - 1; i ++){
+        for (int i = 0; i < n; i ++){
             c.h(i);
         }
 
         boolean result = false;
-        for (int i = 0; i < n - 1; i ++){
+        for (int i = 0; i < n; i ++){
             result |= c.measure(i);
         }
         return result;

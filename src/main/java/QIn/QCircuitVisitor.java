@@ -12,6 +12,8 @@ import org.jmlspecs.openjml.JmlTree;
 import org.jmlspecs.openjml.JmlTreeCopier;
 import org.jmlspecs.openjml.JmlTreeUtils;
 
+import java.io.IOException;
+
 public class QCircuitVisitor extends JmlTreeCopier {
     private static final String CIRCUIT_TYPE = "CircuitMock";
     private final JmlTreeUtils treeutils;
@@ -28,6 +30,8 @@ public class QCircuitVisitor extends JmlTreeCopier {
     private JmlTree.JmlVariableDecl currentCircuitName = null;
     public static List<JmlTree.JmlVariableDecl> classFinalVars = List.nil();
     public static List<JmlTree.JmlVariableDecl> localFinalVars = List.nil();
+
+    private int listIndex = 0;
 
     public QCircuitVisitor(Context context, JmlTree.Maker maker) {
         super(context, maker);
@@ -172,7 +176,13 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         return super.visitMethodInvocation(node, p);
                     } else if(fullMethod.name.toString().equals("measure")) {
                         Utils.anonymizeState(qState, qStateVars);
-                        qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
+
+                        try {
+                            qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
+                        }catch (NumberFormatException e){
+                            qBit = listIndex;
+                        }
+
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
                         JCTree.JCExpression cond = TransUtils.makeMeasureMaxCondition(qState, qBit);
@@ -213,7 +223,13 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         return tmp;
                     } else {
                         unitary = Utils.getUnitaryForName(fullMethod.name.toString());
-                        qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
+
+                        try {
+                            qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
+                        }catch (NumberFormatException e){
+                            qBit = listIndex;
+                        }
+
                         int tmp = qBit;
                         for (int i = 1; i < methodInvocation.args.size(); ++i) {
                             if(tmp + 1 != Integer.parseInt(methodInvocation.args.get(i).toString())) {
@@ -286,18 +302,44 @@ public class QCircuitVisitor extends JmlTreeCopier {
         //node.body.stats[0].expr.meth.name; //h gate
         //node.body.stats[0].expr.args[0].sym; // i
 
+        //JCTree.JCStatement b = ((JCTree.JCBlock) node.body).stats.get(0);
+        //JCTree.JCExpression a =  ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) b).expr).args.get(0);
+
+        //((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) ((JCTree.JCBlock) node.body).stats.get(0)).expr).getArguments();
+
+        List<JCTree.JCExpression> args = ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) ((JCTree.JCBlock) node.body).stats.get(0)).expr).args;
+
+        List<JCTree.JCStatement> tmp = newStatements;
+        listIndex = 0;
+
         for (int i = 0; i < 2; i ++){
+            newStatements = List.nil();
             //substitute loop index for argument
-            if(node.body instanceof JCTree.JCBlock){
+            //if(node.body instanceof JCTree.JCBlock){
               //  ((JCTree.JCBlock) node.body).stats.get(0).expr.args[0] = i;
-            }
+            //}
+
+            //set is not supported?
+            //args.set(0, M.Literal(i));
+
+            //übersetzung durch copy?
+            JCTree.JCStatement copy = super.copy(node.body);
+
+
+            tmp = tmp.appendList(newStatements);
+
+            listIndex++;
+
             //node.body.stats[0].expr.args[0] = i;
             //now call visitor, what to do with return?
             //visitMethodInvocation(node.body.stats[0].expr);
         }
 
+        listIndex = 0;
+
+        newStatements = tmp;
         //skip rest of node?
-        return null;
-        //return super.visitJmlForLoop(node, p);
+        //return null;
+        return super.visitJmlForLoop(node, p);
     }
 }
