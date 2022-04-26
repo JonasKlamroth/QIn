@@ -25,7 +25,7 @@ public class GenericDeutsch {
         }
 
         boolean res = false;
-        for(int i = 0; i <= N; ++i) {
+        for(int i = 0; i < N; ++i) {
             res |= circuit.measure(i);
         }
         return res;
