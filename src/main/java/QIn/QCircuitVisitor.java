@@ -11,11 +11,12 @@ import com.sun.tools.javac.util.Position;
 import org.jmlspecs.openjml.JmlTree;
 import org.jmlspecs.openjml.JmlTreeCopier;
 import org.jmlspecs.openjml.JmlTreeUtils;
+import org.jmlspecs.openjml.JmlTreeScanner;
 
 import java.io.IOException;
 
 public class QCircuitVisitor extends JmlTreeCopier {
-    private static final String CIRCUIT_TYPE = "CircuitMock";
+    public static final String CIRCUIT_TYPE = "CircuitMock";
     private final JmlTreeUtils treeutils;
     public static org.jmlspecs.openjml.Utils utils;
     private List<JCTree.JCStatement> newStatements = List.nil();
@@ -307,39 +308,169 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
         //((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) ((JCTree.JCBlock) node.body).stats.get(0)).expr).getArguments();
 
-        List<JCTree.JCExpression> args = ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) ((JCTree.JCBlock) node.body).stats.get(0)).expr).args;
+        if(ContainsCircuitVisitor.containsCircuit(node.body)) {
 
-        List<JCTree.JCStatement> tmp = newStatements;
-        listIndex = 0;
+            //List<JCTree.JCExpression> args = ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) ((JCTree.JCBlock) node.body).stats.get(0)).expr).args;
 
-        for (int i = 0; i < 2; i ++){
+            List<JCTree.JCStatement> tmp = newStatements;
+            listIndex = 0;
+
+            JCTree.JCVariableDecl loopVar = (JCTree.JCVariableDecl) node.init.get(0);
+
+            RangeExtractor re = new RangeExtractor(M, loopVar.sym);
+            re.extractRange(node.cond);
+            JCTree.JCExpression lowerExpr = re.getMin();
+            JCTree.JCExpression upperExpr = re.getMax();
+
+            int upper = Integer.parseInt(String.valueOf(upperExpr.toString().charAt(0)));
+
             newStatements = List.nil();
-            //substitute loop index for argument
-            //if(node.body instanceof JCTree.JCBlock){
-              //  ((JCTree.JCBlock) node.body).stats.get(0).expr.args[0] = i;
-            //}
 
-            //set is not supported?
-            //args.set(0, M.Literal(i));
+            for (int i = 0; i < upper; i ++){
 
-            //übersetzung durch copy?
-            JCTree.JCStatement copy = super.copy(node.body);
+                //substitute loop index for argument
+                //if(node.body instanceof JCTree.JCBlock){
+                //  ((JCTree.JCBlock) node.body).stats.get(0).expr.args[0] = i;
+                //}
+                //set is not supported?
+                //args.set(0, M.Literal(i));
 
+                //übersetzung durch copy?
+                //JCTree.JCStatement copy = super.copy(node.body);
+                //tmp = tmp.appendList(newStatements);
 
-            tmp = tmp.appendList(newStatements);
+                JCTree.JCBlock newBody = M.Block(0L, List.nil());
+                JCTree.JCStatement replacedVar = ReplaceVisitor.replace(loopVar.sym, i, node.body, M);
+                JCTree.JCStatement copy = this.copy(replacedVar);
+                newBody.stats = newBody.stats.append(copy);
+                newStatements = newStatements.append(newBody);
 
-            listIndex++;
+                listIndex++;
 
-            //node.body.stats[0].expr.args[0] = i;
-            //now call visitor, what to do with return?
-            //visitMethodInvocation(node.body.stats[0].expr);
+                //node.body.stats[0].expr.args[0] = i;
+                //now call visitor, what to do with return?
+                //visitMethodInvocation(node.body.stats[0].expr);
+            }
+            listIndex = 0;
+
+            newStatements = tmp;
+            //skip rest
+            return M.Exec(null);
+
+        }else{
+            //do nothing
+            return super.visitJmlForLoop(node, p);
+        }
+    }
+
+    class RangeExtractor extends JmlTreeScanner {
+        private JCTree.JCExpression minResult;
+        private JCTree.JCExpression maxResult;
+        private Symbol ident;
+
+        private final JmlTree.Maker M;
+
+        public RangeExtractor(JmlTree.Maker maker, Symbol ident) {
+            this.ident = ident;
+            this.M = maker;
         }
 
-        listIndex = 0;
+        @Override
+        public void visitBinary(JCTree.JCBinary tree) {
+            if(tree.getKind() == Tree.Kind.GREATER_THAN) {
+                if(tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = M.Binary(JCTree.Tag.PLUS, tree.getRightOperand(), M.Literal(1));
+                    return;
+                }
+                if(tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getRightOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = M.Binary(JCTree.Tag.MINUS, tree.getLeftOperand(), M.Literal(1));
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.LESS_THAN) {
+                if(tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = M.Binary(JCTree.Tag.MINUS, tree.getRightOperand(), M.Literal(1));
+                    return;
+                }
+                if(tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getRightOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = M.Binary(JCTree.Tag.PLUS, tree.getLeftOperand(), M.Literal(1));
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.GREATER_THAN_EQUAL) {
+                if(tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = tree.getRightOperand();
+                    return;
+                }
+                if(tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent)tree.getRightOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = tree.getLeftOperand();
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.LESS_THAN_EQUAL) {
+                if (tree.getLeftOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent) tree.getLeftOperand()).name.equals(ident.name)) {
+                    if(maxResult != null) {
+                        throw new UnsupportedException("Ambiguous upper bound in range: ");
+                    }
+                    maxResult = tree.getRightOperand();
+                    return;
+                }
+                if (tree.getRightOperand().getKind() == Tree.Kind.IDENTIFIER && ((JCTree.JCIdent) tree.getRightOperand()).name.equals(ident.name)) {
+                    if(minResult != null) {
+                        throw new UnsupportedException("Ambiguous lower bound in range: ");
+                    }
+                    minResult = tree.getLeftOperand();
+                    return;
+                }
+                throw new UnsupportedException("Error extracting range from quantifier: ");
+            }
+            else if(tree.getKind() == Tree.Kind.AND || tree.getKind() == Tree.Kind.CONDITIONAL_AND) {
+                super.visitBinary(tree);
+                return;
+            }
+            throw new UnsupportedException("Error extracting range from quantifier: " + tree);
+        }
 
-        newStatements = tmp;
-        //skip rest of node?
-        //return null;
-        return super.visitJmlForLoop(node, p);
+
+        public JCTree.JCExpression getMin() {
+            return minResult;
+        }
+
+        public JCTree.JCExpression getMax() {
+            return maxResult;
+        }
+
+        public void extractRange(JCTree tree) {
+            try{
+                maxResult = null;
+                minResult = null;
+                super.scan(tree);
+            } catch (UnsupportedException e) {
+                throw new UnsupportedException(e.getInnerMessage() + tree);
+            }
+        }
     }
 }
+
+

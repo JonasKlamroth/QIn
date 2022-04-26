@@ -18,11 +18,11 @@ public class Deutsch_parameter {
         final float[][] m = new float[dim][dim];
 
         for (int i = 0; i < dim; i = i + 2){
-            m[i][i] = !f[0] ? 1.0f : 0.0f;
-            m[i][i + 1] = f[0] ? 1.0f : 0.0f;
+            m[i][i] = !f[i/2] ? 1.0f : 0.0f;
+            m[i][i + 1] = f[i/2] ? 1.0f : 0.0f;
 
-            m[i + 1][i] = f[0] ? 1.0f : 0.0f;
-            m[i + 1][i + 1] = !f[0] ? 1.0f : 0.0f;
+            m[i + 1][i] = f[i/2] ? 1.0f : 0.0f;
+            m[i + 1][i + 1] = !f[i/2] ? 1.0f : 0.0f;
         }
 
         CircuitMock c = new CircuitMock(n + 1);
