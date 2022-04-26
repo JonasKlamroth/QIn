@@ -78,11 +78,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
             qStateVars = List.nil();
             for(int i = 0; i < init.size(); ++i) {
                 qStateVars = qStateVars.append(treeutils.makeVarDef(init.get(i).type, M.Name("q_state_" + i), currentSymbol, init.get(i)));
-                if(i != init.size() - 1) {
-                    newStatements = newStatements.append(qStateVars.get(qStateVars.size() - 1));
-                }
+                newStatements = newStatements.append(qStateVars.get(qStateVars.size() - 1));
             }
-            return qStateVars.get(qStateVars.size() - 1);
+            return null;
         }
         if(TransUtils.isFinal(that)) {
             if(that.sym.owner.equals(currentSymbol)) {
@@ -225,11 +223,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     } else {
                         unitary = Utils.getUnitaryForName(fullMethod.name.toString());
 
-                        try {
-                            qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
-                        }catch (NumberFormatException e){
-                            qBit = listIndex;
-                        }
+                        qBit = Integer.parseInt(methodInvocation.args.get(0).toString());
 
                         int tmp = qBit;
                         for (int i = 1; i < methodInvocation.args.size(); ++i) {
@@ -262,23 +256,17 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
     @Override
     public JCTree visitJmlBlock(JmlTree.JmlBlock that, Void p) {
+        List<JCTree.JCStatement> tmp = newStatements;
         JCTree.JCBlock res = M.Block(0L, List.nil());
         for(JCTree.JCStatement st : that.stats) {
             newStatements = List.nil();
             JCTree.JCStatement statementCopy = super.copy(st);
             res.stats = res.stats.appendList(newStatements);
-            if(statementCopy instanceof JCTree.JCExpressionStatement) {
-                if(((JCTree.JCExpressionStatement) statementCopy).expr instanceof JCTree.JCMethodInvocation) {
-                    if(((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) statementCopy).expr).meth instanceof JCTree.JCFieldAccess) {
-                        if(((JCTree.JCFieldAccess) ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) statementCopy).expr).meth).selected.type.toString().equals(CIRCUIT_TYPE)) {
-                            continue;
-                        }
-                    }
-                }
+            if(statementCopy != null && !statementCopy.toString().contains("/*missing*/")) {
+                res.stats = res.stats.append(statementCopy);
             }
-            res.stats = res.stats.append(statementCopy);
         }
-        newStatements = List.nil();
+        newStatements = tmp;
         return res;
     }
 
@@ -353,7 +341,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
             }
             listIndex = 0;
 
-            newStatements = tmp;
+            //newStatements = tmp;
             //skip rest
             return M.Exec(null);
 
