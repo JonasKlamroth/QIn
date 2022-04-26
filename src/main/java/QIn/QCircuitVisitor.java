@@ -306,8 +306,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 newBody.stats = newBody.stats.append(copy);
                 newStatements = newStatements.append(newBody);
             }
+            return M.Exec(null);
         }
-        return M.Exec(null);
+       return super.visitJmlForLoop(that, p);
     }
 
 
