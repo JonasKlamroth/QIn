@@ -287,21 +287,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
     @Override
     public JCTree visitJmlForLoop(JmlTree.JmlForLoop node, Void p) {
 
-        //int size = node.cond.rhs.value; // = 2
-        //node.body.stats[0].expr.meth.name; //h gate
-        //node.body.stats[0].expr.args[0].sym; // i
-
-        //JCTree.JCStatement b = ((JCTree.JCBlock) node.body).stats.get(0);
-        //JCTree.JCExpression a =  ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) b).expr).args.get(0);
-
-        //((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) ((JCTree.JCBlock) node.body).stats.get(0)).expr).getArguments();
-
         if(ContainsCircuitVisitor.containsCircuit(node.body)) {
-
-            //List<JCTree.JCExpression> args = ((JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) ((JCTree.JCBlock) node.body).stats.get(0)).expr).args;
-
-            List<JCTree.JCStatement> tmp = newStatements;
-            listIndex = 0;
 
             JCTree.JCVariableDecl loopVar = (JCTree.JCVariableDecl) node.init.get(0);
 
@@ -316,34 +302,16 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
             for (int i = 0; i < upper; i ++){
 
-                //substitute loop index for argument
-                //if(node.body instanceof JCTree.JCBlock){
-                //  ((JCTree.JCBlock) node.body).stats.get(0).expr.args[0] = i;
-                //}
-                //set is not supported?
-                //args.set(0, M.Literal(i));
-
-                //übersetzung durch copy?
-                //JCTree.JCStatement copy = super.copy(node.body);
-                //tmp = tmp.appendList(newStatements);
-
                 JCTree.JCBlock newBody = M.Block(0L, List.nil());
                 JCTree.JCStatement replacedVar = ReplaceVisitor.replace(loopVar.sym, i, node.body, M);
                 JCTree.JCStatement copy = this.copy(replacedVar);
                 newBody.stats = newBody.stats.append(copy);
                 newStatements = newStatements.append(newBody);
 
-                listIndex++;
-
-                //node.body.stats[0].expr.args[0] = i;
-                //now call visitor, what to do with return?
-                //visitMethodInvocation(node.body.stats[0].expr);
             }
-            listIndex = 0;
-
-            //newStatements = tmp;
             //skip rest
             return M.Exec(null);
+
 
         }else{
             //do nothing

@@ -31,7 +31,7 @@ public class Deutsch_parameter_decompiled {
             for(int i = 0; i < 4; q[i] = i++) {
             }
 
-            c.u(m, 0,1,2,3);
+            c.u(m, 0, 1, 2, 3);
 
             for(int i = 0; i < 3; ++i) {
                 c.h(i);
