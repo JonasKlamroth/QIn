@@ -193,7 +193,17 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
                         return tmp;
                     } else {
-                        unitary = Utils.getUnitaryForName(fullMethod.name.toString());
+                        if(fullMethod.name.toString().equals("mcx")){
+                            unitary = Utils.getUnitaryForName(fullMethod.name.toString(), ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString()));
+                        }else if(fullMethod.name.toString().equals("rx")){
+                            unitary = Utils.getUnitaryForName(fullMethod.name.toString(), ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString()));
+                        }else if(fullMethod.name.toString().equals("ry")){
+                            unitary = Utils.getUnitaryForName(fullMethod.name.toString(), ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString()));
+                        }else if(fullMethod.name.toString().equals("rz")){
+                            unitary = Utils.getUnitaryForName(fullMethod.name.toString(), ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString()));
+                        }else{
+                            unitary = Utils.getUnitaryForName(fullMethod.name.toString());
+                        }
                         qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
                         int tmp = qBit;
                         for (int i = 1; i < methodInvocation.args.size(); ++i) {

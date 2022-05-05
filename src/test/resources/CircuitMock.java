@@ -29,7 +29,15 @@ public class CircuitMock {
     public void cz(int cqbit, int tqbit) {
     }
 
-    public void cxx(int cqbit1, int cqbit2, int tqbit) {
+    public void ccx(int cqbit1, int cqbit2, int tqbit) {
+    }
+    public void mcx(int nqbits) {
+    }
+    public void rx(float val, int qbit) {
+    }
+    public void ry(float val, int qbit) {
+    }
+    public void rz(float val, int qbit) {
     }
 
     public void u(float[][] m, int qbit, int numQbits) {

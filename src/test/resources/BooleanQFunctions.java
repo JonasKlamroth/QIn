@@ -8,7 +8,7 @@ public class BooleanQFunctions {
         if(b) {
             c.x(1);
         }
-        c.cxx(0, 1, 2);
+        c.ccx(0, 1, 2);
         c.swap(0, 1);
         c.swap(0, 2);
         c.cx(0, 1);
@@ -33,7 +33,7 @@ public class BooleanQFunctions {
         c.swap(0, 2);
         c.swap(0, 1);
 
-        c.cxx(0, 1, 2);
+        c.ccx(0, 1, 2);
         c.x(3);
         return c.measure(3);
     }

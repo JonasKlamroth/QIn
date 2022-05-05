@@ -182,8 +182,11 @@ public class Utils {
         if(name.equals("z")) {
             return getExprMatrix(Z);
         }
-        if(name.equals("cxx")) {
+        if(name.equals("ccx")) {
             return getExprMatrix(CCX);
+        }
+        if(name.equals("mcx")) {
+            return getMCXGate(theta);
         }
         if(name.equals("rx")) {
             return getRXGate(theta);
@@ -261,6 +264,29 @@ public class Utils {
                 new float[]{0.0f, (float)Math.sin(theta/2.0)}
         };
         return getExprMatrix(real, img);
+    }
+
+    public static Expr[][] getMCXGate(Object arg) {
+        if(!(arg instanceof Integer)) {
+            throw new RuntimeException("Parameter of mcx gate has to be integer.");
+        }
+        int n = (Integer) arg;
+
+        int size = (int) Math.pow(2, n);
+
+        float[][] m = new float[size][size];
+        for (int i = 0; i < size; i++){
+            for (int j = 0; j < size; j++){
+                m[i][j] = 0.0f;
+            }
+        }
+        for (int j = 0; j < size-2; j++){
+            m[j][j] = 1.0f;
+        }
+        m[size-2][size-1] = 1.0f;
+        m[size-1][size-2] = 1.0f;
+
+        return getExprMatrix(m);
     }
 
     private static Expr[][] getExprMatrix(float[][] real, float[][] img) {
