@@ -6,6 +6,7 @@ public class Grover {
       @ requires f != null;
       @ requires f.length == 4;
       @ requires (\exists int j; j >= 0 && j < f.length; f[j] == val);
+      @ requires (\forall int i; 0 <= i && i < f.length; (\forall int j; 0 <= j && j < f.length; i != j ==> f[i] != f[j]));
       @ ensures f[\result] == val;
       @*/
 
@@ -43,8 +44,12 @@ public class Grover {
 
 
     /*@
-      @ ensures ((val >= 0 && val < 7) ==> f[\result] == val) && ((val < 0 || val > 7) ==> \result == -1);
-      @*/
+    @ requires f != null;
+    @ requires f.length == 8;
+    @ requires (\exists int j; j >= 0 && j < f.length; f[j] == val);
+    @ requires (\forall int i; 0 <= i && i < f.length; (\forall int j; 0 <= j && j < f.length; i != j ==> f[i] != f[j]));
+    @ ensures f[\result] == val;
+    @*/
     public static int grover3(int val, int[] f) {
         if (val < 0 || val > 7) {
             return -1;
@@ -99,8 +104,12 @@ public class Grover {
         return (res1 ? 4 : 0) + (res2 ? 2 : 0) + (res3 ? 1 : 0);
     }
     /*@
-          @ ensures ((val >= 0 && val < 15) ==> f[\result] == val) && ((val < 0 || val > 15) ==> \result == -1);
-          @*/
+    @ requires f != null;
+    @ requires f.length == 16;
+    @ requires (\exists int j; j >= 0 && j < f.length; f[j] == val);
+    @ requires (\forall int i; 0 <= i && i < f.length; (\forall int j; 0 <= j && j < f.length; i != j ==> f[i] != f[j]));
+    @ ensures f[\result] == val;
+    @*/
     public static int grover4(int val, int[] f) {
         if (val < 0 || val > 15) {
             return -1;
@@ -169,6 +178,16 @@ public class Grover {
         return (res1 ? 8 : 0) + (res2 ? 4 : 0) + (res3 ? 2 : 0) + (res4 ? 1 : 0);
     }
 
+    //optional: restrict size of elements in input array
+    // requires (\forall int i; i >= 0 && i < f.length; f[i] <= 50);
+    
+    /*@
+   @ requires f != null;
+   @ requires f.length == 1 << N;
+   @ requires (\exists int j; j >= 0 && j < f.length; f[j] == val);
+   @ requires (\forall int i; 0 <= i && i < f.length; (\forall int j; 0 <= j && j < f.length; i != j ==> f[i] != f[j]));
+   @ ensures f[\result] == val;
+   @*/
     public static int grovern(int val, int[] f) {
         if (val < 0 || val > 1 << N) {
             return -1;
