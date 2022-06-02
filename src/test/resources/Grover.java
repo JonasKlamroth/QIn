@@ -51,9 +51,6 @@ public class Grover {
     @ ensures f[\result] == val;
     @*/
     public static int grover3(int val, int[] f) {
-        if (val < 0 || val > 7) {
-            return -1;
-        }
 
         final float[][] oracle2 = new float[][]{
                 new float[]{val == f[0] ? 1.0f : -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
@@ -111,9 +108,6 @@ public class Grover {
     @ ensures f[\result] == val;
     @*/
     public static int grover4(int val, int[] f) {
-        if (val < 0 || val > 15) {
-            return -1;
-        }
 
         final float[][] oracle2 = new float[][]{
                 new float[]{val == f[0] ? 1.0f : -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
@@ -180,7 +174,7 @@ public class Grover {
 
     //optional: restrict size of elements in input array
     // requires (\forall int i; i >= 0 && i < f.length; f[i] <= 50);
-    
+
     /*@
    @ requires f != null;
    @ requires f.length == 1 << N;
@@ -189,9 +183,7 @@ public class Grover {
    @ ensures f[\result] == val;
    @*/
     public static int grovern(int val, int[] f) {
-        if (val < 0 || val > 1 << N) {
-            return -1;
-        }
+
         int dim = 1 << N;
         final float[][] oracle2 = new float[dim][dim];
         for (int i = 0; i < dim; i = i + 1){
