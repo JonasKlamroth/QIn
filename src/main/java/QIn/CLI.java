@@ -1,28 +1,27 @@
 package QIn;
+
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import org.antlr.v4.runtime.tree.*;
-import org.jmlspecs.openjml.Factory;
-import org.jmlspecs.openjml.IAPI;
-import org.jmlspecs.openjml.JmlTree;
-import picocli.CommandLine;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.jmlspecs.openjml.Factory;
+import org.jmlspecs.openjml.IAPI;
+import org.jmlspecs.openjml.JmlTree;
+import picocli.CommandLine;
 
 @CommandLine.Command(name = "CircTrans", header = "@|bold translate quantum circuits to plain java |@")
 public class CLI implements Runnable {
 
-    @CommandLine.Parameters(index="0", arity = "1", description = "The file to be translated")
+    @CommandLine.Parameters(index = "0", arity = "1", description = "The file to be translated")
     public String fileName = null;
 
     @CommandLine.Option(names = {"-p", "-printStates"}, description = "Include printout statements after each state update")
@@ -40,7 +39,8 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-fixed", "-useFixedPointArithmetic"}, description = "Whether fixed or floating point arithmetic is used.")
     public static boolean useFix = false;
 
-    @CommandLine.Option(names = {"-o", "-outputFile"}, description = "Provide a file to which the output is stored. If not provided output is printed to stdout")
+    @CommandLine.Option(names = {"-o", "-outputFile"},
+        description = "Provide a file to which the output is stored. If not provided output is printed to stdout")
     public static String outPath = null;
 
     @CommandLine.Option(names = {"-ndf", "-nondetFunctions"}, description = "Allow the use of JJBMCs nondet functions.")
@@ -49,7 +49,7 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-m", "-mockCircuit"}, description = "Create a mock circuit java file")
     public static boolean createMockCircuit;
 
-    @CommandLine.Option(names= {"-v", "-variableAssignment"}, description = "Assign values to variables (only ints supported for now)")
+    @CommandLine.Option(names = {"-v", "-variableAssignment"}, description = "Assign values to variables (only ints supported for now)")
     public static Map<String, Integer> variableAssignments = new HashMap<>();
 
     public static void main(String[] args) {
@@ -62,7 +62,7 @@ public class CLI implements Runnable {
     public void run() {
         ScriptEngineWrapper.getInstance().applyAssignmentMap(variableAssignments);
 
-        String[] apiArgs = new String[]{"-cp", new File(fileName).getParent()};
+        String[] apiArgs = new String[]{"-cp", new File(fileName).toPath().toAbsolutePath().getParent().toString()};
         String[] args = new String[]{fileName};
         IAPI api = null;
         try {
@@ -72,7 +72,7 @@ public class CLI implements Runnable {
             throw new RuntimeException("Error creating api: " + e.getMessage());
         }
 
-        if(fileName.endsWith(".qasm")){
+        if (fileName.endsWith(".qasm")) {
             //parse qasm
             try {
                 parseQasm(fileName);
@@ -80,7 +80,7 @@ public class CLI implements Runnable {
                 e.printStackTrace();
                 throw new RuntimeException("Error parsing qasm " + e.getMessage());
             }
-        }else if(fileName.endsWith(".java")){
+        } else if (fileName.endsWith(".java")) {
             //parse java
             java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
             int a = 0;
@@ -90,7 +90,7 @@ public class CLI implements Runnable {
                 e.printStackTrace();
                 throw new RuntimeException("Error running typecheck: " + e.getMessage());
             }
-            if(a > 0) {
+            if (a > 0) {
                 System.out.println("Error translating");
                 return;
             }
@@ -102,9 +102,9 @@ public class CLI implements Runnable {
                 JCTree t = rewriteAssert(it, ctx);
                 try {
                     String translation = api.prettyPrint(t);
-                    if(outPath != null) {
+                    if (outPath != null) {
                         File outFile = new File(outPath);
-                        if(outFile.exists()) {
+                        if (outFile.exists()) {
                             Files.delete(outFile.toPath());
                         }
                         Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
@@ -116,7 +116,7 @@ public class CLI implements Runnable {
                     e.printStackTrace();
                 }
             }
-        }else{
+        } else {
             throw new RuntimeException("unknown file format!");
         }
     }
@@ -130,7 +130,7 @@ public class CLI implements Runnable {
         ParseTree parseTree = qasmParser.mainprog();
 
         String translation = "";
-        if(createMockCircuit){
+        if (createMockCircuit) {
             translation += "public class test { \n" + "public static void testM() {\n";
 
             qasm2mock_listener q = new qasm2mock_listener();
@@ -139,16 +139,16 @@ public class CLI implements Runnable {
 
             translation += "} \n" + "}\n";
 
-        }else{
+        } else {
             qasm_listener q = new qasm_listener();
             ParseTreeWalker.DEFAULT.walk((ParseTreeListener) q, parseTree);
             translation = q.jv.prettyPrint("test", "testM");
         }
         //save file
         try {
-            if(outPath != null) {
+            if (outPath != null) {
                 File outFile = new File(outPath);
-                if(outFile.exists()) {
+                if (outFile.exists()) {
                     Files.delete(outFile.toPath());
                 }
                 Files.write(outFile.toPath(), translation.getBytes(), StandardOpenOption.CREATE);
