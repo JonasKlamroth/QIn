@@ -4,6 +4,7 @@ import QIn.Expressions.Expr;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Symtab;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
@@ -18,11 +19,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
     private final JmlTreeUtils treeutils;
     public static org.jmlspecs.openjml.Utils utils;
     private List<JCTree.JCStatement> newStatements = List.nil();
-    private final Symtab syms;
     private Symbol currentSymbol;
     int numQbits = -1;
     private List<JCTree.JCVariableDecl> qStateVars;
-    private int stateSize;
     private Expr[][] qState;
     private int measureVarCounter = 0;
     private int paramVarCounter = 0;
@@ -33,7 +32,6 @@ public class QCircuitVisitor extends JmlTreeCopier {
     public QCircuitVisitor(Context context, JmlTree.Maker maker) {
         super(context, maker);
         this.treeutils = JmlTreeUtils.instance(context);
-        this.syms = Symtab.instance(context);
         utils = org.jmlspecs.openjml.Utils.instance(context);
     }
 
@@ -50,8 +48,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 throw new RuntimeException("Error creating circuit.");
             }
             currentCircuitName = that;
-            numQbits = ScriptEngineWrapper.getInstance().eval(clazz.args.get(0).toString());
-            stateSize = (int)Math.pow(2, numQbits);
+            numQbits = ScriptEngineWrapper.getInstance().evalInt(clazz.args.get(0).toString());
             if(clazz.args.size() == 2) {
                 if(clazz.args.get(1) instanceof JCTree.JCIdent || !CLI.useReals) {
                     qState = Utils.getInitialSymbState(numQbits, (JCTree.JCIdent) clazz.args.get(1));
@@ -127,15 +124,15 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     Utils.anonymizePartialState(qState, qStateVars);
                     if(fullMethod.name.toString().equals("u")) {
                         if(methodInvocation.args.size() == 3) {
-                            qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(1).toString());
-                            numQbits = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(2).toString());
+                            qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(1).toString());
+                            numQbits = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(2).toString());
                             if (methodInvocation.args.get(0) instanceof JCTree.JCIdent) {
                                 int size = (int) Math.pow(2, numQbits);
                                 unitary = TransUtils.getUnitaryFromIdent((JCTree.JCIdent) methodInvocation.args.get(0), size);
                             }
                         } else if(methodInvocation.args.size() == 4) {
-                            qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(2).toString());
-                            numQbits = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(3).toString());
+                            qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(2).toString());
+                            numQbits = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(3).toString());
                             if (methodInvocation.args.get(0) instanceof JCTree.JCIdent && methodInvocation.args.get(1) instanceof JCTree.JCIdent) {
                                 int size = (int)Math.pow(2, numQbits);
                                 unitary = TransUtils.getUnitaryFromCompIdent((JCTree.JCIdent) methodInvocation.args.get(0), (JCTree.JCIdent) methodInvocation.args.get(1), size);
@@ -146,14 +143,14 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     } else if(fullMethod.name.toString().equals("swap")) {
                         assert methodInvocation.args.size() == 2;
 
-                        int qBit1 = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
-                        int qBit2 = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(1).toString());
+                        int qBit1 = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());
+                        int qBit2 = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(1).toString());
                         Utils.applySwap(qState, qBit1, qBit2);
                         newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
-                        return super.visitMethodInvocation(node, p);
+                        return null;
                     } else if(fullMethod.name.toString().equals("measure")) {
                         Utils.anonymizeState(qState, qStateVars);
-                        qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
+                        qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
                         JCTree.JCExpression cond = TransUtils.makeMeasureMaxCondition(qState, qBit);
@@ -171,7 +168,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         return tmp;
                     } else if(fullMethod.name.toString().equals("measurePos")) {
                         Utils.anonymizeState(qState, qStateVars);
-                        qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
+                        qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
                         JCTree.JCExpression cond = null;
@@ -193,14 +190,20 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
                         return tmp;
                     } else {
-                        unitary = Utils.getUnitaryForName(fullMethod.name.toString());
-                        qBit = ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(0).toString());
+                        qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());
                         int tmp = qBit;
                         for (int i = 1; i < methodInvocation.args.size(); ++i) {
-                            if(tmp + 1 != ScriptEngineWrapper.getInstance().eval(methodInvocation.args.get(i).toString())) {
+                            if(!methodInvocation.args.get(i).type.hasTag(TypeTag.INT)) {
+                                unitary = Utils.getUnitaryForName(fullMethod.name.toString(), methodInvocation.args.get(i));
+                                break;
+                            }
+                            if(tmp + 1 != ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(i).toString())) {
                                 throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-operations if needed. (Gate: " + node + ")" );
                             }
                             tmp += 1;
+                        }
+                        if(unitary == null) {
+                            unitary = Utils.getUnitaryForName(fullMethod.name.toString());
                         }
 
                     }
@@ -268,6 +271,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
             re.extractRange(that.cond);
             JCTree.JCExpression lowerExpr = re.getMin();
             JCTree.JCExpression upperExpr = re.getMax();
+            boolean upwards = true;
             if(lowerExpr == null && that.step != null && that.step.size() == 1) {
                 JCTree.JCStatement step = that.step.get(0);
                 if(step instanceof JCTree.JCExpressionStatement && ((JCTree.JCExpressionStatement) step).expr instanceof JCTree.JCUnary) {
@@ -286,6 +290,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                 if(step instanceof JCTree.JCExpressionStatement && ((JCTree.JCExpressionStatement) step).expr instanceof JCTree.JCUnary) {
                     JCTree.JCUnary u = (JCTree.JCUnary) ((JCTree.JCExpressionStatement) step).expr;
                     if(u.getTag().toString().equals("POSTDEC") || u.getTag().toString().equals("PREDEC")) {
+                        upwards = false;
                         if(loopVar.init != null) {
                             upperExpr = loopVar.init;
                         }
@@ -295,10 +300,10 @@ public class QCircuitVisitor extends JmlTreeCopier {
             if(upperExpr == null || lowerExpr == null) {
                 throw new UnsupportedException("Could not extract range from expr: " + that.cond);
             }
-            int lower = ScriptEngineWrapper.getInstance().eval(lowerExpr.toString());
-            int upper = ScriptEngineWrapper.getInstance().eval(upperExpr.toString());
+            int lower = ScriptEngineWrapper.getInstance().evalInt(lowerExpr.toString());
+            int upper = ScriptEngineWrapper.getInstance().evalInt(upperExpr.toString());
 
-            for (int i = lower; i <= upper; ++i) {
+            for (int i = (upwards ? lower : upper); i <= upper && i >= lower; i += (upwards ?  1 : - 1)) {
                 //replace loop var in statements
                 JCTree.JCBlock newBody = M.Block(0L, List.nil());
                 JCTree.JCStatement replacedVar = ReplaceVisitor.replace(loopVar.sym, i, that.body, M);
@@ -313,10 +318,10 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
 
 
-    class RangeExtractor extends JmlTreeScanner {
+    static class RangeExtractor extends JmlTreeScanner {
         private JCTree.JCExpression minResult;
         private JCTree.JCExpression maxResult;
-        private Symbol ident;
+        private final Symbol ident;
 
         private final JmlTree.Maker M;
 

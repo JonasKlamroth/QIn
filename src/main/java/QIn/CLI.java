@@ -49,8 +49,8 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-m", "-mockCircuit"}, description = "Create a mock circuit java file")
     public static boolean createMockCircuit;
 
-    @CommandLine.Option(names = {"-v", "-variableAssignment"}, description = "Assign values to variables (only ints supported for now)")
-    public static Map<String, Integer> variableAssignments = new HashMap<>();
+    @CommandLine.Option(names = {"-v", "-variableAssignment"}, description = "Assign values to variables (only ints and floats supported for now)")
+    public static Map<String, String> variableAssignments = new HashMap<>();
 
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));

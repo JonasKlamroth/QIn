@@ -186,15 +186,60 @@ public class Utils {
             return getExprMatrix(CCX);
         }
         if(name.equals("rx")) {
-            return getRXGate(theta);
+            try {
+                double ftheta = ScriptEngineWrapper.getInstance().eval(theta.toString());
+                return getRZGate(ftheta);
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("The parameter theta of an RX-Gate has to have type float");
+            }
         }
         if(name.equals("rz")) {
-            return getRZGate(theta);
+            try {
+                double ftheta = ScriptEngineWrapper.getInstance().eval(theta.toString());
+                return getRZGate(ftheta);
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("The parameter theta of an RZ-Gate has to have type float");
+            }
         }
         if(name.equals("ry")) {
-            return getRYGate(theta);
+            try {
+                double ftheta = ScriptEngineWrapper.getInstance().eval(theta.toString());
+                return getRYGate(ftheta);
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("The parameter theta of an RZ-Gate has to have type float");
+            }
+        }
+        if(name.equals("cp")) {
+            double ftheta = ScriptEngineWrapper.getInstance().eval(theta.toString());
+            return getCPGate(ftheta);
         }
         throw new AssertionError("unsupported unitary " + name);
+    }
+
+    private static Expr[][] getCPGate(Object arg) {
+        if(!(arg instanceof Float) && !(arg instanceof Double)) {
+            throw new RuntimeException("Parameter theta of cp gate has to be float.");
+        }
+        double theta = 0.0;
+        if(arg instanceof Float) {
+            theta = ((Float) arg).doubleValue();
+        }
+        if(arg instanceof Double) {
+            theta = (Double) arg;
+        }
+        float[][] real = new float[][]{
+                new float[]{1.0f, 0.0f, 0.0f, 0.f},
+                new float[]{0.0f, 1.0f, 0.0f, 0.0f},
+                new float[]{0.0f, 0.0f, 1.0f, 0.0f},
+                new float[]{0.0f, 0.0f, 0.0f, (float)Math.cos(theta)}
+        };
+        float[][] img = new float[][]{
+                new float[]{0.0f, 0.0f, 0.0f, 0.f},
+                new float[]{0.0f, 0.0f, 0.0f, 0.0f},
+                new float[]{0.0f, 0.0f, 0.0f, 0.0f},
+                new float[]{0.0f, 0.0f, 0.0f, (float)(Math.sin(theta))}
+        };
+        return getExprMatrix(real, img);
     }
 
     public static Expr[][] getRXGate(Object arg) {
@@ -206,7 +251,7 @@ public class Utils {
             theta = ((Float) arg).doubleValue();
         }
         if(arg instanceof Double) {
-            theta = ((Double) arg).doubleValue();
+            theta = (Double) arg;
         }
         float[][] real = new float[][]{
                 new float[]{(float)Math.cos(theta/2.0), 0.0f},
@@ -228,7 +273,7 @@ public class Utils {
             theta = ((Float) arg).doubleValue();
         }
         if(arg instanceof Double) {
-            theta = ((Double) arg).doubleValue();
+            theta = (Double) arg;
         }
         float[][] real = new float[][]{
                 new float[]{(float)Math.cos(theta/2.0), -(float)Math.sin(theta/2.0)},
@@ -250,7 +295,7 @@ public class Utils {
             theta = ((Float) arg).doubleValue();
         }
         if(arg instanceof Double) {
-            theta = ((Double) arg).doubleValue();
+            theta = (Double) arg;
         }
         float[][] real = new float[][]{
                 new float[]{(float)Math.cos(theta/2.0), 0.0f},

@@ -2,14 +2,12 @@ package QIn;
 
 import org.mariuszgromada.math.mxparser.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class ScriptEngineWrapper {
 
     private static ScriptEngineWrapper instance = null;
-    private Map<String, Integer> assignmentMap = null;
+    private Map<String, String> assignmentMap = null;
 
 
     private ScriptEngineWrapper() {
@@ -22,12 +20,16 @@ public class ScriptEngineWrapper {
         return instance;
     }
 
-    public void applyAssignmentMap(Map<String, Integer> map) {
+    public void applyAssignmentMap(Map<String, String> map) {
         assignmentMap = map;
     }
 
 
-    public int eval(String expr) {
+    public int evalInt(String expr) {
+        return new Double(eval(expr)).intValue();
+    }
+
+    public double eval(String expr) {
         Argument[] args = new Argument[assignmentMap.keySet().size()];
         int idx = 0;
         for(String k : assignmentMap.keySet()) {
@@ -35,12 +37,18 @@ public class ScriptEngineWrapper {
             args[idx] = a;
             idx++;
         }
+        expr = expr.replaceAll("\\(double\\)", "");
+        expr = expr.replaceAll("\\(float\\)", "");
+        expr = expr.replaceAll("\\(int\\)", "");
+        expr = expr.replaceAll(">>", "@>>");
+        expr = expr.replaceAll("<<", "@<<");
         try {
             Expression e = new Expression(expr, args);
-            if(Double.isNaN(e.calculate())) {
+            double res = e.calculate();
+            if(Double.isNaN(res)) {
                 throw new RuntimeException("Could not evaluate expression: " + e.getExpressionString());
             }
-            return (int)e.calculate();
+            return res;
         } catch (Exception e) {
             throw new UnsupportedException("Unsupported expression evaluated: " + expr);
         }
