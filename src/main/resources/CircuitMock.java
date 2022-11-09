@@ -1,5 +1,3 @@
-package QIn;
-
 public class CircuitMock {
     public CircuitMock(int numQbits) {
     }
@@ -34,7 +32,6 @@ public class CircuitMock {
     public void cp(int cqbit, int tqbit, double theta) {
 
     }
-
 
     public void cxx(int cqbit1, int cqbit2, int tqbit) {
     }

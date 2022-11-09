@@ -4,8 +4,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 import org.antlr.v4.runtime.CharStreams;
@@ -51,6 +50,8 @@ public class CLI implements Runnable {
 
     @CommandLine.Option(names = {"-v", "-variableAssignment"}, description = "Assign values to variables (only ints and floats supported for now)")
     public static Map<String, String> variableAssignments = new HashMap<>();
+    private final Path MockFilepath = new File("." + File.separator + "src" + File.separator + "main" + File.separator +
+            "resources" + File.separator + "CircuitMock.java").toPath();
 
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));
@@ -81,6 +82,7 @@ public class CLI implements Runnable {
                 throw new RuntimeException("Error parsing qasm " + e.getMessage());
             }
         } else if (fileName.endsWith(".java")) {
+            copyMock();
             //parse java
             java.util.List<JmlTree.JmlCompilationUnit> cu = api.parseFiles(args);
             int a = 0;
@@ -116,13 +118,39 @@ public class CLI implements Runnable {
                     e.printStackTrace();
                 }
             }
+            deleteMock();
         } else {
             throw new RuntimeException("unknown file format!");
         }
     }
 
+    private void deleteMock() {
+        File folder = new File(fileName).getParentFile();
+        File mock = new File(folder, "CircuitMock.java");
+        try {
+            Files.delete(mock.toPath());
+        } catch (IOException e) {
+            System.out.println("Error trying to delete the CircuitMock.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void copyMock() {
+        File folder = new File(fileName).getParentFile();
+        File mock = new File(folder, "CircuitMock.java");
+        if(mock.exists()) {
+            throw new RuntimeException("CircuitMock.java is already existing in the folder of the given file. Please make sure this is not the case.");
+        }
+        try {
+            Files.copy(MockFilepath, mock.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            System.out.println("Error copying CircuitMock.");
+            throw new RuntimeException(e);
+        }
+    }
+
     public void parseQasm(String fileName) throws IOException {
-        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromFileName(fileName));
+        QIn.QASMLexer qasmLexer = new QIn.QASMLexer(CharStreams.fromFileName(fileName));
         CommonTokenStream commonTokenStream = new CommonTokenStream(qasmLexer);
 
         QIn.QASMParser qasmParser = new QIn.QASMParser(commonTokenStream);
