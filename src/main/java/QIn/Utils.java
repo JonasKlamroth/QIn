@@ -182,7 +182,7 @@ public class Utils {
         if(name.equals("z")) {
             return getExprMatrix(Z);
         }
-        if(name.equals("cxx")) {
+        if(name.equals("ccx")) {
             return getExprMatrix(CCX);
         }
         if(name.equals("rx")) {
@@ -241,6 +241,7 @@ public class Utils {
         };
         return getExprMatrix(real, img);
     }
+
 
     public static Expr[][] getRXGate(Object arg) {
         if(!(arg instanceof Float) && !(arg instanceof Double)) {
@@ -445,6 +446,17 @@ public class Utils {
         }
         return newState;
 
+    }
+
+    public static void applyReset(Expr[][] qState, int qBit1) {
+        int stateSize = qState.length;
+        int numQbits = log2(stateSize);
+        qBit1 = numQbits - qBit1 - 1;
+        for(int i = 0; i < stateSize; ++i) {
+            if((i / (1 << qBit1)) % 2 != 0) {
+                qState[i][0] = new FloatConst(0.0f);
+            }
+        }
     }
 
     public static void applySwap(Expr[][] qState, int qBit1, int qBit2) {

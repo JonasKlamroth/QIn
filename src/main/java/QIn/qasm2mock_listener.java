@@ -8,29 +8,20 @@ public class qasm2mock_listener extends QIn.QASMBaseListener {
 
         if(ctx.getChild(0).getText().equals("h")){
             statements += " c.h(" + ctx.getChild(1).getChild(0).getChild(2).getText() + ");" + "\n";
-        }
-
-        if(ctx.getChild(0).getText().equals("x")){
+        } else if (ctx.getChild(0).getText().equals("x")){
             statements += " c.x(" + ctx.getChild(1).getChild(0).getChild(2).getText() + ");" + "\n";
-        }
-
-        if(ctx.getChild(0).getText().equals("cx")){
+        } else if(ctx.getChild(0).getText().equals("cx")){
             statements += "c.cx(" + ctx.getChild(1).getChild(0).getChild(2).getText() + "," + ctx.getChild(1).getChild(0).getChild(7).getText() + ");" + "\n";
-        }
-
-        if(ctx.getChild(0).getText().equals("swap")){
+        } else if(ctx.getChild(0).getText().equals("swap")){
             statements += " c.swap(" + ctx.getChild(1).getChild(0).getChild(2).getText() + "," + ctx.getChild(1).getChild(0).getChild(7).getText() + ");" + "\n";
-        }
-
-        if(ctx.getChild(0).getText().equals("rx")){
+        } else if(ctx.getChild(0).getText().equals("rx")){
             statements += "c.rx(" + ctx.getChild(2).getChild(0).getChild(0).getText() + "," + ctx.getChild(4).getChild(0).getChild(2).getText() + ");" + "\n";
-        }
-
-        if(ctx.getChild(0).getText().equals("rz")){
+        } else if(ctx.getChild(0).getText().equals("rz")){
             statements += "c.rz(" + ctx.getChild(2).getChild(0).getChild(0).getText() + "," + ctx.getChild(4).getChild(0).getChild(2).getText() + ");" + "\n";
-        }
-        if(ctx.getChild(0).getText().equals("ry")){
+        } else if(ctx.getChild(0).getText().equals("ry")){
             statements += "c.ry(" + ctx.getChild(2).getChild(0).getChild(0).getText() + "," + ctx.getChild(4).getChild(0).getChild(2).getText() + ");" + "\n";
+        } else {
+            throw new RuntimeException("Unkown gate type :" + ctx.getChild(0).getText());
         }
 
     }

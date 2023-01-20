@@ -33,7 +33,10 @@ public class CircuitMock {
 
     }
 
-    public void cxx(int cqbit1, int cqbit2, int tqbit) {
+    public void ccx(int cqbit1, int cqbit2, int tqbit) {
+    }
+
+    public void reset(int qbit1) {
     }
 
     public void u(float[][] m, int qbit, int numQbits) {

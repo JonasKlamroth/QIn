@@ -1,4 +1,4 @@
-public class QFTBug {
+public class QFEBug {
     // https://quantumcomputing.stackexchange.com/questions/9246/quantum-phase-estimation-implementation
     // extracted from https://github.com/Z-928/Bugs4Q
 
@@ -7,7 +7,7 @@ public class QFTBug {
 
 
     //@ ensures \result == 3;
-    public int computeQFT() {
+    public int computeQFE() {
         float theta = 0.78f;
         CircuitMock c = new CircuitMock(N + 1);
         //create initial state
@@ -46,7 +46,7 @@ public class QFTBug {
     }
 
     //@ ensures \result == 3;
-    public int computeQFTBroken() {
+    public int computeQFEBroken() {
         float theta = 0.78f;
         CircuitMock c = new CircuitMock(N + 1);
         //create initial state
@@ -66,12 +66,12 @@ public class QFTBug {
 
         //Applying qft_dagger
         for(int i = N - 1; i >= 0; i--) {
-            c.h(i);
             for(int j = i - 1; j >= 0; j--) {
                 c.swap(j, i - 1);
                 c.cp(i - 1, i, -2.0 * PI / ((double)(1 << (i - j  + 1))));
                 c.swap(j, i - 1);
             }
+            c.h(i);
         }
 
         int res = 0;

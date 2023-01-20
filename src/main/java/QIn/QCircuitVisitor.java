@@ -148,6 +148,13 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         Utils.applySwap(qState, qBit1, qBit2);
                         newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
                         return null;
+                    } else if(fullMethod.name.toString().equals("reset")) {
+                        assert methodInvocation.args.size() == 1;
+
+                        int qBit1 = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());
+                        Utils.applyReset(qState, qBit1);
+                        newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
+                        return null;
                     } else if(fullMethod.name.toString().equals("measure")) {
                         Utils.anonymizeState(qState, qStateVars);
                         qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());

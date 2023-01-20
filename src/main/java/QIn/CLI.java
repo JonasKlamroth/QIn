@@ -90,10 +90,12 @@ public class CLI implements Runnable {
                 a = api.typecheck(cu);
             } catch (IOException e) {
                 e.printStackTrace();
+                deleteMock();
                 throw new RuntimeException("Error running typecheck: " + e.getMessage());
             }
             if (a > 0) {
                 System.out.println("Error translating");
+                deleteMock();
                 return;
             }
             Context ctx = api.context();
@@ -115,6 +117,7 @@ public class CLI implements Runnable {
                         System.out.println(translation);
                     }
                 } catch (IOException e) {
+                    deleteMock();
                     e.printStackTrace();
                 }
             }
@@ -127,11 +130,13 @@ public class CLI implements Runnable {
     private void deleteMock() {
         File folder = new File(fileName).getParentFile();
         File mock = new File(folder, "CircuitMock.java");
-        try {
-            Files.delete(mock.toPath());
-        } catch (IOException e) {
-            System.out.println("Error trying to delete the CircuitMock.");
-            throw new RuntimeException(e);
+        if(mock.exists()) {
+            try {
+                Files.delete(mock.toPath());
+            } catch (IOException e) {
+                System.out.println("Error trying to delete the CircuitMock.");
+                throw new RuntimeException(e);
+            }
         }
     }
 

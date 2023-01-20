@@ -46,9 +46,7 @@ qop
   ;
 
 uop
-  : 'U' '(' explist ')' argument ';'
-  | 'CX' argument ',' argument ';'
-  | ID anylist ';'
+  : ID anylist ';'
   | ID '(' ')' anylist ';'
   | ID '(' explist ')' anylist ';'
   ;
@@ -63,14 +61,11 @@ idlist
   ;
 
 mixedlist
-  : (ID '[' INT ']' ',')* ID
-  | (ID '[' INT ']' ',')* ID '[' INT ']'
-  | ((ID ',')* ID ',')* ID '[' INT ']'
+  : argument (',' argument)*
   ;
 
 argument 
-  : ID 
-  | ID '[' INT ']' 
+  : ID '[' INT ']'
   ;
 
 explist 
@@ -112,6 +107,10 @@ INT
 
 WS
   : [ \t\u000C\r\n]+ -> skip
+  ;
+
+INCLUDE
+  : 'include' .*? '";' -> skip
   ;
 
 COMMENT
