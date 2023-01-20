@@ -23,8 +23,8 @@ public class Grover {
         circuit.cz(0, 1);
         circuit.h(0);
         circuit.h(1);
-        boolean res1 = circuit.measureMax(0);
-        boolean res2 = circuit.measureMax(1);
+        boolean res1 = circuit.measure(0);
+        boolean res2 = circuit.measure(1);
         return (res1 ? 2 : 0) + (res2 ? 1 : 0);
     }
 
