@@ -3,11 +3,11 @@ package QIn;
 import QIn.Expressions.Expr;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.Pair;
 import com.sun.tools.javac.util.Position;
 import org.jmlspecs.openjml.JmlTree;
 import org.jmlspecs.openjml.JmlTreeCopier;
@@ -118,6 +118,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     if(!fullMethod.selected.toString().equals(currentCircuitName.name.toString())) {
                         throw new RuntimeException("Currently only one circuit allowed in parallel.");
                     }
+                    List<Pair<Integer, Integer>> necessarySwaps = List.nil();
                     Expr[][] unitary = null;
                     int qBit = -1;
                     int numQbits = 1;
@@ -197,24 +198,27 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
                         return tmp;
                     } else {
-                        qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());
-                        int tmp = qBit;
-                        for (int i = 1; i < methodInvocation.args.size(); ++i) {
+                        List<Integer> qBits = List.nil();
+                        for (int i = 0; i < methodInvocation.args.size(); ++i) {
                             if(!methodInvocation.args.get(i).type.hasTag(TypeTag.INT)) {
                                 unitary = Utils.getUnitaryForName(fullMethod.name.toString(), methodInvocation.args.get(i));
                                 break;
                             }
-                            if(tmp + 1 != ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(i).toString())) {
-                                throw new RuntimeException("Application of gates only supported to successive qbits. Please use swap-operations if needed. (Gate: " + node + ")" );
-                            }
-                            tmp += 1;
+                            int nextQBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(i).toString());
+                            qBits = qBits.append(nextQBit);
                         }
+                        Pair<Integer, List<Pair<Integer, Integer>>> res = Utils.applyNecessarySwaps(qState, qBits);
+                        necessarySwaps = res.snd;
+                        qBit = res.fst;
+
                         if(unitary == null) {
                             unitary = Utils.getUnitaryForName(fullMethod.name.toString());
                         }
 
                     }
                     qState = Utils.apply(unitary, qBit, qState);
+                    Utils.applySwaps(qState, necessarySwaps);
+                    necessarySwaps = List.nil();
                     newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
                     if(CLI.includePrintStatements) {
                         newStatements = newStatements.appendList(TransUtils.makePrintStatement(qStateVars));

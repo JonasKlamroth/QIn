@@ -2,10 +2,11 @@ package QIn;
 
 import QIn.Expressions.*;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.Pair;
 import com.sun.tools.javac.util.Position;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
 
 public class Utils {
     public static final float h = 0.70710678118f;
@@ -124,7 +125,7 @@ public class Utils {
     }
 
     public static Expr[][] getInitialSymbState(int numQbits, JCTree.JCIdent state) {
-        List<Expr[][]> initialStates = new ArrayList<>();
+        List<Expr[][]> initialStates = List.nil();
         for(int i = 0; i < numQbits; ++i) {
             initialStates.add(new Expr[][]{
                     new Expr[]{
@@ -461,7 +462,7 @@ public class Utils {
 
     public static void applySwap(Expr[][] qState, int qBit1, int qBit2) {
         int stateSize = qState.length;
-        int numQbits = log2(stateSize);
+        int numQbits = getStateSize(qState);
         qBit1 = numQbits - qBit1 - 1;
         qBit2 = numQbits - qBit2 - 1;
         for(int i = 0; i < stateSize; ++i) {
@@ -473,6 +474,73 @@ public class Utils {
                 qState[r][0] = qState[i][0];
                 qState[i][0] = tmp;
             }
+        }
+    }
+
+    public static int getStateSize(Expr[][] qState) {
+        int stateSize = qState.length;
+        return log2(stateSize);
+    }
+
+    private static List<Integer> considerSwap(List<Integer> qBits, Pair<Integer, Integer> swap) {
+        List<Integer> res = List.nil();
+        for(int qBit : qBits) {
+            if(qBit == swap.fst) {
+                res = res.append(swap.snd);
+            } else if(qBit == swap.snd) {
+                res = res.append(swap.fst);
+            } else {
+                res = res.append(qBit);
+            }
+        }
+        return res;
+    }
+    public static Pair<Integer, List<Pair<Integer, Integer>>> applyNecessarySwaps(Expr[][] qState, com.sun.tools.javac.util.List<Integer> qBits) {
+        int maxArgs = qBits.stream().max(Comparator.naturalOrder()).get();
+        int numQbits = getStateSize(qState);
+        if(maxArgs >= numQbits) {
+            throw new UnsupportedException("Found gate application to qBit " + maxArgs + " but only " + numQbits + "qbits in the circuit.");
+        }
+        int numArgs = qBits.length();
+        int minArgs = qBits.stream().min(Comparator.naturalOrder()).get();
+        if(minArgs < 0) {
+            throw new UnsupportedException("Cant apply gate to negative qbit index: " + minArgs);
+        }
+
+        List<Pair<Integer, Integer>> necessarySwaps = List.nil();
+        int firstQbit = qBits.get(0);
+        if(!(qBits.get(0) + numArgs <= numQbits)) {
+            if(minArgs + numArgs <= numQbits) {
+                Pair<Integer, Integer> newSwap = Pair.of(minArgs, qBits.get(0));
+                necessarySwaps = necessarySwaps.append(newSwap);
+                qBits = considerSwap(qBits, newSwap);
+                firstQbit = minArgs;
+            } else {
+                Pair<Integer, Integer> newSwap = Pair.of(minArgs, qBits.get(0));
+                necessarySwaps = necessarySwaps.append(newSwap);
+                qBits = considerSwap(qBits, newSwap);
+                firstQbit = numQbits - numArgs;
+            }
+        }
+
+        for(int i = 1; i < qBits.length(); ++i) {
+            if(qBits.get(i) != firstQbit + i) {
+                Pair<Integer, Integer> newSwap = Pair.of(qBits.get(i), firstQbit + i);
+                if(newSwap.fst.equals(newSwap.snd)) {
+                    necessarySwaps = necessarySwaps.append(newSwap);
+                }
+                qBits = considerSwap(qBits, newSwap);
+            }
+        }
+
+        applySwaps(qState, necessarySwaps);
+        necessarySwaps = necessarySwaps.reverse();
+        return Pair.of(firstQbit, necessarySwaps);
+    }
+
+    public static void applySwaps(Expr[][] qState, List<Pair<Integer, Integer>> necessarySwaps) {
+        for(Pair<Integer, Integer> swap : necessarySwaps) {
+            applySwap(qState, swap.fst, swap.snd);
         }
     }
 }
