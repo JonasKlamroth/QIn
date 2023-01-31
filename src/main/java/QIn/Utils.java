@@ -526,7 +526,7 @@ public class Utils {
         for(int i = 1; i < qBits.length(); ++i) {
             if(qBits.get(i) != firstQbit + i) {
                 Pair<Integer, Integer> newSwap = Pair.of(qBits.get(i), firstQbit + i);
-                if(newSwap.fst.equals(newSwap.snd)) {
+                if(!newSwap.fst.equals(newSwap.snd)) {
                     necessarySwaps = necessarySwaps.append(newSwap);
                 }
                 qBits = considerSwap(qBits, newSwap);
