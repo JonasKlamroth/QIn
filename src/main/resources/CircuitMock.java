@@ -36,6 +36,9 @@ public class CircuitMock {
     public void ccx(int cqbit1, int cqbit2, int tqbit) {
     }
 
+    public void cccx(int cqbit1, int cqbit2, int cqbit3, int tqbit) {
+    }
+
     public void reset(int qbit1) {
     }
 
