@@ -477,7 +477,11 @@ public class Utils {
         qBit1 = numQbits - qBit1 - 1;
         for(int i = 0; i < stateSize; ++i) {
             if((i / (1 << qBit1)) % 2 != 0) {
-                qState[i][0] = new FloatConst(0.0f);
+                if(CLI.useReals) {
+                    qState[i][0] = getConst(0.0f);
+                } else {
+                    qState[i][0] = new ComplexExpression(getConst(0.0f), getConst(0.0f));
+                }
             }
         }
     }
