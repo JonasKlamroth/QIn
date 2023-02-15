@@ -130,6 +130,10 @@ public class JavaCircuitWriter {
         Utils.applyReset(qState, qBit1);
     }
 
+    public Expr[][] getqState() {
+        return qState;
+    }
+
     public static void main(String[] args) {
         JavaCircuitWriter jv = new JavaCircuitWriter(3);
         jv.applyGate(Utils.getUnitaryForName("x"), 0);

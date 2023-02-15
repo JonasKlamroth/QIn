@@ -1,19 +1,20 @@
 package QIn;
 
 import QIn.Expressions.Expr;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jmlspecs.annotation.In;
+import com.sun.tools.javac.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.sun.tools.javac.util.List.nil;
 
 public class qasm_listener extends QIn.QASMBaseListener {
 
     JavaCircuitWriter jv;
     private List<Integer> currentArguments = new ArrayList<Integer>();
     private List<QuantumRegister> quantumRegisters = new ArrayList<>();
-    private List<Pair<Integer, Integer>> pendingSwaps = new ArrayList<>();
+    private com.sun.tools.javac.util.List<Pair<Integer, Integer>> pendingSwaps = com.sun.tools.javac.util.List.nil();
 
     public class QuantumRegister {
         String name;
@@ -52,18 +53,15 @@ public class qasm_listener extends QIn.QASMBaseListener {
         }
 
         Expr[][] unitary = Utils.getUnitaryForName(ctx.getChild(0).getText());
-        int[] args = new int[currentArguments.size()];
-        args[0] = currentArguments.get(0);
-        for(int i = 1; i < currentArguments.size(); ++i) {
-            if(currentArguments.get(i - 1) != currentArguments.get(i) - 1) {
-                jv.applySwap(currentArguments.get(i), args[i - 1] + 1);
-                pendingSwaps.add(Pair.of(currentArguments.get(i), args[i - 1] + 1));
-            }
-            args[i] = args[i - 1] + 1;
+        com.sun.tools.javac.util.List<Integer> args = nil();
+        for(int i = 0; i < currentArguments.size(); ++i) {
+            args = args.append(currentArguments.get(i));
         }
-        jv.applyGate(unitary, args);
-        for(Pair<Integer, Integer> swap : pendingSwaps) {
-            jv.applySwap(swap.getLeft(), swap.getRight());
+        com.sun.tools.javac.util.Pair<Integer, com.sun.tools.javac.util.List<com.sun.tools.javac.util.Pair<Integer, Integer>>> res = Utils.applyNecessarySwaps(jv.getqState(), args);
+        pendingSwaps = res.snd;
+        jv.applyGate(unitary, res.fst);
+        for(com.sun.tools.javac.util.Pair<Integer, Integer> swap : pendingSwaps) {
+            jv.applySwap(swap.fst, swap.snd);
         }
         pendingSwaps.clear();
     }
@@ -89,7 +87,7 @@ public class qasm_listener extends QIn.QASMBaseListener {
 
         if(ctx.getChild(0).getText().equals("qreg")){
             quantumRegisters.add(new QuantumRegister(ctx.ID().getText(), Integer.parseInt(ctx.INT().getText()),
-                    quantumRegisters.stream().collect(Collectors.summingInt(quantumRegister -> quantumRegister.size))
+                    quantumRegisters.stream().mapToInt(quantumRegister -> quantumRegister.size).sum()
                     ));
 
             QuantumRegister lastRegister = quantumRegisters.get(quantumRegisters.size() - 1);
