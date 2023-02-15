@@ -1,7 +1,7 @@
 package QIn;
 
 import QIn.Expressions.*;
-import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
@@ -11,18 +11,17 @@ import org.jmlspecs.openjml.JmlTree;
 import org.jmlspecs.openjml.JmlTreeUtils;
 
 import javax.lang.model.element.Modifier;
-import javax.lang.model.type.ArrayType;
 import java.lang.reflect.Array;
 
 public class TransUtils {
     public static JmlTreeUtils treeutils;
     public static JmlTree.Maker M;
-    private static Context ctx;
+    private static Symtab syms = null;
 
     public static void init(Context ctx) {
         TransUtils.M = JmlTree.Maker.instance(ctx);
-        TransUtils.ctx = ctx;
         TransUtils.treeutils = JmlTreeUtils.instance(ctx);
+        TransUtils.syms = Symtab.instance(ctx);
     }
 
     public static boolean isFinal(JmlTree.JmlVariableDecl decl) {
@@ -211,11 +210,20 @@ public class TransUtils {
     }
 
 
-    public static JCTree.JCMethodInvocation makeNondetBoolean(Symbol currentSymbol) {
+    public static JCTree.JCMethodInvocation makeNondetBoolean() {
+        List<JCTree.JCExpression> args = List.nil();
+        return makeCProverMethod("nondetBoolean", args);
+    }
+
+    public static JCTree.JCMethodInvocation makeAssume(JCTree.JCExpression arg) {
+        List<JCTree.JCExpression> args = List.of(arg);
+        return makeCProverMethod("assume", args);
+    }
+
+    public static JCTree.JCMethodInvocation makeCProverMethod(String methodName, List<JCTree.JCExpression> args) {
         JCTree.JCIdent classCProver = M.Ident(M.Name("CProver"));
-        JCTree.JCFieldAccess nondetFunc = M.Select(classCProver, M.Name("nondetBoolean"));
-        List<JCTree.JCExpression> largs = List.nil();
-        return M.Apply(List.nil(), nondetFunc, largs);
+        JCTree.JCFieldAccess nondetFunc = M.Select(classCProver, M.Name(methodName));
+        return M.Apply(List.nil(), nondetFunc, args);
     }
 
     public static JCTree.JCStatement makePrintStatement(JCTree.JCExpression expr) {
@@ -232,4 +240,34 @@ public class TransUtils {
     }
 
 
+    public static JCTree.JCExpression makeMeasurePosCondition(Expr[][] qState, int qBit, boolean b) {
+        int numQbits = Utils.log2(qState.length);
+        int shift = numQbits - qBit - 1;
+        JCTree.JCExpression trueCase = M.Literal(true);
+        JCTree.JCExpression falseCase = M.Literal(true);
+        for(int i = 0; i < qState.length; ++i) {
+            if((i & (1 << shift)) != 0) {
+                List<JCTree.JCExpression> complexAst = qState[i][0].getSimplifiedAST();
+                for(JCTree.JCExpression ast : complexAst) {
+                    ast = treeutils.makeEquality(Position.NOPOS, ast, M.Literal(0.0f));
+                    trueCase = treeutils.makeAnd(Position.NOPOS, trueCase, ast);
+                }
+            } else {
+                List<JCTree.JCExpression> complexAst = qState[i][0].getSimplifiedAST();
+                for(JCTree.JCExpression ast : complexAst) {
+                    ast = treeutils.makeEquality(Position.NOPOS, ast, M.Literal(0.0f));
+                    falseCase = treeutils.makeAnd(Position.NOPOS, falseCase, ast);
+                }
+            }
+        }
+        if(b) {
+            return falseCase;
+        }
+        return trueCase;
+    }
+
+    public static JCTree.JCStatement makeRuntimeException(String message) {
+        JCTree.JCExpression ty = M.Type(syms.runtimeExceptionType);
+        return M.Throw(M.NewClass(null, null, ty, List.of(M.Literal(message)), null));
+    }
 }

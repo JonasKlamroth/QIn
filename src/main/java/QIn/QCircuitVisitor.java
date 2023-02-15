@@ -179,17 +179,29 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         qBit = ScriptEngineWrapper.getInstance().evalInt(methodInvocation.args.get(0).toString());
                         Expr[][] trueState = Utils.applyMeasurement(qState, qBit, true);
                         Expr[][] falseState = Utils.applyMeasurement(qState, qBit, false);
-                        JCTree.JCExpression cond = null;
+                        JCTree.JCExpression random = null;
                         if(CLI.useNondetFunctions) {
-                            cond = TransUtils.makeNondetBoolean(currentSymbol);
+                            random = TransUtils.makeNondetBoolean();
                         } else {
-                            cond = M.Ident("$$_tmp_measureParam" + paramVarCounter++);
+                            random = M.Ident("$$_tmp_measureParam" + paramVarCounter++);
+                        }
+                        JCTree.JCExpression condTrue = TransUtils.makeMeasurePosCondition(qState, qBit, true);
+                        JCTree.JCExpression condFalse = TransUtils.makeMeasurePosCondition(qState, qBit, false);
+                        JCTree.JCIf measureTrueGuard = M.If(condTrue, M.Exec(TransUtils.makeAssume(M.Literal(false))), null);
+                        JCTree.JCIf measureFalseGuard = M.If(condFalse, M.Exec(TransUtils.makeAssume(M.Literal(false))), null);
+                        if(!CLI.useNondetFunctions) {
+                            measureTrueGuard.thenpart = TransUtils.makeRuntimeException("Impossible measurement result.");
+                            measureFalseGuard.thenpart = TransUtils.makeRuntimeException("Impossible measurement result.");
                         }
                         newStatements = newStatements.append(treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureVar" + ++measureVarCounter), currentSymbol, Position.NOPOS));
                         JCTree.JCIdent tmp = M.Ident("$$_tmp_measureVar" + measureVarCounter);
-                        JCTree.JCBlock ifBlock = M.Block(0L, TransUtils.updateState(trueState, qStateVars).append(TransUtils.setCState(tmp,  false)));
-                        JCTree.JCBlock elseBlock = M.Block(0L, TransUtils.updateState(falseState, qStateVars).append(TransUtils.setCState(tmp,  true)));
-                        JCTree.JCIf jcIf = M.If(cond, ifBlock, elseBlock);
+                        JCTree.JCBlock ifBlock = M.Block(0L, List.of((JCTree.JCStatement)measureTrueGuard).
+                                appendList(TransUtils.updateState(trueState, qStateVars)).
+                                append(TransUtils.setCState(tmp,  false)));
+                        JCTree.JCBlock elseBlock = M.Block(0L, List.of((JCTree.JCStatement)measureFalseGuard).
+                                appendList(TransUtils.updateState(falseState, qStateVars)).
+                                append(TransUtils.setCState(tmp,  true)));
+                        JCTree.JCIf jcIf = M.If(random, ifBlock, elseBlock);
                         newStatements = newStatements.append(jcIf);
                         if(CLI.includePrintStatements) {
                             newStatements = newStatements.appendList(TransUtils.makePrintStatement(qStateVars));
@@ -218,7 +230,6 @@ public class QCircuitVisitor extends JmlTreeCopier {
                     }
                     qState = Utils.apply(unitary, qBit, qState);
                     Utils.applySwaps(qState, necessarySwaps);
-                    necessarySwaps = List.nil();
                     newStatements = newStatements.appendList(TransUtils.updateState(qState, qStateVars));
                     if(CLI.includePrintStatements) {
                         newStatements = newStatements.appendList(TransUtils.makePrintStatement(qStateVars));
@@ -232,9 +243,9 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
     @Override
     public JCTree visitExpressionStatement(ExpressionStatementTree node, Void p) {
-        JCTree res = super.visitExpressionStatement(node, p);
-        if(res instanceof JCTree.JCIdent) {
-            return M.Exec(M.Assign((JCTree.JCExpression) res, (JCTree.JCExpression) res));
+        JCTree.JCExpressionStatement res = (JCTree.JCExpressionStatement) super.visitExpressionStatement(node, p);
+        if(res.expr instanceof JCTree.JCIdent) {
+            return null;
         }
         return res;
     }
