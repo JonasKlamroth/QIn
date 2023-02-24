@@ -70,7 +70,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
             List<JCTree.JCExpression> init = TransUtils.makeArrayExpression(qState);
             qStateVars = List.nil();
             for(int i = 0; i < init.size(); ++i) {
-                qStateVars = qStateVars.append(treeutils.makeVarDef(init.get(i).type, M.Name("q_state_" + i), currentSymbol, init.get(i)));
+                qStateVars = qStateVars.append(treeutils.makeVarDef(init.get(i).type, M.Name("q" + i), currentSymbol, init.get(i)));
                 newStatements = newStatements.append(qStateVars.get(qStateVars.size() - 1));
             }
             return null;
@@ -91,8 +91,10 @@ public class QCircuitVisitor extends JmlTreeCopier {
         paramVarCounter = 0;
         JmlTree.JmlMethodDecl copy = (JmlTree.JmlMethodDecl) super.visitJmlMethodDecl(that, p);
         for(int i = 0; i < paramVarCounter; ++i) {
-            JCTree.JCVariableDecl newParam = treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureParam" + i), currentSymbol.owner, Position.NOPOS);
-            copy.params = copy.params.append(newParam);
+            JCTree.JCVariableDecl newParam = treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureParam_" + i), currentSymbol.owner, Position.NOPOS);
+            if(copy.params.stream().noneMatch(param -> param.name.toString().equals(newParam.name.toString()))) {
+                copy.params = copy.params.append(newParam);
+            }
         }
 
         if(copy.methodSpecsCombined.cases != null && copy.methodSpecsCombined.cases.cases != null && copy.methodSpecsCombined.cases.cases.size() == 1) {
@@ -183,7 +185,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         if(CLI.useNondetFunctions) {
                             random = TransUtils.makeNondetBoolean();
                         } else {
-                            random = M.Ident("$$_tmp_measureParam" + paramVarCounter++);
+                            random = M.Ident("$$_tmp_measureParam_" + paramVarCounter++);
                         }
                         JCTree.JCExpression condTrue = TransUtils.makeMeasurePosCondition(qState, qBit, true);
                         JCTree.JCExpression condFalse = TransUtils.makeMeasurePosCondition(qState, qBit, false);
