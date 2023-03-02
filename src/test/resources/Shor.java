@@ -27,7 +27,7 @@ public class Shor {
         return null;
     }
 
-    private static int pow(int a, int b) {
+    private static /*@ pure */ int pow(int a, int b) {
         int res = 1;
         for (int i = 0; i < b; ++i) {
             res *= a;
@@ -57,11 +57,11 @@ public class Shor {
     }
     /*@
       @ requires a == 14;
-      @ ensures \result == 0 || \result == 4;
+      @ ensures (\forall int i; 1 <= i < n; pow(a, i) % n == pow(a, i + \result) % n);
       @ assignable \nothing;
       @ signals_only RuntimeException;
    */
-    private static int findPeriodCircuit(int a, boolean $$_tmp_measureParam_0, boolean $$_tmp_measureParam_1, boolean $$_tmp_measureParam_2) {
+    private static int findPeriodCircuit(int a, int n, boolean $$_tmp_measureParam_0, boolean $$_tmp_measureParam_1, boolean $$_tmp_measureParam_2) {
         double PI = 3.141592653;
         CircuitMock c = new CircuitMock(7);
         c.x(6);
@@ -99,7 +99,7 @@ public class Shor {
         }
         for (int i = 0; i < 8; ++i) {
             try {
-                findPeriodCircuit(a, (i & 1) == 0, (i & 2) == 0, (i & 4) == 0);
+                findPeriodCircuit(a, n, (i & 1) == 0, (i & 2) == 0, (i & 4) == 0);
                 int[] fraction = getFraction((float)i / (float)n, 3);
                 if (pow(a, fraction[1]) % n == 1) {
                     return fraction[1];
