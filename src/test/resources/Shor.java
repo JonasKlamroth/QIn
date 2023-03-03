@@ -25,7 +25,7 @@ public class Shor {
         return null;
     }
 
-    private static /*@ pure */ int pow(int a, int b) {
+    private static int pow(int a, int b) {
         int res = 1;
         for (int i = 0; i < b; ++i) {
             res *= a;
@@ -44,6 +44,7 @@ public class Shor {
         }
         return r_0;
     }
+
     /*@
       @ requires a == 2;
       @ ensures \result == 0 || \result == 2 || \result == 4 || \result == 6;
@@ -82,7 +83,7 @@ public class Shor {
     }
 
     /*@ requires n > 2 && n <= 15 && 0 < a < n;
-      @ ensures (a == 2 && n == 15) ==> \result == 2;
+      @ ensures (a == 2 && n == 15) ==> \result == 4;
       @ ensures !(a == 2 && n == 15) ==> \result == -1;
       @ assignable \nothing;
      */
@@ -92,8 +93,8 @@ public class Shor {
         }
         for (int i = 0; i < 8; ++i) {
             try {
-                findPeriodCircuit(a, n, (i & 1) == 0, (i & 2) == 0, (i & 4) == 0);
-                int[] fraction = getFraction((float)i / (float)n, 3);
+                int phase = findPeriodCircuit(a, n, (i & 1) == 0, (i & 2) == 0, (i & 4) == 0);
+                int[] fraction = getFraction((float)phase / (float)8, 3);
                 if (pow(a, fraction[1]) % n == 1) {
                     return fraction[1];
                 }
@@ -103,12 +104,6 @@ public class Shor {
         return -1;
     }
 
-    /*@
-      @ requires (\exists int k; 0 <= k <= 100; val == 0.01 * k);
-      @ requires 3 <= numConsideredDigits < 5;
-      @ ensures \result != null & \result.length == 2 && (float)\result[0] / (float)\result[1] == val;
-      @ assignable \nothing;
-      @*/
     private static int[] getFraction(float val, int numConsideredDigits) {
         if(val == 0.0f) {
             return new int[]{0, 1};
