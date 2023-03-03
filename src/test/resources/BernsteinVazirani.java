@@ -1,12 +1,12 @@
 public class BernsteinVazirani {
-    public static final int N = 2;
+    public static final int N = 3;
 
     /*@ requires f!= null && f.length == 1 << N;
       @ requires (\exists int s; s >= 0 && s < f.length; (\forall int x; x >= 0 && x < f.length; ((x*s) % 2) == (f[x] ? 1 : 0)));
       @ ensures (\forall int x; x >= 0 && x < f.length; ((x*\result) % 2) == (f[x] ? 1 : 0));
       @ assignable \nothing;
      */
-    public int isBalanced(boolean[] f) {
+    public int findHiddenShift(boolean[] f) {
         CircuitMock circuit = new CircuitMock(N + 1);
 
         circuit.x(N);
