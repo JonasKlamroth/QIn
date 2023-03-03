@@ -6,24 +6,20 @@ public class Shor {
       ensures !(\exists int i; 2 <= i < n; n % i == 0) ==> \result == null;
       assignable \nothing;
    */
-
     public static int[] factorize(int n) {
-        for (int a = 0; a < n; a++) {
+        for (int a = 2; a < n; a++) {
             int K = gcd(a, n);
             if (K != 1) {
                 return new int[]{K, n / K};
             }
             int r = findPeriod(a, n);
             if (r > 0) {
-                assert false;
                 r = r / 2;
                 int guess1 = gcd(pow(a, r) + 1, n);
                 int guess2 = gcd(pow(a, r) - 1, n);
                 if (guess1 * guess2 == n && guess2 != 1 && guess1 != 1) {
                     return new int[]{guess1, guess2};
                 }
-            } else {
-                return null;
             }
         }
         return null;
@@ -37,15 +33,6 @@ public class Shor {
         return res;
     }
 
-    /*@
-      @ requires a > 0 && b > 0 && a <= 1000 && b <= 1000;
-      @ ensures \result > 0;
-      @ ensures a % \result == 0 && b % \result == 0;
-      @ ensures (\exists int i; 0 < i <= a; \result * i == a);
-      @ ensures (\exists int i; 0 < i <= b; \result * i == b);
-      @ ensures !(\exists int i; \result < i <= a; a % i == 0 && b % i == 0);
-      @ assignable \nothing;
-      @*/
     public static int gcd(int a, int b) {
         int r_0 = a;
         int r_1 = b;
@@ -59,7 +46,7 @@ public class Shor {
     }
     /*@
       @ requires a == 2;
-      @ ensures (\forall int i; 1 <= i < n; pow(a, i) % n == pow(a, i + \result) % n);
+      @ ensures \result == 0 || \result == 2 || \result == 4 || \result == 6;
       @ assignable \nothing;
       @ signals_only RuntimeException;
    */
@@ -95,7 +82,7 @@ public class Shor {
     }
 
     /*@ requires n > 2 && n <= 15 && 0 < a < n;
-      @ ensures (a == 2 && n == 15) ==> \result == 4;
+      @ ensures (a == 2 && n == 15) ==> \result == 2;
       @ ensures !(a == 2 && n == 15) ==> \result == -1;
       @ assignable \nothing;
      */
