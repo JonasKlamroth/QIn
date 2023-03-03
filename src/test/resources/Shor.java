@@ -8,7 +8,7 @@ public class Shor {
    */
 
     public static int[] factorize(int n) {
-        for (int a = n - 1; a > 1; --a) {
+        for (int a = 0; a < n; a++) {
             int K = gcd(a, n);
             if (K != 1) {
                 return new int[]{K, n / K};
@@ -22,6 +22,8 @@ public class Shor {
                 if (guess1 * guess2 == n && guess2 != 1 && guess1 != 1) {
                     return new int[]{guess1, guess2};
                 }
+            } else {
+                return null;
             }
         }
         return null;
@@ -56,7 +58,7 @@ public class Shor {
         return r_0;
     }
     /*@
-      @ requires a == 14;
+      @ requires a == 2;
       @ ensures (\forall int i; 1 <= i < n; pow(a, i) % n == pow(a, i + \result) % n);
       @ assignable \nothing;
       @ signals_only RuntimeException;
@@ -69,11 +71,15 @@ public class Shor {
             c.h(i);
         }
         c.x(2);
-        c.cx(2, 3);
+        c.x(1);
+        c.ccx(2, 1, 3);
         c.x(2);
-        c.cx(2, 4);
-        c.cx(2, 5);
-        c.cx(2, 6);
+        c.ccx(2, 1, 4);
+        c.x(1);
+        c.x(2);
+        c.ccx(2, 1, 5);
+        c.x(2);
+        c.ccx(2, 1, 6);
         c.h(0);
         c.cp(0, 1, PI / 2.0);
         c.h(1);
@@ -89,12 +95,12 @@ public class Shor {
     }
 
     /*@ requires n > 2 && n <= 15 && 0 < a < n;
-      @ ensures (a == 14 && n == 15) ==> \result == 4;
-      @ ensures !(a == 14 && n == 15) ==> \result == -1;
+      @ ensures (a == 2 && n == 15) ==> \result == 4;
+      @ ensures !(a == 2 && n == 15) ==> \result == -1;
       @ assignable \nothing;
      */
     private static int findPeriod(int a, int n) {
-        if(n < 15 || a != 14) {
+        if(n < 15 || a != 2) {
             return -1;
         }
         for (int i = 0; i < 8; ++i) {
