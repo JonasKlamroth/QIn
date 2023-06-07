@@ -1,0 +1,90 @@
+Exception in thread "main" picocli.CommandLine$ExecutionException: Error while running command (QIn.CLI@5456afaa): QIn.UnsupportedException: Encountered unsupported syntax: Unsupported expression evaluated: 1
+	at picocli.CommandLine.execute(CommandLine.java:1168)
+	at picocli.CommandLine.access$800(CommandLine.java:141)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:1367)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:1335)
+	at picocli.CommandLine$AbstractParseResultHandler.handleParseResult(CommandLine.java:1243)
+	at picocli.CommandLine.parseWithHandlers(CommandLine.java:1526)
+	at picocli.CommandLine.run(CommandLine.java:1974)
+	at picocli.CommandLine.run(CommandLine.java:1904)
+	at QIn.CLI.main(CLI.java:60)
+Caused by: QIn.UnsupportedException: Encountered unsupported syntax: Unsupported expression evaluated: 1
+	at QIn.ScriptEngineWrapper.eval(ScriptEngineWrapper.java:53)
+	at QIn.ScriptEngineWrapper.evalInt(ScriptEngineWrapper.java:29)
+	at QIn.QCircuitVisitor.visitJmlVariableDecl(QCircuitVisitor.java:51)
+	at QIn.QCircuitVisitor.visitJmlVariableDecl(QCircuitVisitor.java:17)
+	at org.jmlspecs.openjml.JmlTree$JmlVariableDecl.accept(JmlTree.java:1352)
+	at com.sun.tools.javac.tree.TreeCopier.copy(TreeCopier.java:58)
+	at com.sun.tools.javac.tree.TreeCopier.copy(TreeCopier.java:51)
+	at QIn.QCircuitVisitor.visitJmlBlock(QCircuitVisitor.java:261)
+	at QIn.QCircuitVisitor.visitJmlBlock(QCircuitVisitor.java:17)
+	at org.jmlspecs.openjml.JmlTree$JmlBlock.accept(JmlTree.java:1292)
+	at com.sun.tools.javac.tree.TreeCopier.copy(TreeCopier.java:58)
+	at com.sun.tools.javac.tree.TreeCopier.visitMethod(TreeCopier.java:260)
+	at org.jmlspecs.openjml.JmlTreeCopier.visitJmlMethodDecl(JmlTreeCopier.java:127)
+	at QIn.QCircuitVisitor.visitJmlMethodDecl(QCircuitVisitor.java:92)
+	at QIn.QCircuitVisitor.visitJmlMethodDecl(QCircuitVisitor.java:17)
+	at org.jmlspecs.openjml.JmlTree$JmlMethodDecl.accept(JmlTree.java:1220)
+	at com.sun.tools.javac.tree.TreeCopier.copy(TreeCopier.java:58)
+	at org.jmlspecs.openjml.JmlTreeCopier.copy(JmlTreeCopier.java:88)
+	at org.jmlspecs.openjml.JmlTreeCopier.copy(JmlTreeCopier.java:1)
+	at com.sun.tools.javac.tree.TreeCopier.visitClass(TreeCopier.java:162)
+	at org.jmlspecs.openjml.JmlTreeCopier.visitJmlClassDecl(JmlTreeCopier.java:117)
+	at QIn.QCircuitVisitor.visitJmlClassDecl(QCircuitVisitor.java:110)
+	at QIn.QCircuitVisitor.visitJmlClassDecl(QCircuitVisitor.java:17)
+	at org.jmlspecs.openjml.JmlTree$JmlClassDecl.accept(JmlTree.java:1133)
+	at com.sun.tools.javac.tree.TreeCopier.copy(TreeCopier.java:58)
+	at org.jmlspecs.openjml.JmlTreeCopier.copy(JmlTreeCopier.java:88)
+	at org.jmlspecs.openjml.JmlTreeCopier.copy(JmlTreeCopier.java:1)
+	at com.sun.tools.javac.tree.TreeCopier.visitCompilationUnit(TreeCopier.java:358)
+	at org.jmlspecs.openjml.JmlTreeCopier.visitJmlCompilationUnit(JmlTreeCopier.java:101)
+	at org.jmlspecs.openjml.JmlTreeCopier.visitJmlCompilationUnit(JmlTreeCopier.java:1)
+	at org.jmlspecs.openjml.JmlTree$JmlCompilationUnit.accept(JmlTree.java:959)
+	at QIn.CLI.rewriteAssert(CLI.java:208)
+	at QIn.CLI.run(CLI.java:107)
+	at picocli.CommandLine.execute(CommandLine.java:1160)
+	... 8 more
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark3S.java -t 1200000000 qbits_1 -u 4
+            Mean                Std.Dev.    Min         Median      Max
+real        2.206+/-0.0503      0.050       2.139       2.213       2.323       
+user        6.107+/-0.2063      0.206       5.739       6.100       6.519       
+sys         0.259+/-0.0214      0.021       0.220       0.262       0.289       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark3S.java -t 1200000000 qbits_2 -u 6
+            Mean                Std.Dev.    Min         Median      Max
+real        2.325+/-0.0460      0.046       2.270       2.313       2.409       
+user        6.295+/-0.2127      0.212       5.987       6.259       6.673       
+sys         0.257+/-0.0304      0.030       0.202       0.259       0.295       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark3S.java -t 1200000000 qbits_3 -u 10
+            Mean                Std.Dev.    Min         Median      Max
+real        2.683+/-0.0244      0.024       2.629       2.686       2.721       
+user        6.766+/-0.2134      0.213       6.415       6.803       7.032       
+sys         0.236+/-0.0290      0.029       0.191       0.229       0.296       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark3S.java -t 1200000000 qbits_4 -u 18
+            Mean                Std.Dev.    Min         Median      Max
+real        4.743+/-0.0599      0.060       4.647       4.753       4.822       
+user        8.830+/-0.1623      0.162       8.624       8.783       9.114       
+sys         0.282+/-0.0432      0.043       0.212       0.286       0.349       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark3S.java -t 1200000000 qbits_5 -u 34
+            Mean                Std.Dev.    Min         Median      Max
+real        10.247+/-0.2955      0.295       10.013      10.103      10.996      
+user        14.541+/-0.5965      0.595       13.996      14.309      16.061      
+sys         0.322+/-0.0415      0.041       0.258       0.333       0.377       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark3S.java -t 1200000000 qbits_6 -u 66
+            Mean                Std.Dev.    Min         Median      Max
+real        42.758+/-0.9433      0.941       42.125      42.475      45.531      
+user        46.881+/-0.9054      0.903       46.050      46.613      49.467      
+sys         0.489+/-0.0343      0.034       0.430       0.493       0.542       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark3S.java -t 1200000000 qbits_7 -u 130
+            Mean                Std.Dev.    Min         Median      Max
+real        199.735+/-1.1715      1.169       198.771     199.034     202.116     
+user        203.648+/-1.1515      1.149       202.635     202.960     205.844     
+sys         1.004+/-0.0304      0.030       0.957       1.001       1.053       
+./runPerformanceTests.sh: line 22: syntax error near unexpected token `done'
+./runPerformanceTests.sh: line 22: `done'

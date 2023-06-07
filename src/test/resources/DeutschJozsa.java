@@ -1,4 +1,4 @@
-public class GenericDeutsch {
+public class DeutschJozsa {
     public static final int N = 3;
 
     /*@ requires f!= null && f.length == 1 << N;
@@ -28,37 +28,33 @@ public class GenericDeutsch {
         return res;
     }
 
-    /*@ requires f!= null && f.length == 1 << 2;
+
+    /*@ requires f!= null && f.length == 1 << N;
       @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||
       @             count(f) == f.length / 2;
       @ ensures \result <==> (count(f) == f.length / 2);
      */
-    public boolean isBalancedHandTranslated(boolean[] f) {
-        //Circuit for N == 2
-        CircuitMock circuit = new CircuitMock(2 + 1);
+    public boolean isBalancedBroken(boolean[] f) {
+        CircuitMock circuit = new CircuitMock(N + 1);
+        for (int i = 0; i < N; ++i) {
+            circuit.h(i);
+        }
 
-        circuit.x(2);
-        circuit.h(2);
+        int size = 1 << N + 1;
+        float oracle[][] = getOracle(N, f);
+        circuit.u(oracle, 0, N + 1);
 
-        circuit.h(0);
-        circuit.h(1);
-
-        float[][] oracle = getOracle(2, f);
-
-        //how to do this
-        circuit.u(oracle, 0, 3);
-
-        circuit.h(0);
-        circuit.h(1);
-
+        for (int i = 0; i < N; ++i) {
+            circuit.h(i);
+        }
         boolean res = false;
-        res |= circuit.measure(0);
-        res |= circuit.measure(1);
-        res |= circuit.measure(2);
+        for (int i = 0; i < N; ++i) {
+            res |= circuit.measure(i);
+        }
         return res;
     }
 
-    public float[][] getOracle(int N, boolean[] f) {
+        public float[][] getOracle(int N, boolean[] f) {
         int size = 1 << N + 1;
         float oracle[][] = new float[size][size];
         for(int i = 0; i < size; ++i) {

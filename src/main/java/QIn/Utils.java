@@ -12,6 +12,21 @@ public class Utils {
     public static final float h = 0.70710678118f;
     public static final float[][] H = new float[][]{{h, h},
             {h, -h}};
+
+    public static final float[][] HH = new float[][]{{ 0.5f, 0.5f, 0.5f, 0.5f},
+        {0.5f,-0.5f, 0.5f,-0.5f},
+        {0.5f, 0.5f,-0.5f,-0.5f},
+        { 0.5f,-0.5f,-0.5f, 0.5f}};
+
+    public static final float[][] HHH = new float[][]{{ 0.35355339f,  0.35355339f,  0.35355339f,  0.35355339f,  0.35355339f,  0.35355339f, 0.35355339f,  0.35355339f},
+            {0.35355339f, -0.35355339f,  0.35355339f, -0.35355339f,  0.35355339f, -0.35355339f,   0.35355339f, -0.35355339f},
+            {0.35355339f,  0.35355339f, -0.35355339f, -0.35355339f,  0.35355339f,  0.35355339f, -0.35355339f, -0.35355339f},
+        {0.35355339f, -0.35355339f, -0.35355339f,  0.35355339f,  0.35355339f, -0.35355339f, -0.35355339f,  0.35355339f},
+            {0.35355339f,  0.35355339f,  0.35355339f,  0.35355339f, -0.35355339f, -0.35355339f,  -0.35355339f, -0.35355339f},
+            {0.35355339f, -0.35355339f,  0.35355339f, -0.35355339f, -0.35355339f,  0.35355339f, -0.35355339f,  0.35355339f},
+            {0.35355339f,  0.35355339f, -0.35355339f, -0.35355339f, -0.35355339f, -0.35355339f, 0.35355339f,  0.35355339f},
+        {0.35355339f, -0.35355339f, -0.35355339f,  0.35355339f, -0.35355339f,  0.35355339f,   0.35355339f, -0.35355339f}};
+
     public static final float[][] ID = new float[][]{{1.0f, 0.0f},
             {0.0f, 1.0f}};
     public static final float[][] X = new float[][]{{0.0f, 1.0f},
@@ -189,6 +204,12 @@ public class Utils {
     public static Expr[][] getUnitaryForName(String name, Object theta) {
         if(name.equals("x")) {
             return getExprMatrix(X);
+        }
+        if(name.equals("hh")) {
+            return getExprMatrix(HH);
+        }
+        if(name.equals("hhh")) {
+            return getExprMatrix(HHH);
         }
         if(name.equals("h")) {
             return getExprMatrix(H);
@@ -371,12 +392,14 @@ public class Utils {
         return res;
     }
 
-    public static void anonymizePartialState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
+    public static boolean anonymizePartialState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {
+        boolean anonymized = false;
         for (int i = 0; i < qState.length; ++i) {
             Expr realVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(0)), TransUtils.M.Literal(i)));
             if(CLI.useReals) {
                 if(!(qState[i][0] instanceof Const)) {
                     qState[i][0] = realVal;
+                    anonymized = true;
                 }
             } else {
                 if(qState[i][0] instanceof ComplexExpression) {
@@ -384,9 +407,13 @@ public class Utils {
                     Expr compVal = new SymbExpr(TransUtils.treeutils.makeArrayElement(Position.NOPOS, TransUtils.M.Ident(qStateVar.get(1)), TransUtils.M.Literal(i)));
                     if (ce.getImg() instanceof Const) {
                         compVal = ce.getImg();
+                    } else {
+                        anonymized = true;
                     }
                     if (ce.getReal() instanceof Const) {
                         realVal = ce.getReal();
+                    } else {
+                        anonymized = true;
                     }
                     qState[i][0] = new ComplexExpression(realVal, compVal);
                 } else {
@@ -394,6 +421,7 @@ public class Utils {
                 }
             }
         }
+        return anonymized;
     }
 
     public static void anonymizeState(Expr[][] qState, List<JCTree.JCVariableDecl> qStateVar) {

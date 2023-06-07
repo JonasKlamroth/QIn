@@ -16,6 +16,10 @@ public class CircuitMock {
 
     public void h(int qbit) {
     }
+    public void hhh(int qbit) {
+    }
+    public void hh(int qbit) {
+    }
 
     public void x(int qbit) {
     }
@@ -29,19 +33,25 @@ public class CircuitMock {
     public void cz(int cqbit, int tqbit) {
     }
 
-    public void cxx(int cqbit1, int cqbit2, int tqbit) {
+    public void cp(int cqbit, int tqbit, double theta) {
+
     }
 
-    public void u(float[][] m, int... qbits) {
-    }
-    public void u(float[][] m, float[][]m_i, int... qbits) {
+    public void ccx(int cqbit1, int cqbit2, int tqbit) {
     }
 
-    public void u(int[][] m, int qbits) {
+    public void cccx(int cqbit1, int cqbit2, int cqbit3, int tqbit) {
     }
 
-    public void swap(int qbit1, int qbit2) {
+    public void reset(int qbit1) {
     }
+
+    public void u(float[][] m, int qbit, int numQbits) {
+    }
+    public void u(float[][] m, float[][]m_i, int qbits, int numQbits) {
+    }
+
+    public void swap(int qbit1, int qbit2) {}
 
     public boolean measure(int qBit) {
         return true;

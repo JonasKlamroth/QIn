@@ -36,7 +36,7 @@ public class qasm2mock_listener extends QIn.QASMBaseListener {
     @Override public void enterDecl(QASMParser.DeclContext ctx) {
 
         if(ctx.getChild(0).getText().equals("qreg")){
-            statements += "CircuitMock c = new CircuitMock(" + ctx.getChild(3).getText() + ");" + "\n";
+            statements += "QIn.CircuitMock c = new QIn.CircuitMock(" + ctx.getChild(3).getText() + ");" + "\n";
         }
 
     }

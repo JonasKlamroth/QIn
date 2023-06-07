@@ -2,8 +2,8 @@ public class BernsteinVazirani {
     public static final int N = 3;
 
     /*@ requires f!= null && f.length == 1 << N;
-      @ requires (\exists int s; s >= 0 && s < f.length; (\forall int x; x >= 0 && x < f.length; ((x*s) % 2) == (f[x] ? 1 : 0)));
-      @ ensures (\forall int x; x >= 0 && x < f.length; ((x*\result) % 2) == (f[x] ? 1 : 0));
+      @ requires (\exists int s; s >= 0 && s < f.length; (\forall int x; x >= 0 && x < f.length; (countOnes(x&s) % 2) == (f[x] ? 1 : 0)));
+      @ ensures (\forall int x; x >= 0 && x < f.length; (countOnes(x&\result) % 2) == (f[x] ? 1 : 0));
       @ assignable \nothing;
      */
     public int findHiddenShift(boolean[] f) {
@@ -26,7 +26,7 @@ public class BernsteinVazirani {
 
         int res = 0;
         for(int i = 0; i < N; ++i) {
-            res += circuit.measure(i) ? (1 << i) : 0;
+            res += circuit.measure(i) ? (1 << (N - i - 1)) : 0;
         }
         return res;
     }
@@ -49,5 +49,15 @@ public class BernsteinVazirani {
             }
         }
         return oracle;
+    }
+
+    public /*@ pure */ int countOnes(int val) {
+        int ones = 0;
+        for(int i = 0; i <= val; ++i) {
+            if((val & (1 << i)) != 0) {
+                ones++;
+            }
+        }
+        return ones;
     }
 }

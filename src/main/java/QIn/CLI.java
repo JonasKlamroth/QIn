@@ -4,6 +4,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,22 +135,29 @@ public class CLI implements Runnable {
             try {
                 Files.delete(mock.toPath());
             } catch (IOException e) {
-                System.out.println("Error trying to delete the CircuitMock.");
+                System.out.println("Error trying to delete the QIn.CircuitMock.");
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     private void copyMock() {
         File folder = new File(fileName).getParentFile();
         File mock = new File(folder, "CircuitMock.java");
         if(mock.exists()) {
-            throw new RuntimeException("CircuitMock.java is already existing in the folder of the given file. Please make sure this is not the case.");
+            throw new RuntimeException("QIn.CircuitMock.java is already existing in the folder of the given file. Please make sure this is not the case.");
         }
         try {
-            Files.copy(MockFilepath, mock.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            InputStream is = CLI.class.getResourceAsStream("/QIn/CircuitMock.java");
+            String content = convertStreamToString(is);
+            Files.write(mock.toPath(), content.getBytes());
         } catch (IOException e) {
-            System.out.println("Error copying CircuitMock.");
+            System.out.println("Error copying QIn.CircuitMock.");
             throw new RuntimeException(e);
         }
     }

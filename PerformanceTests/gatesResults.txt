@@ -1,0 +1,114 @@
+Output written to: /home/klamroth/QIn/PerformanceTests/QBenchmark2S.java
+2
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2single -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        11.673+/-0.1572      0.157       11.407      11.647      11.960      
+user        15.864+/-0.2917      0.291       15.344      15.776      16.316      
+sys         0.353+/-0.0230      0.023       0.319       0.354       0.394       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2singleX -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        3.294+/-0.0861      0.086       3.196       3.275       3.527       
+user        7.576+/-0.2983      0.298       7.282       7.493       8.376       
+sys         0.301+/-0.0418      0.042       0.231       0.284       0.378       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2 -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        15.405+/-0.8526      0.851       14.752      15.126      17.826      
+user        19.911+/-1.2988      1.296       18.682      19.449      23.401      
+sys         0.392+/-0.0768      0.077       0.275       0.387       0.583       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3single -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        61.252+/-0.5604      0.559       60.743      61.210      62.689      
+user        65.305+/-0.8156      0.814       64.497      65.205      67.442      
+sys         0.627+/-0.0603      0.060       0.544       0.629       0.745       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3singleX -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        12.237+/-0.0849      0.085       12.124      12.227      12.438      
+user        16.239+/-0.2320      0.231       15.919      16.199      16.656      
+sys         0.465+/-0.0412      0.041       0.410       0.448       0.543       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3 -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        154.151+/-0.7364      0.735       153.273     153.935     155.416     
+user        157.985+/-0.7291      0.727       156.969     157.859     159.160     
+sys         0.853+/-0.0549      0.055       0.740       0.854       0.947       
+Output written to: /home/klamroth/QIn/PerformanceTests/QBenchmark2S.java
+4
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2single -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        20.110+/-0.0625      0.062       20.047      20.084      20.238      
+user        24.484+/-0.1817      0.181       24.185      24.471      24.832      
+sys         0.411+/-0.0315      0.031       0.361       0.412       0.467       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2singleX -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        3.826+/-0.0616      0.062       3.738       3.816       3.944       
+user        8.304+/-0.1798      0.179       8.146       8.207       8.741       
+sys         0.320+/-0.0389      0.039       0.281       0.305       0.411       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2 -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        28.373+/-0.0704      0.070       28.252      28.376      28.490      
+user        32.840+/-0.1778      0.177       32.576      32.797      33.077      
+sys         0.431+/-0.0390      0.039       0.370       0.435       0.498       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3single -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        114.947+/-0.5256      0.524       114.350     114.694     115.644     
+user        119.234+/-0.7049      0.703       118.404     118.914     120.229     
+sys         0.777+/-0.0380      0.038       0.729       0.776       0.863       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3singleX -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        16.802+/-0.0727      0.073       16.705      16.787      16.910      
+user        21.305+/-0.1681      0.168       21.089      21.266      21.627      
+sys         0.492+/-0.0558      0.056       0.427       0.469       0.573       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3 -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        290.683+/-0.6990      0.698       290.025     290.481     292.620     
+user        294.742+/-0.7354      0.734       294.252     294.480     296.803     
+sys         1.182+/-0.0511      0.051       1.073       1.204       1.264       
+Output written to: /home/klamroth/QIn/PerformanceTests/QBenchmark2S.java
+6
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2single -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        31.853+/-0.1313      0.131       31.660      31.890      32.049      
+user        36.717+/-0.1630      0.163       36.502      36.722      36.986      
+sys         0.464+/-0.0427      0.043       0.406       0.457       0.549       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2singleX -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        3.648+/-0.0713      0.071       3.543       3.672       3.754       
+user        8.699+/-0.2274      0.227       8.387       8.710       9.122       
+sys         0.322+/-0.0271      0.027       0.285       0.312       0.361       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest2 -u 6 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        32.394+/-0.1460      0.146       32.194      32.367      32.663      
+user        37.343+/-0.2651      0.264       36.883      37.430      37.679      
+sys         0.485+/-0.0555      0.055       0.391       0.480       0.574       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3single -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        185.176+/-0.6650      0.664       184.670     184.888     186.486     
+user        189.770+/-0.6992      0.698       189.133     189.460     191.227     
+sys         0.930+/-0.0741      0.074       0.846       0.903       1.071       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3singleX -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        12.174+/-0.0786      0.078       12.057      12.169      12.274      
+user        17.090+/-0.2671      0.267       16.713      17.073      17.605      
+sys         0.492+/-0.0457      0.046       0.446       0.475       0.577       
+===> multitime results
+1: -qq java -jar ../tools/JJBMC.jar QBenchmark2S.java -t 1200000000 gatesTest3 -u 10 -j "--external-sat-solver ~/kissat/build/kissat"
+            Mean                Std.Dev.    Min         Median      Max
+real        524.860+/-1.9780      1.974       522.976     524.014     528.867     
+user        528.991+/-2.0454      2.041       526.843     528.090     533.230     
+sys         1.696+/-0.0566      0.056       1.594       1.696       1.789       
