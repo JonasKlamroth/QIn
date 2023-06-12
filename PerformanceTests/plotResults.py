@@ -43,7 +43,7 @@ def plotLineResults(mins, maxes, stds, means, label):
         ax.plot([2, 4, 6, 8], means, label=label, linestyle='dashed')
 
 
-res = readResults("gatesResults2.txt")
+res = readResults("gatesResults.txt")
 for name in res:
     times = res[name]
     plotLineResults(times[1], times[2], times[3], times[0], name)
