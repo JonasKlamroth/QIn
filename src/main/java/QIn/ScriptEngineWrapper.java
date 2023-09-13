@@ -1,13 +1,14 @@
 package QIn;
 
-import org.mariuszgromada.math.mxparser.*;
-
+import java.io.Reader;
 import java.util.Map;
+import javax.script.*;
 
 public class ScriptEngineWrapper {
+    private static final ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
 
     private static ScriptEngineWrapper instance = null;
-    private Map<String, String> assignmentMap = null;
+    private Map<String, Object> assignmentMap = null;
 
 
     private ScriptEngineWrapper() {
@@ -20,8 +21,19 @@ public class ScriptEngineWrapper {
         return instance;
     }
 
-    public void applyAssignmentMap(Map<String, String> map) {
+    public void applyAssignmentMap(Map<String, Object> map) {
         assignmentMap = map;
+        for(String key : assignmentMap.keySet()) {
+            try {
+                if (assignmentMap.get(key) instanceof String) {
+                    assignmentMap.put(key, Integer.parseInt((String) assignmentMap.get(key)));
+                }
+            } catch (NumberFormatException e) {
+                if (assignmentMap.get(key) instanceof String) {
+                    assignmentMap.put(key, Double.parseDouble((String) assignmentMap.get(key)));
+                }
+            }
+        }
     }
 
 
@@ -30,27 +42,25 @@ public class ScriptEngineWrapper {
     }
 
     public double eval(String expr) {
-        Argument[] args = new Argument[assignmentMap.keySet().size()];
-        int idx = 0;
-        for(String k : assignmentMap.keySet()) {
-            Argument a = new Argument(k + "=" + assignmentMap.get(k));
-            args[idx] = a;
-            idx++;
-        }
-        expr = expr.replaceAll("\\(double\\)", "");
-        expr = expr.replaceAll("\\(float\\)", "");
-        expr = expr.replaceAll("\\(int\\)", "");
-        expr = expr.replaceAll(">>", "@>>");
-        expr = expr.replaceAll("<<", "@<<");
+        Bindings args = new SimpleBindings();
+        args.putAll(assignmentMap);
+
+        //expr = expr.replaceAll("\\(double\\)", "");
+        //expr = expr.replaceAll("\\(float\\)", "");
+        //expr = expr.replaceAll("\\(int\\)", "");
+        //expr = expr.replaceAll(">>", "@>>");
+        //expr = expr.replaceAll("<<", "@<<");
         try {
-            Expression e = new Expression(expr, args);
-            double res = e.calculate();
-            if(Double.isNaN(res)) {
-                throw new RuntimeException("Could not evaluate expression: " + e.getExpressionString());
+            Object res = engine.eval(expr, args);
+            if(res instanceof Double) {
+                return (double)res;
+            } else if(res instanceof Integer) {
+                return (((Integer) res).doubleValue());
+            } else {
+                throw new UnsupportedException("Unsupported expression evaluated: " + expr + ". Did you forget to provide a constant?");
             }
-            return res;
         } catch (Exception e) {
-            throw new UnsupportedException("Unsupported expression evaluated: " + expr);
+            throw new UnsupportedException("Unsupported expression evaluated: " + expr + ". Did you forget to provide a constant?");
         }
     }
 }

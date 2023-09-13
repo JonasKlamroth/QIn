@@ -36,14 +36,14 @@ java -jar QIn.jar src/test/resources/Grover.java -o Grover.java
 - You can also translate .qasm files (OPENQASM 2.0, experimental support only)
 
 ## Running tools on translations
-- To run [JJBMC](https://github.com/jonasklamroth/JJBMC) on one of the examples you can either go to the JJBMC-Website or use the precompiled version in the tools folder. To run JJBMC on the grover case study use the following command (make sure everything is installed as necessary in the readme of JJBMC): 
+- To run [JJBMC](https://github.com/jonasklamroth/JJBMC) on one of the examples you can either go to the JJBMC-Website or download JJBMC using the gradle task "downloadJJBMC" ("./gradlew downloadJJBMC"). To run JJBMC on the grover case study use the following command (make sure everything is installed as necessary in the readme of JJBMC): 
 ```
 java -jar ./tools/JJBMC.jar Grover.java grover2
 ```
 
 - To run the tests for the translations of the case studies run:
 ```
-gradle testCaseStudies
+./gradlew testCaseStudies
 ```
 
 ## Running Benchmark for qubits and gates

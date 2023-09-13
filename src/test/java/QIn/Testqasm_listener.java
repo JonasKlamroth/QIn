@@ -5,17 +5,15 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.apache.commons.lang3.StringEscapeUtils;
+
 public class Testqasm_listener {
 
     @Test
     public void testHGate(){
 
-        QASMLexer qasmLexer = new QASMLexer(CharStreams.fromString(
+        QIn.QASMLexer qasmLexer = new QIn.QASMLexer(CharStreams.fromString(
                 "OPENQASM 2.0;\n" +
                         "qreg q[1];\n" +
                         "h q[0];\n" + "measure q[0];\n"));

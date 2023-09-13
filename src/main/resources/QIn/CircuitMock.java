@@ -46,6 +46,10 @@ public class CircuitMock {
     public void reset(int qbit1) {
     }
 
+    public void u(int[][] m, int qbit, int numQbits) {
+    }
+    public void u(int[][] m, int[][]m_i, int qbits, int numQbits) {
+    }
     public void u(float[][] m, int qbit, int numQbits) {
     }
     public void u(float[][] m, float[][]m_i, int qbits, int numQbits) {

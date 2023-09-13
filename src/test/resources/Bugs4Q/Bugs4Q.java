@@ -1,4 +1,5 @@
 public class Bugs4Q {
+    //List of quantum bugs reported on online-platforms. List is a selection from: https://github.com/Z-928/Bugs4Q
 
     //https://stackoverflow.com/questions/63283443/my-qiskit-codes-output-differ-from-the-lecturer-ryan-o-donnell
     //@ ensures \result[0] == false && \result[1] == true && \result[2] == true;

@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
+
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
@@ -49,10 +51,15 @@ public class CLI implements Runnable {
     @CommandLine.Option(names = {"-m", "-mockCircuit"}, description = "Create a mock circuit java file")
     public static boolean createMockCircuit;
 
+    @CommandLine.Option(names = {"--mxLicencseName"}, interactive = true)
+    private static String mxLicencseName = null;
+
     @CommandLine.Option(names = {"-v", "-variableAssignment"}, description = "Assign values to variables (only ints and floats supported for now)")
-    public static Map<String, String> variableAssignments = new HashMap<>();
+    public static Map<String, Object> variableAssignments = new HashMap<>();
     private final Path MockFilepath = new File("." + File.separator + "src" + File.separator + "main" + File.separator +
             "resources" + File.separator + "CircuitMock.java").toPath();
+
+
 
     public static void main(String[] args) {
         System.setErr(new CostumPrintStream(System.err));
@@ -149,9 +156,9 @@ public class CLI implements Runnable {
     private void copyMock() {
         File folder = new File(fileName).getParentFile();
         File mock = new File(folder, "CircuitMock.java");
-        if(mock.exists()) {
-            throw new RuntimeException("QIn.CircuitMock.java is already existing in the folder of the given file. Please make sure this is not the case.");
-        }
+        //if(mock.exists()) {
+            //throw new RuntimeException("QIn.CircuitMock.java is already existing in the folder of the given file. Please make sure this is not the case.");
+        //}
         try {
             InputStream is = CLI.class.getResourceAsStream("/QIn/CircuitMock.java");
             String content = convertStreamToString(is);
