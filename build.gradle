@@ -15,6 +15,7 @@ plugins {
     id 'idea'
     id 'java'
     id 'antlr'
+    id 'de.undercouch.download' version '5.5.0'
 }
 
 test.testLogging.showStandardStreams = true
@@ -27,7 +28,7 @@ repositories {
 
 dependencies {
     // Use OpenJml and Picolini
-    implementation fileTree(include: ['*.jar'], dir: 'lib')
+    implementation fileTree(include: ['*.jar'], dir: 'openjml')
     implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     implementation 'info.picocli:picocli:4.7.5'
 
@@ -50,6 +51,7 @@ application {
     mainClass = 'QIn.CLI'
 }
 
+
 test {
     // Use junit platform for unit tests.
     useJUnitPlatform()
@@ -60,6 +62,17 @@ test {
      logger.lifecycle("Running test: ${descriptor}")
   }
 }
+
+task downloadOpenJML(type: Download) {
+    src 'https://github.com/OpenJML/OpenJML/releases/download/0.8.35/openjml-0.8.35-20180614.zip'
+    dest ("openjml/openjml.zip")
+}
+
+task prepareopenjml(dependsOn: downloadOpenJML, type: Copy) {
+    from zipTree(downloadOpenJML.dest)
+    into file("openjml")
+}
+
 
 task fatJar(type: Jar) {
     manifest {
@@ -103,6 +116,14 @@ tasks.register('testCaseStudies', Test) {
      filter {
             includeTestsMatching "*Translations.*"
      }
+}
+
+//If openjml jar is not present we have to download it
+tasks.compileJava {
+    def f = new File('openjml/openjml.jar')
+    if(!f.exists()) {
+        dependsOn prepareopenjml
+    }
 }
 
 //tasks.withType(JavaCompile) {
