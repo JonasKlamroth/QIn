@@ -4,6 +4,9 @@ exe() { echo "\$ ${@/eval/}" ; "$@" ; }
 echo "Create QIn-jar"
 exe ./gradlew fatJar
 
+echo "DownloadJJBMC"
+exe ./gradlew downloadJJBMC
+
 echo "Creating example folder"
 if [[ ! -d examples ]]
 then

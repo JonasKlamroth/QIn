@@ -31,6 +31,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'openjml')
     implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     implementation 'info.picocli:picocli:4.7.5'
+    implementation 'com.google.code.gson:gson:2.10.1'
 
 
     // Use JUnit Jupiter API for testing.
@@ -64,7 +65,7 @@ test {
 }
 
 task downloadOpenJML(type: Download) {
-    src 'https://github.com/OpenJML/OpenJML/releases/download/0.8.35/openjml-0.8.35-20180614.zip'
+    src 'https://github.com/OpenJML/OpenJML/releases/download/0.8.42/openjml-0.8.42-20190401.zip'
     dest ("openjml/openjml.zip")
 }
 
@@ -103,6 +104,11 @@ tasks.register('downloadJJBMC') {
                 i -> f.withOutputStream{ it << i }}
         }
     }
+}
+
+tasks.register('runCaseStudies', JavaExec) {
+
+
 }
 
 tasks.register('testCaseStudies', Test) {
