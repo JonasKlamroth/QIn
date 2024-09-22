@@ -1,12 +1,12 @@
 public class DeutschJozsaQiskit {
-    public static final int n = 2;
+    public static final int n = 3;
 
-    /*@ requires 0 <= oracleType <= 1;
-      @ requires 0 <= oracleValue <= 1;
-      @ requires 1 <= a <= 1 << n;
-      @ ensures \result == (oracleType == 1);
+    /*@
+      @ requires 1 <= a < 1 << n;
+      @ ensures \result == oracleType;
+      @ assignable \nothing;
      */
-    public static boolean dj(int oracleType, int oracleValue, int a) {
+    public static boolean dj(boolean oracleType, boolean oracleValue, int a) {
         // n qubits for querying the oracle and one qubit for storing the answer
         CircuitMock djCircuit = new CircuitMock(n + 1);
 
@@ -20,8 +20,8 @@ public class DeutschJozsaQiskit {
         djCircuit.h(n);
 
         // Oracle logic
-        if (oracleType == 0) {  // If the oracleType is "0", the oracle returns oracleValue for all inputs.
-            if (oracleValue == 1) {
+        if (!oracleType) {  // If the oracleType is "0", the oracle returns oracleValue for all inputs.
+            if (oracleValue) {
                 djCircuit.x(n);
             } else {
                 //djCircuit.id(n);  // Assuming `id` is the identity gate

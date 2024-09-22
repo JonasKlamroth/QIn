@@ -1,5 +1,5 @@
 public class DeutschJozsa {
-    public static final int N = 3;
+    public static final int N = 2;
 
     /*@ requires f!= null && f.length == 1 << N;
       @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||
@@ -14,7 +14,6 @@ public class DeutschJozsa {
             circuit.h(i);
         }
 
-        int size = 1 << N + 1;
         float oracle[][] = getOracle(N, f);
         circuit.u(oracle, 0, N + 1);
 
@@ -36,11 +35,11 @@ public class DeutschJozsa {
      */
     public boolean isBalancedBroken(boolean[] f) {
         CircuitMock circuit = new CircuitMock(N + 1);
+        circuit.h(N);
         for (int i = 0; i < N; ++i) {
             circuit.h(i);
         }
 
-        int size = 1 << N + 1;
         float oracle[][] = getOracle(N, f);
         circuit.u(oracle, 0, N + 1);
 
@@ -54,7 +53,7 @@ public class DeutschJozsa {
         return res;
     }
 
-        public float[][] getOracle(int N, boolean[] f) {
+    public float[][] getOracle(int N, boolean[] f) {
         int size = 1 << N + 1;
         float oracle[][] = new float[size][size];
         for(int i = 0; i < size; ++i) {

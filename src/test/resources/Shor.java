@@ -1,16 +1,16 @@
 public class Shor {
 
     /*@
-      requires 2 <= n <= 15;
-      ensures (\exists int i; 2 <= i < n; n % i == 0) ==> \result != null && \result.length == 2 && \result[0] * \result[1] == n;
-      ensures !(\exists int i; 2 <= i < n; n % i == 0) ==> \result == null;
-      assignable \nothing;
-   */
-    public static int[] factorize(int n) {
+      @ requires 2 <= n <= 15;
+      @ ensures (\exists int i; 2 <= i < n; n % i == 0) ==> n % \result == 0;
+      @ ensures !(\exists int i; 2 <= i < n; n % i == 0) ==> \result == -1;
+      @ assignable \nothing;
+      @*/
+    public static int factorize(int n) {
         for (int a = 2; a < n; a++) {
             int K = gcd(a, n);
             if (K != 1) {
-                return new int[]{K, n / K};
+                return K;
             }
             int r = findPeriod(a, n);
             if (r > 0) {
@@ -18,11 +18,11 @@ public class Shor {
                 int guess1 = gcd(pow(a, r) + 1, n);
                 int guess2 = gcd(pow(a, r) - 1, n);
                 if (guess1 * guess2 == n && guess2 != 1 && guess1 != 1) {
-                    return new int[]{guess1, guess2};
+                    return guess1;
                 }
             }
         }
-        return null;
+        return -1;
     }
 
     private static int pow(int a, int b) {
@@ -95,8 +95,8 @@ public class Shor {
             try {
                 int phase = findPeriodCircuit(a, n, (i & 1) == 0, (i & 2) == 0, (i & 4) == 0);
                 int[] fraction = getFraction((float)phase / (float)8, 3);
-                if (pow(a, fraction[1]) % n == 1) {
-                    return fraction[1];
+                if (pow(a, fraction) % n == 1) {
+                    return fraction;
                 }
             } catch (RuntimeException e) {
             }
@@ -104,9 +104,9 @@ public class Shor {
         return -1;
     }
 
-    private static int[] getFraction(float val, int numConsideredDigits) {
+    private static int getFraction(float val, int numConsideredDigits) {
         if(val == 0.0f) {
-            return new int[]{0, 1};
+            return 1;
         }
         int n = 0;
         float p = val;
@@ -118,6 +118,6 @@ public class Shor {
         int r = gcd((int)p, power);
         int nominator = (int)p / r;
         int denominator = power / r;
-        return new int[]{nominator, denominator};
+        return denominator;
     }
 }

@@ -32,6 +32,5 @@ public class QTeleportation {
         if(b0) {
             c.z(2);
         }
-        return c.measure(2);
     }
 }

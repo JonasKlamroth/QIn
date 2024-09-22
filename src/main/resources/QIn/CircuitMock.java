@@ -27,6 +27,15 @@ public class CircuitMock {
     public void z(int qbit) {
     }
 
+    public void rx(int qbit, float theta) {
+    }
+
+    public void ry(int qbit, float theta) {
+    }
+
+    public void rz(int qbit, float theta) {
+    }
+
     public void cx(int cqbit, int tqbit) {
     }
 
@@ -41,6 +50,9 @@ public class CircuitMock {
     }
 
     public void cccx(int cqbit1, int cqbit2, int cqbit3, int tqbit) {
+    }
+
+    public void cswap(int cqbit, int qbit1, int qbit2) {
     }
 
     public void reset(int qbit1) {

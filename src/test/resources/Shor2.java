@@ -2,13 +2,35 @@ import java.util.Random;
 public class Shor2 {
 
 
+    //@ requires 0 <= min < max;
+    //@ ensures min <= \result < max;
+    //@ assignable \nothing;
     public static int rand(int min, int max) {
-        return (new Random().nextInt(0) % (max - min)) + min;
+        int i = new Random().nextInt(0);
+        if (i < 0) {
+            i = 0;
+        }
+        return (i % (max - min)) + min;
+    }
+
+    /*@ requires 2 <= n <= 15;
+      @ ensures n % \result == 0 && \result != 1 && \result != n;
+     */
+    public static int shor(int n) {
+        int res = factorize(n);
+
+        //@ loop_invariant res != 0;
+        //@ loop_invariant res == -1 || n % res == 0 && res != 1 && res != n;
+        while (res == -1) {
+            res = factorize(n);
+        }
+        return res;
     }
 
     /*@
       @ requires 2 <= n <= 15;
-      @ ensures \result != -1 ==> n % \result == 0;
+      @ ensures \result != 0;
+      @ ensures \result != -1 ==> (n % \result == 0 && \result != 1 && \result != n);
       @ assignable \nothing;
       @*/
     public static int factorize(int n) {
@@ -86,8 +108,9 @@ public class Shor2 {
         return res;
     }
 
-    /*@ requires n > 2 && n <= 15 && 0 < a < n;
-      @ ensures pow(a, \result) % n == 1 || \result == 1;
+    /*@ requires 2 <= n <= 15 && 0 < a < n;
+      @ ensures -1 <= \result < n;
+      @ ensures \result != 1 && (pow(a, \result) % n == 1 || \result == -1);
       @ assignable \nothing;
      */
     private static int findPeriod(int a, int n) {
