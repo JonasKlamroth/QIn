@@ -1,5 +1,5 @@
 public class DeutschJozsa {
-    public static final int N = 2;
+    public static final int N = 3;
 
     /*@ requires f!= null && f.length == 1 << N;
       @ requires (\forall int i; 0 <= i && i < f.length; f[i]) || (\forall int j; 0 <= j && j < f.length; !f[j]) ||

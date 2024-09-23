@@ -51,7 +51,7 @@ public class Shor3 {
         return -1;
     }
 
-    private static int /*@ pure */ pow(int a, int b) {
+    private /*@ pure helper @*/ static int pow(int a, int b) {
         int res = 1;
         for (int i = 0; i < b; ++i) {
             res *= a;
@@ -59,7 +59,7 @@ public class Shor3 {
         return res;
     }
 
-    public /*@ pure */ static int gcd(int a, int b) {
+    private /*@ pure helper @*/ static int gcd(int a, int b) {
         int r_0 = a;
         int r_1 = b;
         int r_2 = 0;

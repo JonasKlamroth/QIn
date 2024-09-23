@@ -1,5 +1,7 @@
 public class BB84 {
 
+    //@ ensures b != bprime || a == \result;
+    //@ assignable \nothing;
     public boolean generateKeyBit(boolean a, boolean b, boolean bprime) {
         CircuitMock c = new CircuitMock(1);
         if(a) {
@@ -14,8 +16,6 @@ public class BB84 {
             c.h(0);
         }
         boolean aprime = c.measurePos(0);
-        //if a and bprime are equal a and aprime have to be equal. Otherwise we dont care
-        assert b != bprime || a == aprime;
         return aprime;
     }
 

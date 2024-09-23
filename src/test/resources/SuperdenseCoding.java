@@ -1,6 +1,7 @@
 public class SuperdenseCoding {
 
-    public static void sdc(boolean b1, boolean b2) {
+    //@ ensures \result[0] == b1 && \result[1] == b2;
+    public static boolean[] sdc(boolean b1, boolean b2) {
         CircuitMock c = new CircuitMock(2);
         //prepare bell-state
         c.h(0);
@@ -17,7 +18,8 @@ public class SuperdenseCoding {
         //bobs part
         c.cx(0, 1);
         c.h(0);
-        assert c.measure(0) == b1;
-        assert c.measure(1) == b2;
+        boolean m1 = c.measure(0);
+        boolean m2 = c.measure(1);
+        return new boolean[]{m1, m2};
     }
 }

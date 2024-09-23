@@ -1,5 +1,5 @@
 public class BernsteinVaziraniQiskit {
-    public static final int N = 6;
+    public static final int N = 3;
 
     /*@ requires 0 <= a < (1 << N);
       @ ensures \result == a;
