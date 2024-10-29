@@ -205,12 +205,8 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         }
                         JCTree.JCExpression condTrue = TransUtils.makeMeasurePosCondition(qState, qBit, true);
                         JCTree.JCExpression condFalse = TransUtils.makeMeasurePosCondition(qState, qBit, false);
-                        JCTree.JCIf measureTrueGuard = M.If(condTrue, M.Exec(TransUtils.makeAssume(M.Literal(false))), null);
-                        JCTree.JCIf measureFalseGuard = M.If(condFalse, M.Exec(TransUtils.makeAssume(M.Literal(false))), null);
-                        if(!CLI.useNondetFunctions) {
-                            measureTrueGuard.thenpart = TransUtils.makeRuntimeException("Impossible measurement result.");
-                            measureFalseGuard.thenpart = TransUtils.makeRuntimeException("Impossible measurement result.");
-                        }
+                        JCTree.JCIf measureTrueGuard = M.If(condTrue, M.Block(0L, List.of(TransUtils.makeJMLAssume(M.Literal(false)))), null);
+                        JCTree.JCIf measureFalseGuard = M.If(condFalse, M.Block(0L, List.of(TransUtils.makeJMLAssume(M.Literal(false)))), null);
                         newStatements = newStatements.append(treeutils.makeVarDef(M.Literal(true).type, M.Name("$$_tmp_measureVar" + ++measureVarCounter), currentSymbol, Position.NOPOS));
                         JCTree.JCIdent tmp = M.Ident("$$_tmp_measureVar" + measureVarCounter);
                         JCTree.JCBlock ifBlock = M.Block(0L, List.of((JCTree.JCStatement)measureTrueGuard).

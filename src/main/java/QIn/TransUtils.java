@@ -9,6 +9,7 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Position;
 import org.jmlspecs.openjml.JmlTree;
 import org.jmlspecs.openjml.JmlTreeUtils;
+import org.jmlspecs.openjml.ext.StatementExprType;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Array;
@@ -213,6 +214,10 @@ public class TransUtils {
     public static JCTree.JCMethodInvocation makeNondetBoolean() {
         List<JCTree.JCExpression> args = List.nil();
         return makeCProverMethod("nondetBoolean", args);
+    }
+
+    public static JmlTree.JmlStatementExpr makeJMLAssume(JCTree.JCExpression arg) {
+        return M.JmlExpressionStatement("assume", new StatementExprType("assume"), null,arg);
     }
 
     public static JCTree.JCMethodInvocation makeAssume(JCTree.JCExpression arg) {
