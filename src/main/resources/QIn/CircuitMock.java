@@ -79,4 +79,8 @@ public class CircuitMock {
     public boolean measurePos(int qBit) {
         return true;
     }
+
+    public int measureAll() {
+        return 0;
+    }
 }

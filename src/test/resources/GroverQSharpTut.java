@@ -2,7 +2,7 @@ public class GroverQSharpTut {
 
     //resulting int has alternating bits
     //@ requires N == 3 && iterations == 1;
-    //@ ensures (\forall int i; 0 <= i < 2; ((\result & (1 << (32 - i))) == 0) != ((\result & (i << (32 - (i + 1)))) == 0));
+    //@ ensures (\forall int i; 0 <= i < 2; ((\result & (1 << i)) == 0) != ((\result & (1 << (i + 1))) == 0));
     public int groverAlternating(int N, int iterations) {
         int res = 0;
         CircuitMock c = new CircuitMock(N);
@@ -49,9 +49,7 @@ public class GroverQSharpTut {
                 c.h(j);
             }
         }
-        for(int j = 0; j < N; ++j) {
-            res += c.measure(j) ? (1 << (N - j - 1)) : 0;
-        }
+        res = c.measureAll();
         return res;
     }
 }

@@ -10,8 +10,7 @@ public class GHZ {
         }
 
         boolean m = c.measurePos(0);
-        for(int i = 1; i < N; ++i) {
-            assert c.measurePos(i) == m;
-        }
+        int res = c.measureAll();
+        assert res == 0 || res == ((1 << N) - 1);
     }
 }

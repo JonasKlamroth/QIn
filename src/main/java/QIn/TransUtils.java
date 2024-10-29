@@ -13,6 +13,7 @@ import org.jmlspecs.openjml.ext.StatementExprType;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Array;
+import java.util.Collections;
 
 public class TransUtils {
     public static JmlTreeUtils treeutils;
@@ -274,5 +275,28 @@ public class TransUtils {
     public static JCTree.JCStatement makeRuntimeException(String message) {
         JCTree.JCExpression ty = M.Type(syms.runtimeExceptionType);
         return M.Throw(M.NewClass(null, null, ty, List.of(M.Literal(message)), null));
+    }
+
+    public static Expr[][] makeMeasureAllArray(Expr[][] qState) {
+        Expr[][] res = new Expr[qState.length][1];
+        for(int i = 0; i < qState.length; ++i) {
+            if(CLI.useReals) {
+                res[i][0] = qState[i][0].mult(qState[i][0]);
+            } else {
+                ComplexExpression c = (ComplexExpression)qState[i][0];
+                res[i][0] = c.getReal().mult(c.getReal()).add(c.getImg().mult(c.getImg()));
+            }
+        }
+        return res;
+    }
+
+    public static JCTree.JCForLoop makeStandardLoop(int max, List<JCTree.JCStatement> body, JCTree.JCVariableDecl loopVarName) {
+        JCTree.JCExpressionStatement loopStep = M.Exec(treeutils.makeUnary(Position.NOPOS, JCTree.Tag.PREINC,
+                treeutils.makeIdent(Position.NOPOS, loopVarName.sym)));
+        List<JCTree.JCExpressionStatement> loopStepl = List.from(Collections.singletonList(loopStep));
+        JCTree.JCBlock loopBodyBlock = M.Block(0L, List.from(body));
+        List<JCTree.JCStatement> loopVarl = List.from(Collections.singletonList(loopVarName));
+        JCTree.JCExpression cond = M.Binary(JCTree.Tag.LE, M.Ident(loopVarName), M.Literal(max));
+        return M.ForLoop(loopVarl, cond, loopStepl, loopBodyBlock);
     }
 }

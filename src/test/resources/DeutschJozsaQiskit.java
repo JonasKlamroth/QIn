@@ -40,10 +40,8 @@ public class DeutschJozsaQiskit {
         }
 
         // Measurement
-        boolean res = false;
-        for(int i = 0; i < N; ++i) {
-            res |= djCircuit.measurePos(i);
-        }
-        return res;
+        int res = djCircuit.measureAll();
+
+        return res != 0 && res != 1;
     }
 }

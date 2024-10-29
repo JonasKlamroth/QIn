@@ -3,16 +3,16 @@ package QIn;
 import QIn.Expressions.Expr;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Pair;
 import com.sun.tools.javac.util.Position;
-import org.jmlspecs.openjml.JmlTree;
-import org.jmlspecs.openjml.JmlTreeCopier;
-import org.jmlspecs.openjml.JmlTreeScanner;
-import org.jmlspecs.openjml.JmlTreeUtils;
+import org.jmlspecs.openjml.*;
+
+import javax.lang.model.type.PrimitiveType;
 
 public class QCircuitVisitor extends JmlTreeCopier {
     public static final String CIRCUIT_TYPE = "CircuitMock";
@@ -42,6 +42,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
         if(CLI.useNondetFunctions) {
             cu.defs = cu.defs.prepend(M.Import(M.Ident(M.Name("org.cprover.CProver")), false));
         }
+        //cu.defs = cu.defs.prepend(M.Import(M.Ident(M.Name("Math")), false));
         return cu;
     }
     @Override
@@ -116,7 +117,21 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
     @Override
     public JCTree visitJmlClassDecl(JmlTree.JmlClassDecl that, Void p) {
-        return super.visitJmlClassDecl(that, p);
+        JmlTree.JmlClassDecl res = (JmlTree.JmlClassDecl) super.visitJmlClassDecl(that, p);
+        //Symbol.ClassSymbol sym = new Symbol.ClassSymbol(0L, res.name, res.type, null);
+        //JCTree.JCMethodDecl randFunc = treeutils.makeMethodDefNoArg(null, M.Name("randInt"), M.Literal(0).type, sym);
+        //JCTree.JCVariableDecl min = treeutils.makeVarDef(randFunc.getReturnType().type, M.Name("min"), randFunc.sym, Position.NOPOS);
+        //JCTree.JCVariableDecl max = treeutils.makeVarDef(randFunc.getReturnType().type, M.Name("max"), randFunc.sym, Position.NOPOS);
+        //randFunc.params = List.of(min, max);
+        //JCTree.JCStatement st = M.Return(M.Binary(JCTree.Tag.PLUS, M.Ident(min),
+        //        M.TypeCast(M.Literal(0).type,
+        //                M.Binary(JCTree.Tag.MUL,
+        //                        M.Apply(null, M.Select(M.Ident("Math"), M.Name("random")), null),
+        //                        M.Binary(JCTree.Tag.PLUS, M.Literal(1),
+        //                                M.Binary(JCTree.Tag.MINUS, M.Ident(max), M.Ident(min)))))));
+        //randFunc.body = M.Block(0L, List.of(st));
+        //res.defs.append(randFunc);
+        return res;
     }
 
     @Override
@@ -223,6 +238,29 @@ public class QCircuitVisitor extends JmlTreeCopier {
                         Utils.anonymizeState(qState, qStateVars);
 
                         return tmp;
+                    } else if(fullMethod.name.toString().equals("measureAll")) {
+                        Expr[][] elems = TransUtils.makeMeasureAllArray(qState);
+                        List<JCTree.JCExpression> expressions = TransUtils.makeArrayExpression(elems);
+                        JCTree.JCVariableDecl probs = treeutils.makeVarDef(expressions.get(0).type, M.Name("probs"), currentSymbol, expressions.get(0));
+                        newStatements = newStatements.append(probs);
+                        JCTree.JCVariableDecl highestVar = treeutils.makeVarDef(M.Literal(0.0F).type, M.Name("highestProb"), currentSymbol, M.Literal(0.0f));
+                        newStatements = newStatements.append(highestVar);
+                        JCTree.JCVariableDecl loopVar = treeutils.makeVarDef(M.Literal(1).type, M.Name("loopVarI"), currentSymbol, M.Literal(0));
+                        JCTree.JCIf ifStatement = M.If(M.Binary(JCTree.Tag.GT, treeutils.makeArrayElement(Position.NOPOS, M.Ident(probs), M.Ident(loopVar)), M.Ident(highestVar)), M.Exec(M.Assign(M.Ident(highestVar), treeutils.makeArrayElement(Position.NOPOS, M.Ident(probs), M.Ident(loopVar)))), null);
+                        newStatements = newStatements.append(TransUtils.makeStandardLoop(qState.length - 1, List.of(ifStatement), loopVar));
+                        JCTree.JCVariableDecl randInt = treeutils.makeVarDef(M.Literal(0).type, M.Name("randIdx"), currentSymbol, M.Apply(List.nil() ,M.Ident("CProver.nondetInt"), List.nil()));
+                        newStatements = newStatements.append(randInt);
+                        newStatements = newStatements.append(TransUtils.makeJMLAssume(M.Binary(JCTree.Tag.AND,
+                                M.Binary(JCTree.Tag.LE, M.Literal(0), M.Ident(randInt)),
+                                M.Binary(JCTree.Tag.LT, M.Ident(randInt), M.Literal(qState.length)))));
+
+                        JCTree.JCVariableDecl resVar = treeutils.makeVarDef(M.Literal(0).type, M.Name("tmp_measure_var"), currentSymbol, M.Literal(0));
+                        newStatements = newStatements.append(resVar);
+                        JCTree.JCIf if2 = M.If(M.Binary(JCTree.Tag.GT, treeutils.makeArrayElement(Position.NOPOS, M.Ident(probs), M.Ident(randInt)), M.Binary(JCTree.Tag.MINUS, M.Ident(highestVar), M.Literal(0.001f))), M.Exec(M.Assign(M.Ident(resVar), M.Ident(randInt))), null);
+                        if2.elsepart = M.Block(0L ,List.of(TransUtils.makeJMLAssume(M.Literal(false))));
+                        newStatements = newStatements.append(if2);
+                        CLI.useNondetFunctions = true;
+                        return M.Ident(resVar);
                     } else {
                         List<Integer> qBits = List.nil();
                         for (int i = 0; i < methodInvocation.args.size(); ++i) {
