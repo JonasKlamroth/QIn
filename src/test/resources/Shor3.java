@@ -21,6 +21,7 @@ public class Shor3 {
 
         //@ loop_invariant res != 0;
         //@ loop_invariant res == -1 || n % res == 0 && res != 1 && res != n;
+        //@ assignable \nothing;
         while (res == -1) {
             res = factorize(n);
         }

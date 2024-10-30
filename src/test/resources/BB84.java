@@ -15,7 +15,7 @@ public class BB84 {
             //if bprime we measure in hadamard basis which is equal to applying the hadamard gate and then measuring in computational basis
             c.h(0);
         }
-        boolean aprime = c.measurePos(0);
+        boolean aprime = (c.measureAll() == 1);
         return aprime;
     }
 

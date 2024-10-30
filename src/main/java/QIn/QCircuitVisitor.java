@@ -239,6 +239,8 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
                         return tmp;
                     } else if(fullMethod.name.toString().equals("measureAll")) {
+                        newStatements = newStatements.appendList(pendingStateChange);
+                        pendingStateChange = List.nil();
                         Expr[][] elems = TransUtils.makeMeasureAllArray(qState);
                         List<JCTree.JCExpression> expressions = TransUtils.makeArrayExpression(elems);
                         JCTree.JCVariableDecl probs = treeutils.makeVarDef(expressions.get(0).type, M.Name("probs"), currentSymbol, expressions.get(0));
@@ -256,7 +258,7 @@ public class QCircuitVisitor extends JmlTreeCopier {
 
                         JCTree.JCVariableDecl resVar = treeutils.makeVarDef(M.Literal(0).type, M.Name("tmp_measure_var"), currentSymbol, M.Literal(0));
                         newStatements = newStatements.append(resVar);
-                        JCTree.JCIf if2 = M.If(M.Binary(JCTree.Tag.GT, treeutils.makeArrayElement(Position.NOPOS, M.Ident(probs), M.Ident(randInt)), M.Binary(JCTree.Tag.MINUS, M.Ident(highestVar), M.Literal(0.001f))), M.Exec(M.Assign(M.Ident(resVar), M.Ident(randInt))), null);
+                        JCTree.JCIf if2 = M.If(M.Binary(JCTree.Tag.GT, treeutils.makeArrayElement(Position.NOPOS, M.Ident(probs), M.Ident(randInt)), M.Binary(JCTree.Tag.MINUS, M.Ident(highestVar), M.Literal(0.02f))), M.Exec(M.Assign(M.Ident(resVar), M.Ident(randInt))), null);
                         if2.elsepart = M.Block(0L ,List.of(TransUtils.makeJMLAssume(M.Literal(false))));
                         newStatements = newStatements.append(if2);
                         CLI.useNondetFunctions = true;

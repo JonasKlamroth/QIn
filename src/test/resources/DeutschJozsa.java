@@ -20,11 +20,8 @@ public class DeutschJozsa {
         for(int i = 0; i < N; ++i) {
             circuit.h(i);
         }
-        boolean res = false;
-        for(int i = 0; i < N; ++i) {
-            res |= circuit.measure(i);
-        }
-        return res;
+        int res = circuit.measureAll() >> 1;
+        return res != 0;
     }
 
 

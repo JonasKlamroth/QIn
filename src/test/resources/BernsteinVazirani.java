@@ -25,11 +25,10 @@ public class BernsteinVazirani {
         }
 
         int res = 0;
-        for(int i = 0; i < N; ++i) {
-            res += circuit.measure(i) ? (1 << (N - i - 1)) : 0;
-        }
+        res = circuit.measureAll() >> 1;
         return res;
     }
+
     public float[][] getOracle(int N, boolean[] f) {
         int size = 1 << N + 1;
         float oracle[][] = new float[size][size];

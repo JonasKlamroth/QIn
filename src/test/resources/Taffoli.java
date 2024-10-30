@@ -20,7 +20,7 @@ public class Taffoli {
         c.ccx(2, 3, 4);
         c.swap(2, 3);
         c.ccx(0, 1, 2);
-        return c.measure(4);
+        return c.measureAll() == 27;
     }
 
     //@ ensures \result == (b1 && b2 && b3);

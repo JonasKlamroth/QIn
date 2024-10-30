@@ -1,31 +1,59 @@
+import java.util.Random;
+
 public class Shor {
+
+    //@ requires 0 <= min < max;
+    //@ ensures min <= \result < max;
+    //@ assignable \nothing;
+    public static int rand(int min, int max) {
+        int i = new Random().nextInt(0);
+        if (i < 0) {
+            i = 0;
+        }
+        return (i % (max - min)) + min;
+    }
+
+    /*@ requires 2 <= n <= 15;
+      @ ensures n % \result == 0 && \result != 1 && \result != n;
+      @ assignable \nothing;
+     */
+    public static int shor(int n) {
+        int res = factorize(n);
+
+        //@ loop_invariant res != 0;
+        //@ loop_invariant res == -1 || n % res == 0 && res != 1 && res != n;
+        //@ assignable \nothing;
+        while (res == -1) {
+            res = factorize(n);
+        }
+        return res;
+    }
 
     /*@
       @ requires 2 <= n <= 15;
-      @ ensures (\exists int i; 2 <= i < n; n % i == 0) ==> n % \result == 0;
-      @ ensures !(\exists int i; 2 <= i < n; n % i == 0) ==> \result == -1;
+      @ ensures \result != 0;
+      @ ensures \result != -1 ==> (n % \result == 0 && \result != 1 && \result != n);
       @ assignable \nothing;
       @*/
     public static int factorize(int n) {
-        for (int a = 2; a < n; a++) {
-            int K = gcd(a, n);
-            if (K != 1) {
-                return K;
-            }
-            int r = findPeriod(a, n);
-            if (r > 0) {
-                r = r / 2;
-                int guess1 = gcd(pow(a, r) + 1, n);
-                int guess2 = gcd(pow(a, r) - 1, n);
-                if (guess1 * guess2 == n && guess2 != 1 && guess1 != 1) {
-                    return guess1;
-                }
+        int a = rand(1, n);
+        int K = gcd(a, n);
+        if (K != 1) {
+            return K;
+        }
+        int r = findPeriod(a, n);
+        if (r > 1) {
+            r = r / 2;
+            int guess1 = gcd(pow(a, r) + 1, n);
+            int guess2 = gcd(pow(a, r) - 1, n);
+            if (guess1 * guess2 == n && guess2 != 1 && guess1 != 1) {
+                return guess1;
             }
         }
         return -1;
     }
 
-    private static int pow(int a, int b) {
+    private static /*@ pure */ int pow(int a, int b) {
         int res = 1;
         for (int i = 0; i < b; ++i) {
             res *= a;
@@ -33,7 +61,7 @@ public class Shor {
         return res;
     }
 
-    public static int gcd(int a, int b) {
+    public static /*@ pure */ int gcd(int a, int b) {
         int r_0 = a;
         int r_1 = b;
         int r_2 = 0;
@@ -45,13 +73,17 @@ public class Shor {
         return r_0;
     }
 
-    /*@
-      @ requires a == 2;
-      @ ensures \result == 0 || \result == 2 || \result == 4 || \result == 6;
-      @ assignable \nothing;
-      @ signals_only RuntimeException;
+   /*@
+      requires 2 <= n <= 15 && 0 < a < n;
+      requires gcd(a, n) == 1;
+      ensures (n == 15) ==> (\result == 0 || \result == 2 || \result == 4 || \result == 6);
+      ensures (n != 15) ==> (\result == 0);
+      assignable \nothing;
    */
-    private static int findPeriodCircuit(int a, int n, boolean $$_tmp_measureParam_0, boolean $$_tmp_measureParam_1, boolean $$_tmp_measureParam_2) {
+    private static int findPeriodCircuit(int a, int n) {
+        if(n != 15) { //this is a circuit especially for n == 15;
+            return 0;
+        }
         double PI = 3.141592653;
         CircuitMock c = new CircuitMock(7);
         c.x(6);
@@ -75,31 +107,21 @@ public class Shor {
         c.cp(1, 2, PI / 2.0);
         c.h(2);
 
-        int res = 0;
-        for (int i = 0; i < 3; ++i) {
-            res += c.measurePos(i) ? 1 << i : 0;
-        }
-        return res;
+        int res = c.measureAll() >> 4;
+        return res * 2;
     }
 
-    /*@ requires n > 2 && n <= 15 && 0 < a < n;
-      @ ensures (a == 2 && n == 15) ==> \result == 4;
-      @ ensures !(a == 2 && n == 15) ==> \result == -1;
+    /*@ requires 2 <= n <= 15 && 0 < a < n;
+      @ requires gcd(a, n) == 1;
+      @ ensures -1 <= \result < n;
+      @ ensures pow(a, \result) % n == 1 || \result == -1;
       @ assignable \nothing;
      */
     private static int findPeriod(int a, int n) {
-        if(n < 15 || a != 2) {
-            return -1;
-        }
-        for (int i = 0; i < 8; ++i) {
-            try {
-                int phase = findPeriodCircuit(a, n, (i & 1) == 0, (i & 2) == 0, (i & 4) == 0);
-                int[] fraction = getFraction((float)phase / (float)8, 3);
-                if (pow(a, fraction) % n == 1) {
-                    return fraction;
-                }
-            } catch (RuntimeException e) {
-            }
+        int phase = findPeriodCircuit(a, n);
+        int fraction = getFraction((float)phase / (float)8, 3);
+        if (pow(a, fraction) % n == 1) {
+            return fraction;
         }
         return -1;
     }
