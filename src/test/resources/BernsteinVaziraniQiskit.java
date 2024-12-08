@@ -2,6 +2,7 @@ public class BernsteinVaziraniQiskit {
     public static final int N = 3;
 
     /*@ requires 0 <= a < (1 << N);
+      @ requires a == 6;
       @ ensures \result == a;
       @ assignable \nothing;
      */
@@ -25,10 +26,11 @@ public class BernsteinVaziraniQiskit {
             bvCircuit.h(i);
         }
 
-        int res = 0;
-        for(int i = 0; i < N; ++i) {
-            res += (bvCircuit.measurePos(i) ? (1 << i) : 0);
+        // Swap order of qubits to obtain correct measurement
+        for (int i = 0; i < N/2; ++i) {
+            bvCircuit.swap(i, N - i - 1);
         }
+        int res = bvCircuit.measureAll();
         return res;
     }
 }
