@@ -17,7 +17,7 @@ echo "Translating Shor.java"
 exe java -jar QIn.jar ./src/test/resources/Shor3.java -o ./examples/Shor3.java -v PI=3.14159265359 -ndf
 
 echo "Running JJBMC on factorize method as holistic approach"
-exe java -jar ./tools/JJBMC.jar ./examples/Shor3.java -t 60000 factorize -fi
+exe java -jar ./tools/JJBMC.jar ./examples/Shor3.java -t 60000 factorize -fi -u 17
 
 echo "Running JJBMC on all methods (modular approach)"
 exe java -jar ./tools/JJBMC.jar ./examples/Shor3.java -t 6000000 -u 17
@@ -44,7 +44,7 @@ echo "Translating DeutschJozsaQiskit.java using only real valued coefficients (s
 exe java -jar QIn.jar ./src/test/resources/DeutschJozsaQiskit.java -o ./examples/DeutschJozsaQiskit.java -real -v N=3 -ndf
 
 echo "Running JJBMC on the DeutschJozsa algorithm (qiskit version)"
-exe java -jar ./tools/JJBMC.jar ./examples/DeutschJozsaQiskit.java -t 60000 dj -fi 
+exe java -jar ./tools/JJBMC.jar ./examples/DeutschJozsaQiskit.java -t 60000 dj -fi -u 17
 
 echo "Very similar for the BernsteinVazirani Algorithm. First we translate it"
 exe java -jar QIn.jar ./src/test/resources/BernsteinVazirani.java -o ./examples/BernsteinVazirani.java -real -v N=3
@@ -56,7 +56,7 @@ echo "Again the same with the Qiskit version"
 exe java -jar QIn.jar ./src/test/resources/BernsteinVaziraniQiskit.java -o ./examples/BernsteinVaziraniQiskit.java -real -v N=3 -ndf
 
 echo "Now we can JJBMC on it"
-exe java -jar ./tools/JJBMC.jar ./examples/BernsteinVaziraniQiskit.java -t 60000 findHiddenShift 
+exe java -jar ./tools/JJBMC.jar ./examples/BernsteinVaziraniQiskit.java -t 60000 findHiddenShift -u 18
 
 echo "Translating Grover.java using only real valued coefficients again"
 exe java -jar QIn.jar ./src/test/resources/Grover.java -o ./examples/Grover.java -real 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 n=10
-java -jar ../QIn.jar ../src/test/resources/Benchmark/QBenchmark3S.java -o QBenchmark3S.java -v N=$num
+java -jar ../QIn.jar ../src/test/resources/Benchmark/QBenchmark3S.java -o QBenchmark3S.java
 for i in {1..7}
 do
    u=$((2 ** $i + 2))

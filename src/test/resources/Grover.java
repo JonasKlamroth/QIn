@@ -1,12 +1,13 @@
 public class Grover {
     /*@
-      requires database != null && database.length == 4;
-      requires (\forall int i; 0 <= i < 4; database[i] >= 0 && database[i] < 4);
-      requires (\forall int i; 0 <= i < 4; (\forall int j; 0 <= j < 4; i == j || database[i] != database[j]));
-      ensures ((val >= 0 && val < 4) ==> val == database[\result]);
-      ensures ((val < 0 || val > 3) ==> \result == -1);
+      requires n == 4;
+      requires database != null && database.length == n;
+      requires (\forall int i; 0 <= i < n; database[i] >= 0 && database[i] < n);
+      requires (\forall int i; 0 <= i < n; (\forall int j; 0 <= j < n; i == j || database[i] != database[j]));
+      ensures ((val >= 0 && val < n) ==> val == database[\result]);
+      ensures ((val < 0 || val >= n) ==> \result == -1);
       @*/
-    public static int grover2(int[] database, int val) {
+    public static int grover2(int[] database, int val, int n) {
         if (val < 0 || val > 3) {
             return -1;
         }
@@ -32,13 +33,14 @@ public class Grover {
     }
 
     /*@
-      requires database != null && database.length == 4;
-      requires (\forall int i; 0 <= i < 4; database[i] >= 0 && database[i] < 4);
-      requires (\forall int i; 0 <= i < 4; (\forall int j; 0 <= j < 4; i == j || database[i] != database[j]));
-      ensures ((val >= 0 && val < 4) ==> val == database[\result]);
-      ensures ((val < 0 || val > 3) ==> \result == -1);
+      requires n == 4;
+      requires database != null && database.length == n;
+      requires (\forall int i; 0 <= i < n; database[i] >= 0 && database[i] < n);
+      requires (\forall int i; 0 <= i < n; (\forall int j; 0 <= j < n; i == j || database[i] != database[j]));
+      ensures ((val >= 0 && val < n) ==> val == database[\result]);
+      ensures ((val < 0 || val >= n) ==> \result == -1);
       @*/
-    public static int grover2broken(int[] database, int val) {
+    public static int grover2broken(int[] database, int val, int n) {
         if (val < 0 || val > 3) {
             return -1;
         }

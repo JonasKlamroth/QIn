@@ -1,0 +1,131 @@
+BB84                                                                                           
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/BB84.java                                                                                                                                    
+            Mean        Std.Dev.    Min         Median      Max                                
+real        1.560       0.022       1.518       1.554       1.603                                                                                                                             
+user        3.325       0.063       3.232       3.321       3.442                              
+sys         0.319       0.017       0.299       0.318       0.344                              
+DeutschJoszaQiskit                                                                             
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar -u 18 ./CaseStudies/DeutschJozsaQiskit.java dj              
+            Mean        Std.Dev.    Min         Median      Max                                
+real        2.389       0.044       2.331       2.390       2.459                              
+user        4.841       0.142       4.566       4.885       5.064                              
+sys         0.355       0.015       0.325       0.359       0.376                              
+DeutschJozsa                                                                                                                                                                                  
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/DeutschJozsa.java isBalanced -u 18 -t 60000 -tr
+            Mean        Std.Dev.    Min         Median      Max                                
+real        17.064      0.189       16.875      16.987      17.470                           
+user        20.842      0.257       20.526      20.780      21.432                             
+sys         0.493       0.020       0.458       0.495       0.531                              
+BernsteinVaziraniQiskit                                                                                                                                                                       
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/BernsteinVaziraniQiskit.java -u 18 findHiddenShift
+            Mean        Std.Dev.    Min         Median      Max                                
+real        1.848       0.027       1.798       1.850       1.892                             
+user        4.200       0.091       4.069       4.206       4.344                              
+sys         0.334       0.011       0.323       0.331       0.356    
+
+BernsteinVazirani                                                                                                                                                                             
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/BernsteinVazirani.java -u 18 -t 60000 findHiddenShift
+            Mean        Std.Dev.    Min         Median      Max                                
+real        10.595      0.053       10.539      10.578      10.734                             
+user        13.937      0.131       13.734      13.948      14.077                             
+sys         0.496       0.012       0.472       0.497       0.511                              
+Grover                                                                                         
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Grover.java grover2                           
+            Mean        Std.Dev.    Min         Median      Max                                
+real        5.043       0.020       5.016       5.040       5.071                              
+user        7.623       0.088       7.505       7.609       7.771                                                                                                                             
+sys         0.361       0.016       0.338       0.364       0.381                              
+GroverQSharpTut                                                                                
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/GroverQSharpTut.java groverAlternating -u 18
+            Mean        Std.Dev.    Min         Median      Max                                
+real        3.074       0.034       3.009       3.083       3.123                              
+user        6.044       0.072       5.940       6.024       6.173                                                                                                                             
+sys         0.457       0.024       0.428       0.453       0.503                              
+Shor PeriodFinding                                                                             
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor.java -u 130 findPeriodCircuit           
+            Mean        Std.Dev.    Min         Median      Max                                
+real        5.957       0.055       5.854       5.948       6.050                              
+user        8.660       0.211       8.279       8.736       8.884                                                                                                                             
+sys         0.456       0.013       0.434       0.453       0.485
+
+Shor factoring                                                                                 
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor.java -u 17 factorize                     
+            Mean        Std.Dev.    Min         Median      Max                                
+real        6.368       0.057       6.286       6.352       6.478                              
+user        8.728       0.145       8.478       8.728       9.047                              
+sys         0.388       0.015       0.360       0.388       0.411                              
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor.java -u 17 findPeriod                    
+            Mean        Std.Dev.    Min         Median      Max                                
+real        2.705       0.036       2.619       2.709       2.751                                                                                                                             
+user        5.079       0.207       4.664       5.070       5.431                              
+sys         0.367       0.019       0.317       0.371       0.388                            
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor.java shor             
+            Mean        Std.Dev.    Min         Median      Max                                
+real        1.592       0.034       1.540       1.596       1.650                              
+user        4.032       0.194       3.701       4.117       4.254                                                                                                                             
+sys         0.341       0.021       0.308       0.337       0.382                              
+ShorQiskit periodfinding                                                                       
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor3.java -u 34 findPeriodCircuits -t 600000
+            Mean        Std.Dev.    Min         Median      Max                                
+real        445.637     1.373       442.298     445.908     447.409                            
+user        448.599     1.499       445.010     448.879     450.652                                                                                                                           
+sys         3.532       0.055       3.433       3.533       3.626                              
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor3.java -u 34 findPeriodCircuit -t 600000
+            Mean        Std.Dev.    Min         Median      Max         
+real        19.431      0.134       19.222      19.442      19.633                             
+user        23.821      0.230       23.475      23.807      24.151                             
+sys         1.568       0.054       1.498       1.550       1.673 
+
+Shor factoring                                                                                 
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor3.java -u 17 factorize                    
+            Mean        Std.Dev.    Min         Median      Max                                
+real        6.135       0.057       6.059       6.128       6.252                                                                                                                             
+user        11.149      0.153       10.954      11.096      11.418                             
+sys         0.495       0.017       0.472       0.492       0.526                            
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor3.java -u 17 findPeriod
+            Mean        Std.Dev.    Min         Median      Max                                
+real        3.582       0.030       3.518       3.584       3.620                              
+user        8.563       0.048       8.507       8.549       8.662                                                                                                                             
+sys         0.473       0.017       0.452       0.470       0.501                              
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Shor3.java shor        
+            Mean        Std.Dev.    Min         Median      Max         
+real        2.514       0.053       2.387       2.537       2.575                              
+user        7.458       0.172       7.078       7.481       7.666                              
+sys         0.448       0.032       0.401       0.457       0.501                                                                                                                             
+SuperdenseCoding                                                                               
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/SuperdenseCoding.java sdc
+            Mean        Std.Dev.    Min         Median      Max         
+real        1.463       0.019       1.436       1.455       1.494                              
+user        3.218       0.043       3.160       3.218       3.283                              
+sys         0.295       0.013       0.278       0.295       0.319                              
+Taffoli                                                                                        
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/Taffoli.java testTaffoli -u 34
+            Mean        Std.Dev.    Min         Median      Max         
+real        3.202       0.037       3.131       3.205       3.280                              
+user        6.251       0.153       5.974       6.247       6.504       
+sys         0.492       0.015       0.473       0.489       0.531                              
+GHZ                                                                                            
+===> multitime results                                                                         
+1: -qq java -jar ./tools/JJBMC.jar ./CaseStudies/GHZ.java createGHZState -u 18
+            Mean        Std.Dev.    Min         Median      Max         
+real        1.455       0.023       1.418       1.464       1.477                              
+user        3.276       0.059       3.157       3.275       3.367                                                                                                                             
+sys         0.302       0.017       0.273       0.304       0.323  
