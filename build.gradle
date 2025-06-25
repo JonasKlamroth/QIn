@@ -23,7 +23,7 @@ test.testLogging.showStandardStreams = true
 
 repositories {
     // Use JCenter for resolving dependencies.
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -94,6 +94,12 @@ task fatJar(type: Jar) {
     }
 }
 
+task extendedClean(type: Delete) {
+    delete("./tools")
+    delete("./openjml")
+    logger.info("Openjml libs and JJBMC removed")
+}
+
 tasks.register('downloadJJBMC') {
     def directory = file("tools")
     def f = new File('tools/JJBMC.jar')
@@ -104,11 +110,6 @@ tasks.register('downloadJJBMC') {
                 i -> f.withOutputStream{ it << i }}
         }
     }
-}
-
-tasks.register('runCaseStudies', JavaExec) {
-
-
 }
 
 tasks.register('testCaseStudies', Test) {
@@ -130,6 +131,15 @@ tasks.compileJava {
     if(!f.exists()) {
         dependsOn prepareopenjml
     }
+}
+
+tasks.named("build") {
+    finalizedBy("fatJar")
+    finalizedBy("downloadJJBMC")
+}
+
+tasks.named("clean") {
+    finalizedBy("extendedClean")
 }
 
 //tasks.withType(JavaCompile) {
