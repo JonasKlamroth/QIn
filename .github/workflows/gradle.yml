@@ -37,7 +37,7 @@ jobs:
           distribution: zulu
           java-version: 8.0.312+7
       - name: "Build jar"
-        run: gradle fatJar
+        run: ./gradlew fatJar
       - name: "Create release"
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
