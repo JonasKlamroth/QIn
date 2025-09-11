@@ -1,3 +1,5 @@
+// inspired by https://github.com/tcNickolas/qce24-aqdk/blob/main/grovers-search/GroversSearch.qs
+
 public class GroverQSharpTut {
 
     //resulting int has alternating bits

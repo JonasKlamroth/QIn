@@ -1,3 +1,5 @@
+// inspired by: https://github.com/qiskit-community/qiskit-community-tutorials/blob/master/algorithms/bernstein_vazirani.ipynb
+
 public class BernsteinVaziraniQiskit {
     public static final int N = 3;
 

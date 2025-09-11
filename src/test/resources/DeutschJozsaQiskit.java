@@ -1,3 +1,5 @@
+// inspired by: https://github.com/qiskit-community/qiskit-community-tutorials/blob/master/algorithms/deutsch_jozsa.ipynb
+
 public class DeutschJozsaQiskit {
     public static final int N = 3;
 

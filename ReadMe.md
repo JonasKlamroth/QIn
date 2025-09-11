@@ -1,5 +1,10 @@
 QIn is a tool that is developed at [FZI](https://www.fzi.de/en/home/), which translates quantum circuits into Java code and thus makes quantum circuits accessible to software verification/validation tools aimed at Java code. Qin is maintained at [Github](https://github.com/JonasKlamroth/QIn)
 
+This work is part of the SEQUOIA and SEQUOIA End-to-End projects funded by the Ministry of Economic Affairs Baden-Württemberg, Germany
+
+## Publications
+If you use QIn in your research, please cite the following paper: [QIn: Enabling Formal Methods to Deal with Quantum Circuits](https://ieeexplore.ieee.org/abstract/document/10234236?casa_token=szHgsBUFElkAAAAA:Dv4uNSwM9gaVGqsOfhqnmmNRHnz1LTwMrle8b4Y-ilJIm5q4zVGrxRRUBa9asUnfc9K1tdaz)
+
 ## Requirements
 To run or build QIn you need:
 - Java 8 (both newer and older versions do not work due to incompatibilities with OpenJML)
@@ -59,7 +64,7 @@ java -jar ./tools/JJBMC.jar Grover.java grover2
     ```
   
 ## Writing own Circuits
-To write your own quantum circuits we provide an interface similar to those of Qiskit and Cirq: [QIn.CircuitMock](https://github.com/JonasKlamroth/QIn/tree/main/src/java/QIn/QIn.CircuitMock.java)):
+To write your own quantum circuits we provide an interface similar to those of Qiskit and Cirq: [QIn.CircuitMock](https://github.com/JonasKlamroth/QIn/blob/main/src/main/resources/QIn/CircuitMock.java):
 - Create a circuit object: ```QIn.CircuitMock c = new QIn.CircuitMock(numQubits)``` (numQubits is the number of qubits for that circuit)
 - call methods to apply gates: ```c.h(1)``` (to apply a a hadamard gate to qubit 1)
   - supported standard gates for now are: h (Hadamard), x (NOT), z (Z-Rotation), cx (CONTROLLED NOT), CZ (CONTROLLED Z)
